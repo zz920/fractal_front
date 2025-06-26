@@ -14,7 +14,7 @@ export function useServer() {
   // 计算属性：完整的服务器URL
   const serverUrl = computed(() => {
     if (!serverAddress.value || !serverPort.value) return ''
-    return `http://${serverAddress.value}:${serverPort.value}`
+    return `https://${serverAddress.value}:${serverPort.value}`
   })
 
   // 计算属性：WebSocket URL
