@@ -1,0 +1,30 @@
+{
+  "name": "fractal_front",
+  "version": "1.0.0",
+  "description": "小智固件模拟器 - 基于Vue.js和WebSocket的前端应用",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vue",
+    "websocket",
+    "microphone",
+    "firmware",
+    "simulator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "opus-decoder": "^0.7.10",
+    "opus-recorder": "^8.0.5",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^5.0.0"
+  }
+}

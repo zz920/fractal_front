@@ -1,0 +1,8 @@
+{
+  "server": {
+    "address": "192.168.1.100",
+    "port": 8081
+  },
+  "description": "Fractal语音助手服务器配置",
+  "version": "1.0.0"
+} 
