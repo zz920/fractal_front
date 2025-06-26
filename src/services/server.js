@@ -31,17 +31,11 @@ export function useServer() {
   // 硬编码配置加载
   const loadHardcodedConfig = () => {
     // 根据环境设置不同的配置
-    const isProduction = window.location.hostname.includes('github.io')
     
-    if (isProduction) {
-      // 生产环境（GitHub Pages）使用公网地址
-      serverAddress.value = 'bwtest.cpolar.cn'
-      serverPort.value = 443
-    } else {
-      // 开发环境使用本地地址
-      serverAddress.value = '192.168.1.100'
-      serverPort.value = 8081
-    }
+    // 生产环境（GitHub Pages）使用公网地址
+    serverAddress.value = 'bwtest.cpolar.cn'
+    serverPort.value = 443
+
     
     configLoaded.value = true
     configSource.value = 'hardcoded'
@@ -49,45 +43,11 @@ export function useServer() {
     return true
   }
 
-  // 从本地存储加载服务器配置
-  const loadConfigFromStorage = () => {
-    try {
-      const saved = localStorage.getItem('fractal_server_config')
-      if (saved) {
-        const config = JSON.parse(saved)
-        if (config.address && config.port) {
-          serverAddress.value = config.address
-          serverPort.value = config.port
-          configLoaded.value = true
-          configSource.value = 'localStorage'
-          console.log('从localStorage加载配置成功:', config)
-          return true
-        }
-      }
-    } catch (error) {
-      console.error('从localStorage加载配置失败:', error)
-    }
-    return false
-  }
-
-  // 保存服务器配置到本地存储
-  const saveServerConfig = () => {
-    const config = {
-      address: serverAddress.value,
-      port: serverPort.value
-    }
-    localStorage.setItem('fractal_server_config', JSON.stringify(config))
-  }
-
   // 初始化配置加载
   const initializeConfig = async () => {
-    // 优先从localStorage读取（用户自定义配置）
-    const storageLoaded = loadConfigFromStorage()
     
-    // 如果localStorage没有配置，使用硬编码配置
-    if (!storageLoaded) {
-      loadHardcodedConfig()
-    }
+    loadHardcodedConfig()
+    
   }
 
   // 查询服务器状态（/hello接口）
@@ -178,7 +138,6 @@ export function useServer() {
     serverPort.value = port
     configLoaded.value = true
     configSource.value = 'manual'
-    saveServerConfig()
     
     // 如果正在轮询，重新开始轮询
     if (isStatusPolling.value) {
@@ -208,9 +167,7 @@ export function useServer() {
     hasValidConfig,
     
     // 方法
-    saveServerConfig,
     loadHardcodedConfig,
-    loadConfigFromStorage,
     initializeConfig,
     checkServerStatus,
     fetchServerConfig,
