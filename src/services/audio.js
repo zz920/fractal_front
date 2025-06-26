@@ -2,6 +2,15 @@ import { ref } from 'vue'
 import Recorder from 'opus-recorder'
 import { OpusDecoderWebWorker } from 'opus-decoder'
 
+// 动态计算encoderWorker.min.js的路径
+const getEncoderPath = () => {
+  // 获取当前页面的base URL
+  const baseUrl = window.location.pathname.replace(/\/[^/]*$/, '')
+  // 确保路径以/开头，并且正确处理根路径
+  const encoderPath = baseUrl === '' ? '/encoderWorker.min.js' : `${baseUrl}/encoderWorker.min.js`
+  return encoderPath
+}
+
 const microphoneStatus = ref('inactive')
 const microphoneEnabled = ref(false)
 let recorder = null
@@ -510,7 +519,7 @@ export function useAudio() {
       } else {
         recorder = new Recorder({
           encoderSampleRate: 16000,
-          encoderPath: '/encoderWorker.min.js',
+          encoderPath: getEncoderPath(),
           streamPages: true,
           encoderApplication: 2051,
           numberOfChannels: 1,
