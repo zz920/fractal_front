@@ -125,7 +125,7 @@ export default {
 
     const configSourceText = computed(() => {
       switch (configSource.value) {
-        case 'file': return '配置文件'
+        case 'hardcoded': return '硬编码配置'
         case 'localStorage': return '本地存储'
         case 'manual': return '手动设置'
         default: return '未知'

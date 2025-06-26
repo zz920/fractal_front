@@ -1,8 +1,0 @@
-{
-  "server": {
-    "address": "bwtest.cpolar.cn",
-    "port": 443
-  },
-  "description": "Fractal语音助手服务器配置",
-  "version": "1.0.0"
-} 

@@ -7,7 +7,7 @@ const serverStatus = ref('unknown') // unknown, online, offline, error
 const serverConfig = ref(null)
 const isStatusPolling = ref(false)
 const configLoaded = ref(false) // 新增：配置是否已加载
-const configSource = ref('none') // 新增：配置来源 (file, localStorage, none)
+const configSource = ref('none') // 新增：配置来源 (hardcoded, localStorage, none)
 let statusPollingInterval = null
 
 export function useServer() {
@@ -28,31 +28,25 @@ export function useServer() {
     return configLoaded.value && serverAddress.value && serverPort.value
   })
 
-  // 从config.json文件读取配置
-  const loadConfigFromFile = async () => {
-    try {
-      const response = await fetch('/config.json')
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      }
-      
-      const config = await response.json()
-      
-      // 验证配置格式
-      if (config.server && config.server.address && config.server.port) {
-        serverAddress.value = config.server.address
-        serverPort.value = config.server.port
-        configLoaded.value = true
-        configSource.value = 'file'
-        console.log('从config.json加载配置成功:', config.server)
-        return true
-      } else {
-        throw new Error('配置文件格式无效')
-      }
-    } catch (error) {
-      console.warn('从config.json加载配置失败:', error.message)
-      return false
+  // 硬编码配置加载
+  const loadHardcodedConfig = () => {
+    // 根据环境设置不同的配置
+    const isProduction = window.location.hostname.includes('github.io')
+    
+    if (isProduction) {
+      // 生产环境（GitHub Pages）使用公网地址
+      serverAddress.value = 'bwtest.cpolar.cn'
+      serverPort.value = 443
+    } else {
+      // 开发环境使用本地地址
+      serverAddress.value = '192.168.1.100'
+      serverPort.value = 8081
     }
+    
+    configLoaded.value = true
+    configSource.value = 'hardcoded'
+    console.log('使用硬编码配置:', { address: serverAddress.value, port: serverPort.value })
+    return true
   }
 
   // 从本地存储加载服务器配置
@@ -87,12 +81,12 @@ export function useServer() {
 
   // 初始化配置加载
   const initializeConfig = async () => {
-    // 优先从config.json文件读取
-    const fileLoaded = await loadConfigFromFile()
+    // 优先从localStorage读取（用户自定义配置）
+    const storageLoaded = loadConfigFromStorage()
     
-    // 如果文件读取失败，尝试从localStorage读取
-    if (!fileLoaded) {
-      loadConfigFromStorage()
+    // 如果localStorage没有配置，使用硬编码配置
+    if (!storageLoaded) {
+      loadHardcodedConfig()
     }
   }
 
@@ -215,7 +209,7 @@ export function useServer() {
     
     // 方法
     saveServerConfig,
-    loadConfigFromFile,
+    loadHardcodedConfig,
     loadConfigFromStorage,
     initializeConfig,
     checkServerStatus,
