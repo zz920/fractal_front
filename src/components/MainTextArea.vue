@@ -36,7 +36,7 @@
         <div class="emoji-container">
           <div class="emoji">😊</div>
         </div>
-        <h3>正在监听</h3>
+        <h3>情感对话</h3>
         <p>请说话...</p>
       </div>
       
