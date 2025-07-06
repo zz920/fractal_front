@@ -381,6 +381,10 @@ class OpusAudioPlayer {
 }
 
 export function useAudio() {
+  // 帧计数器状态管理
+  let frameCounter = 0
+  const skipHeaderFrames = 2 // 跳过前两帧头部数据（识别头和注释头）
+  
   // Ogg解封装函数：从Ogg封装数据中提取裸Opus帧
   const extractOpusFromOgg = (oggData) => {
     try {
@@ -513,6 +517,11 @@ export function useAudio() {
       console.error('没有可用的音频流')
       return false
     }
+    
+    // 重置帧计数器
+    frameCounter = 0
+    console.log('开始音频流，已重置帧计数器')
+    
     try {
       if (recorder) {
         recorder.resume()
@@ -521,19 +530,26 @@ export function useAudio() {
           encoderSampleRate: 16000,
           encoderPath: getEncoderPath(),
           streamPages: true,
-          encoderApplication: 2051,
+          encoderApplication: 2048,
           numberOfChannels: 1,
           maxFramesPerPage: 1,
-          resampleQuality: 2,
+          resampleQuality: 10,
           encoderFrameSize: 60,
           recordingGain: 1,
         })
         recorder.ondataavailable = (typedArray) => {
           if (onAudioData && typedArray && typedArray.length > 0) {
+            // 跳过前两帧头部数据（识别头和注释头）
+            if (frameCounter < skipHeaderFrames) {
+              frameCounter++
+              return
+            }
+            
             // 使用Ogg解封装函数提取裸Opus帧
             const opusFrame = extractOpusFromOgg(typedArray)
             
             if (opusFrame) {
+              frameCounter++
               onAudioData(opusFrame)
             } else {
               console.warn('Ogg解封装失败，跳过此帧')
@@ -555,6 +571,9 @@ export function useAudio() {
       recorder.pause()
       console.log('opus-recorder已暂停')
     }
+    
+    // 清理帧计数器状态
+    frameCounter = 0
   }
 
   return {
