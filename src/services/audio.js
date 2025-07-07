@@ -4,9 +4,13 @@ import { OpusDecoderWebWorker } from 'opus-decoder'
 
 // 动态计算encoderWorker.min.js的路径
 const getEncoderPath = () => {
-  // 获取当前页面的base URL
+  // 在开发环境中使用绝对路径
+  if (import.meta.env.DEV) {
+    return '/encoderWorker.min.js'
+  }
+  
+  // 生产环境中使用相对路径
   const baseUrl = window.location.pathname.replace(/\/[^/]*$/, '')
-  // 确保路径以/开头，并且正确处理根路径
   const encoderPath = baseUrl === '' ? '/encoderWorker.min.js' : `${baseUrl}/encoderWorker.min.js`
   return encoderPath
 }
@@ -526,9 +530,12 @@ export function useAudio() {
       if (recorder) {
         recorder.resume()
       } else {
+        // 获取encoder路径并验证
+        const encoderPath = getEncoderPath()
+        
         recorder = new Recorder({
           encoderSampleRate: 16000,
-          encoderPath: getEncoderPath(),
+          encoderPath: encoderPath,
           streamPages: true,
           encoderApplication: 2048,
           numberOfChannels: 1,
@@ -537,6 +544,7 @@ export function useAudio() {
           encoderFrameSize: 60,
           recordingGain: 1,
         })
+        
         recorder.ondataavailable = (typedArray) => {
           if (onAudioData && typedArray && typedArray.length > 0) {
             // 跳过前两帧头部数据（识别头和注释头）
@@ -556,11 +564,35 @@ export function useAudio() {
             }
           }
         }
+        
+        recorder.onerror = (error) => {
+          console.error('opus-recorder发生错误:', error)
+          // 清理资源
+          stopMicrophone()
+        }
+        
         recorder.start(stream)
       }
       return true
     } catch (error) {
       console.error('启动opus-recorder失败:', error)
+      console.error('错误详情:', error.message)
+      console.error('错误类型:', error.name)
+      
+      // 清理可能部分创建的recorder
+      if (recorder) {
+        try {
+          recorder.stop()
+        } catch (cleanupError) {
+          console.warn('清理recorder时发生错误:', cleanupError)
+        }
+        recorder = null
+      }
+      
+      // 设置麦克风状态为错误
+      microphoneStatus.value = 'error'
+      microphoneEnabled.value = false
+      
       return false
     }
   }

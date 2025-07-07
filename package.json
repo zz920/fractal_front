@@ -23,7 +23,9 @@
     "express": "^4.18.2",
     "opus-decoder": "^0.7.10",
     "opus-recorder": "^8.0.5",
-    "vue": "^3.4.0"
+    "pinia": "^3.0.3",
+    "vue": "^3.4.0",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",

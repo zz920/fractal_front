@@ -167,6 +167,25 @@ export function useProtocol() {
     }
   }
 
+  // 发送检测消息（模拟用户说话）
+  const sendDetectMessage = (sendMessage) => {
+    if (!sessionId.value) {
+      console.error('没有有效的会话ID，无法发送检测消息')
+      return false
+    }
+
+    const detectMessage = {
+      session_id: sessionId.value,
+      type: "listen",
+      state: "detect",
+      text: "你好小智"
+    }
+    
+    sendMessage(detectMessage)
+    
+    return true
+  }
+
   // 重置协议状态
   const resetProtocol = async () => {
     sessionId.value = null
@@ -195,6 +214,7 @@ export function useProtocol() {
     handleHelloResponse,
     sendStartListen,
     sendStopListen,
+    sendDetectMessage,
     handleTTSMessage,
     handleAudioData,
     resetProtocol
