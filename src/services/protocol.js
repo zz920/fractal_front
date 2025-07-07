@@ -107,7 +107,6 @@ export function useProtocol() {
             break
             
           case 'sentence_start':
-            currentText.value = message.text
             if (onTextUpdate) {
               onTextUpdate(message.text)
             }
@@ -116,7 +115,6 @@ export function useProtocol() {
           case 'stop':
             isSpeaking.value = false
             isListening.value = true
-            currentText.value = ''
             if (onTextUpdate) {
               onTextUpdate('')
             }
