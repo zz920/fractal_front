@@ -4,14 +4,19 @@ import { OpusDecoderWebWorker } from 'opus-decoder'
 
 // 动态计算encoderWorker.min.js的路径
 const getEncoderPath = () => {
-  // 在开发环境中使用绝对路径
-  if (import.meta.env.DEV) {
-    return '/encoderWorker.min.js'
-  }
+  // 使用Vite内置的BASE_URL环境变量来构建正确的路径
+  const baseUrl = import.meta.env.BASE_URL || '/'
+  const encoderPath = baseUrl.endsWith('/') ? 
+    `${baseUrl}encoderWorker.min.js` : 
+    `${baseUrl}/encoderWorker.min.js`
   
-  // 生产环境中使用相对路径
-  const baseUrl = window.location.pathname.replace(/\/[^/]*$/, '')
-  const encoderPath = baseUrl === '' ? '/encoderWorker.min.js' : `${baseUrl}/encoderWorker.min.js`
+  console.log('Encoder路径计算:', {
+    baseUrl,
+    encoderPath,
+    isDev: import.meta.env.DEV,
+    mode: import.meta.env.MODE
+  })
+  
   return encoderPath
 }
 
