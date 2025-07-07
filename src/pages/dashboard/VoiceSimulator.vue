@@ -200,6 +200,11 @@ export default {
       handleTTSMessage(message, null, (text) => {
         // 这里可以更新界面显示
         console.log('更新显示文本:', text)
+        if (text != '') {
+          currentText.value += text;
+        } else {
+          currentText.value = '';
+        }
       })
     }
 
