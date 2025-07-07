@@ -33,7 +33,7 @@ export function useServer() {
     // 根据环境设置不同的配置
     
     // 生产环境（GitHub Pages）使用公网地址
-    serverAddress.value = 'bwtest.cpolar.cn'
+    serverAddress.value = 'fractal.cpolar.cn'
     serverPort.value = 443
 
     

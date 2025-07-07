@@ -19,7 +19,7 @@ if (storedUser) {
 }
 
 // 服务器配置 - 与server.js中的配置保持一致
-const API_BASE_URL = 'https://bwtest.cpolar.cn:443'
+const API_BASE_URL = 'https://fractal.cpolar.cn:443'
 
 export function useAuth() {
   // 计算属性：是否已登录
