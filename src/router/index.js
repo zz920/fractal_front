@@ -7,6 +7,7 @@ const Register = () => import('../pages/auth/Register.vue')
 const Dashboard = () => import('../pages/dashboard/Dashboard.vue')
 const Overview = () => import('../pages/dashboard/Overview.vue')
 const VoiceSimulator = () => import('../pages/dashboard/VoiceSimulator.vue')
+const Device = () => import('../pages/dashboard/Device.vue')
 
 // 路由配置
 const routes = [
@@ -54,15 +55,24 @@ const routes = [
           requiresAuth: true
         }
       },
-      {
-        path: 'voice',
-        name: 'VoiceSimulator', 
-        component: VoiceSimulator,
-        meta: {
-          title: '语音模拟器 - Fractal语音助手',
-          requiresAuth: true
+              {
+          path: 'voice',
+          name: 'VoiceSimulator', 
+          component: VoiceSimulator,
+          meta: {
+            title: '语音模拟器 - Fractal语音助手',
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'device',
+          name: 'Device',
+          component: Device,
+          meta: {
+            title: '设备管理 - Fractal语音助手',
+            requiresAuth: true
+          }
         }
-      }
     ]
   },
   {

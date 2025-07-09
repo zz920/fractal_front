@@ -176,7 +176,7 @@ export function useProtocol() {
       session_id: sessionId.value,
       type: "listen",
       state: "detect",
-      text: "你好小智"
+      text: "小智，你好呀"
     }
     
     sendMessage(detectMessage)

@@ -42,6 +42,18 @@
               <span>Voice Simu</span>
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link
+              to="/dashboard/device"
+              class="nav-link"
+              :class="{ active: $route.path === '/dashboard/device' }"
+            >
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17,3H7A2,2 0 0,0 5,5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V5A2,2 0 0,0 17,3M17,19H7V5H17V19M16,10H13V7H16V10M12,7V10H9V7H12M16,11V14H13V11H16M12,11V14H9V11H12M16,15V18H13V15H16M12,15V18H9V15H12"/>
+              </svg>
+              <span>设备管理</span>
+            </router-link>
+          </li>
         </ul>
       </nav>
       
