@@ -32,21 +32,27 @@ class OpusAudioPlayer {
     this.decoder = null // OpusDecoderWebWorker实例
     this.isInitialized = false
     this.audioQueue = []
-    this.maxQueueSize = 100 // 最大队列长度（参考嵌入式设备的10帧限制）
+    this.maxQueueSize = 10 // 最大队列长度（参考嵌入式设备的10帧限制）
     
     // 播放控制状态
     this.isPlaying = false
     this.currentSource = null
     this.busyDecoding = false // 防重复解码标志
+    this.pendingFrames = [] // 待解码帧队列
     
     // 定时驱动播放
     this.outputTimer = null
-    this.outputInterval = 30 // 30ms定时检查（参考嵌入式设备）
+    this.outputInterval = 5 // 进一步减少到5ms，确保更快响应
     
     // 连续播放时间计算
     this.nextPlayTime = 0
     this.isFirstPlay = true
     this.lastOutputTime = 0
+    this.baseTime = 0 // AudioContext基准时间
+    
+    // 流式播放优化
+    this.minQueueLength = 3 // 最小队列长度，确保连续播放
+    this.scheduledSources = [] // 已调度的音频源队列
     
     this.init()
   }
@@ -56,6 +62,9 @@ class OpusAudioPlayer {
     try {
       // 创建AudioContext
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      
+      // 设置AudioContext基准时间
+      this.baseTime = this.audioContext.currentTime
       
       // 创建opus-decoder解码器
       this.decoder = new OpusDecoderWebWorker({
@@ -96,14 +105,83 @@ class OpusAudioPlayer {
     }
   }
   
-  // 定时驱动的音频输出处理（模拟嵌入式设备的OnAudioOutput）
-  onAudioOutput() {
-    if (this.busyDecoding) {
+  // 处理待解码帧队列
+  processPendingFrames() {
+    // 如果正在解码或没有待解码帧，直接返回
+    if (this.busyDecoding || this.pendingFrames.length === 0) {
       return
     }
     
+    // 处理第一个待解码帧
+    const frameData = this.pendingFrames.shift()
+    this.decodeSingleFrame(frameData)
+  }
+
+  // 清理已完成的音频源
+  cleanupFinishedSources() {
+    const currentTime = this.audioContext ? this.audioContext.currentTime : 0
+    this.scheduledSources = this.scheduledSources.filter(sourceInfo => {
+      // 如果音频源已经播放完成，从列表中移除
+      if (sourceInfo.endTime <= currentTime) {
+        return false
+      }
+      return true
+    })
+  }
+
+  // 调度下一个音频片段
+  scheduleNextAudio() {
+    if (this.audioQueue.length === 0) {
+      return false
+    }
+
+    // 从队列中取出PCM数据
+    const pcmData = this.audioQueue.shift()
+    
+    // 创建AudioBuffer
+    const audioBuffer = this.createAudioBuffer(pcmData)
+    if (!audioBuffer) {
+      console.warn('创建AudioBuffer失败，跳过此片段')
+      return false
+    }
+
+    // 调度播放
+    return this.scheduleAudioBuffer(audioBuffer)
+  }
+
+  // 开始连续播放
+  startContinuousPlayback() {
+    if (this.isPlaying) {
+      return
+    }
+
+    // 预先调度多个音频片段确保无缝播放
+    let scheduledCount = 0
+    while (this.audioQueue.length > 0 && scheduledCount < this.minQueueLength) {
+      if (this.scheduleNextAudio()) {
+        scheduledCount++
+      } else {
+        break
+      }
+    }
+
+    if (scheduledCount > 0) {
+      this.isPlaying = true
+      this.lastOutputTime = Date.now()
+      console.log(`开始连续播放，已调度 ${scheduledCount} 个音频片段`)
+    }
+  }
+
+  // 定时驱动的音频输出处理（模拟嵌入式设备的OnAudioOutput）
+  onAudioOutput() {
     const now = Date.now()
     const maxSilenceMs = 10000 // 10秒无音频后停止
+    
+    // 处理待解码帧队列
+    this.processPendingFrames()
+    
+    // 清理已完成的音频源
+    this.cleanupFinishedSources()
     
     // 如果队列为空，检查是否需要停止播放
     if (this.audioQueue.length === 0) {
@@ -114,50 +192,36 @@ class OpusAudioPlayer {
       return
     }
     
+    // 确保连续播放 - 当队列有数据且调度的源少于最小数量时，继续调度播放
+    if (this.audioQueue.length > 0 && this.scheduledSources.length < this.minQueueLength) {
+      this.scheduleNextAudio()
+    }
+    
     // 如果当前没有播放，开始播放
-    if (!this.isPlaying) {
-      this.playNextFromQueue()
+    if (!this.isPlaying && this.audioQueue.length >= this.minQueueLength) {
+      this.startContinuousPlayback()
     }
   }
   
-  // 从队列中播放下一个音频片段
-  playNextFromQueue() {
-    if (this.audioQueue.length === 0) {
-      this.isPlaying = false
-      return false
-    }
-    
-    // 从队列中取出PCM数据
-    const pcmData = this.audioQueue.shift()
-    
-    // 创建AudioBuffer
-    const audioBuffer = this.createAudioBuffer(pcmData)
-    if (!audioBuffer) {
-      console.warn('创建AudioBuffer失败，跳过此片段')
-      // 继续播放下一个片段
-      this.playNextFromQueue()
-      return false
-    }
-    
-    // 播放音频片段
-    const success = this.playAudioBuffer(audioBuffer)
-    if (success) {
-      this.isPlaying = true
-      this.lastOutputTime = Date.now()
-    } else {
-      // 播放失败，继续播放下一个片段
-      this.playNextFromQueue()
-    }
-    
-    return success
-  }
+
   
   // 清理资源
   async cleanup() {
     // 停止定时器
     this.stopOutputTimer()
     
-    // 停止当前播放的音频源
+    // 停止所有已调度的音频源
+    this.scheduledSources.forEach(sourceInfo => {
+      try {
+        sourceInfo.source.stop()
+        sourceInfo.source.disconnect()
+      } catch (error) {
+        console.warn('停止调度音频源失败:', error)
+      }
+    })
+    this.scheduledSources = []
+    
+    // 停止当前播放的音频源（兼容性处理）
     if (this.currentSource) {
       try {
         this.currentSource.stop()
@@ -191,11 +255,14 @@ class OpusAudioPlayer {
     this.isPlaying = false
     this.busyDecoding = false
     this.audioQueue = []
+    this.pendingFrames = [] // 清理待解码帧队列
+    this.scheduledSources = [] // 清理调度源队列
     
     // 重置连续播放状态
     this.nextPlayTime = 0
     this.isFirstPlay = true
     this.lastOutputTime = 0
+    this.baseTime = 0
     
     console.log('OpusAudioPlayer资源已清理')
   }
@@ -204,11 +271,6 @@ class OpusAudioPlayer {
   decodeAndPlay(opusFrame) {
     if (!this.isInitialized || !this.decoder) {
       console.warn('音频播放器未初始化，跳过音频帧')
-      return false
-    }
-    
-    if (this.busyDecoding) {
-      console.warn('正在解码中，跳过音频帧')
       return false
     }
     
@@ -221,7 +283,19 @@ class OpusAudioPlayer {
       // 将ArrayBuffer转换为TypedArray
       const uint8Data = new Uint8Array(opusFrame)
       
-      // 立即解码单帧（模拟嵌入式设备的单帧处理）
+      // 如果正在解码，将帧加入待解码队列
+      if (this.busyDecoding) {
+        // 限制待解码队列大小，防止内存溢出
+        if (this.pendingFrames.length < 20) {
+          this.pendingFrames.push(uint8Data)
+          console.log('正在解码中，帧已加入待解码队列，队列长度:', this.pendingFrames.length)
+        } else {
+          console.warn('待解码队列已满，跳过此帧')
+        }
+        return true
+      }
+      
+      // 立即解码单帧
       this.decodeSingleFrame(uint8Data)
       
       return true
@@ -289,8 +363,8 @@ class OpusAudioPlayer {
     }
   }
   
-  // 播放AudioBuffer
-  playAudioBuffer(audioBuffer) {
+  // 调度AudioBuffer播放（新的无缝播放核心方法）
+  scheduleAudioBuffer(audioBuffer) {
     if (!this.audioContext || !audioBuffer) {
       return false
     }
@@ -303,44 +377,68 @@ class OpusAudioPlayer {
       // 连接到音频输出
       source.connect(this.audioContext.destination)
       
-      // 计算播放时间（改进的时间计算）
+      // 精确的时间计算，确保完全无缝连接
       let startTime
-      const currentTime = this.audioContext.currentTime
+      const currentContextTime = this.audioContext.currentTime
       
       if (this.isFirstPlay) {
-        // 第一次播放，立即开始
-        startTime = currentTime
+        // 第一次播放，设置基准时间
+        this.baseTime = currentContextTime
+        startTime = currentContextTime + 0.005 // 5ms缓冲，避免过早播放
         this.nextPlayTime = startTime + audioBuffer.duration
         this.isFirstPlay = false
       } else {
-        // 后续播放，确保无缝连接
-        startTime = Math.max(this.nextPlayTime, currentTime)
+        // 后续播放，精确连接到上一个音频片段的结束时间
+        startTime = this.nextPlayTime
         this.nextPlayTime = startTime + audioBuffer.duration
-      }
-      
-      // 播放完成后处理
-      source.onended = () => {
-        this.currentSource = null
         
-        // 检查队列中是否还有数据，如果有则继续播放
-        if (this.audioQueue.length > 0) {
-          this.playNextFromQueue()
-        } else {
-          this.isPlaying = false
+        // 防止播放时间落后于当前时间
+        if (startTime < currentContextTime) {
+          console.warn('播放时间校正: 从', startTime, '调整到', currentContextTime)
+          startTime = currentContextTime
+          this.nextPlayTime = startTime + audioBuffer.duration
         }
       }
       
-      // 播放音频
+      const endTime = startTime + audioBuffer.duration
+      
+      // 播放完成后的清理处理
+      source.onended = () => {
+        // 检查是否还有队列中的数据需要继续调度
+        if (this.audioQueue.length > 0 && this.scheduledSources.length < this.minQueueLength) {
+          this.scheduleNextAudio()
+        }
+        
+        // 如果没有更多调度的音频源，停止播放
+        if (this.scheduledSources.length === 0) {
+          this.isPlaying = false
+          console.log('所有音频片段播放完成')
+        }
+      }
+      
+      // 启动播放
       source.start(startTime)
       
-      // 保存当前播放的source引用
-      this.currentSource = source
+      // 记录调度信息
+      this.scheduledSources.push({
+        source: source,
+        startTime: startTime,
+        endTime: endTime,
+        duration: audioBuffer.duration
+      })
+      
+      console.log(`调度音频播放: 开始时间=${startTime.toFixed(3)}s, 持续时间=${audioBuffer.duration.toFixed(3)}s, 队列中剩余=${this.audioQueue.length}`)
+      
       return true
     } catch (error) {
-      console.error('播放AudioBuffer失败:', error)
-      this.currentSource = null
+      console.error('调度AudioBuffer播放失败:', error)
       return false
     }
+  }
+
+  // 兼容性方法：播放AudioBuffer（用于向后兼容）
+  playAudioBuffer(audioBuffer) {
+    return this.scheduleAudioBuffer(audioBuffer)
   }
   
   // 获取播放状态
@@ -349,11 +447,17 @@ class OpusAudioPlayer {
       isInitialized: this.isInitialized,
       audioContextState: this.audioContext ? this.audioContext.state : 'closed',
       queueLength: this.audioQueue.length,
+      pendingFramesLength: this.pendingFrames.length,
+      scheduledSourcesLength: this.scheduledSources.length,
       isPlaying: this.isPlaying,
       currentSourceActive: this.currentSource !== null,
       busyDecoding: this.busyDecoding,
       maxQueueSize: this.maxQueueSize,
-      outputTimer: this.outputTimer !== null
+      outputTimer: this.outputTimer !== null,
+      outputInterval: this.outputInterval,
+      minQueueLength: this.minQueueLength,
+      nextPlayTime: this.nextPlayTime,
+      baseTime: this.baseTime
     }
   }
   
@@ -375,11 +479,25 @@ class OpusAudioPlayer {
   
   // 重置播放时间（用于新的音频流）
   resetPlayTime() {
+    // 停止所有已调度的音频源
+    this.scheduledSources.forEach(sourceInfo => {
+      try {
+        sourceInfo.source.stop()
+      } catch (error) {
+        // 忽略已经停止的源
+      }
+    })
+    this.scheduledSources = []
+    
     this.nextPlayTime = 0
     this.isFirstPlay = true
     this.lastOutputTime = 0
     this.audioQueue = []
+    this.pendingFrames = [] // 清理待解码帧队列
     this.isPlaying = false
+    if (this.audioContext) {
+      this.baseTime = this.audioContext.currentTime
+    }
     console.log('播放时间已重置')
   }
   
