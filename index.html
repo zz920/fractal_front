@@ -43,6 +43,14 @@
             color: #222;
             font-style: italic;
             margin-top: 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .lang:hover {
+            color: #4bb6e6;
+            background: rgba(75, 182, 230, 0.1);
         }
         .subtitle {
             text-align: center;
@@ -89,41 +97,66 @@
             position: relative;
             box-sizing: border-box;
             cursor: pointer;
-            transition: box-shadow 0.2s;
+            transition: all 0.3s ease;
             border: none;
+            transform: translateY(0);
+        }
+        .diagonal-btn:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .diagonal-btn:active {
+            transform: translateY(-4px);
+            transition: all 0.1s ease;
         }
         .web-diagonal {
             background: #393a5a;
             color: #fff;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            clip-path: polygon(0 0, 92% 0, 100% 100%, 0% 100%);
+            border-radius: 6px;
             box-shadow: 2px 0 8px #b6b6e6;
             z-index: 2;
+        }
+        .web-diagonal:hover {
+            background: #4a4b6a;
+            box-shadow: 0 8px 32px rgba(57, 58, 90, 0.3);
         }
         .app-diagonal {
             background: #e6e8f7;
             color: #4bb6e6;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            border-left: 2px solid #b6b6e6;
-            margin-left: -32px;
-            clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+            border-radius: 6px;
+            margin-left: 8px;
             z-index: 1;
+        }
+        .app-diagonal:hover {
+            background: #f0f2ff;
+            color: #3aa5d6;
+            box-shadow: 0 8px 32px rgba(75, 182, 230, 0.3);
         }
         .web-diagonal i {
             font-size: 2.8rem;
             margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+        .web-diagonal:hover i {
+            transform: scale(1.1);
         }
         .app-diagonal i {
             font-size: 2.2rem;
             margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+        .app-diagonal:hover i {
+            transform: scale(1.1);
         }
         .web-text {
             font-size: 1.6rem;
             font-family: 'Microsoft YaHei', Arial, sans-serif;
             font-weight: bold;
             letter-spacing: 2px;
+            transition: transform 0.3s ease;
+        }
+        .web-diagonal:hover .web-text {
+            transform: translateY(-2px);
         }
         .app-text {
             font-size: 1.6rem;
@@ -131,6 +164,10 @@
             font-weight: bold;
             color: #4bb6e6;
             letter-spacing: 2px;
+            transition: transform 0.3s ease;
+        }
+        .app-diagonal:hover .app-text {
+            transform: translateY(-2px);
         }
         .right-panel {
             background: rgba(255,255,255,0.72);
@@ -167,6 +204,12 @@
             position: relative;
             box-shadow: 0 2px 18px #b6b6e6;
             border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(110, 198, 250, 0.3);
         }
         .feature-item:last-child {
             margin-bottom: 0;
@@ -235,6 +278,11 @@
             font-size: 1.5rem;
             margin: 0 10px;
             color: #222;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .footer-icons i:hover {
+            color: #e6a6f7;
         }
         .footer-block {
             width: 140px;
@@ -252,6 +300,8 @@
             border-radius: 8px;
             opacity: 0.4;
         }
+        
+        
         @media (max-width: 1100px) {
             .main-content {
                 flex-direction: column;
@@ -282,11 +332,11 @@
                 </defs>
                 <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#circleGradient)" stroke-width="16" stroke-linecap="round"/>
                 <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
-                <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="38" font-weight="bold" fill="#111" font-style="italic" letter-spacing="4">FRACTAL</text>
+                <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="32" font-weight="bold" fill="#111" font-style="italic" letter-spacing="4">FRACTAL</text>
             </svg>
             <span class="main-title">Fractal</span>
         </div>
-        <span class="lang">English</span>
+        <span class="lang" id="langToggle">English</span>
     </div>
     <div class="subtitle">一款人性化的智能语音助手</div>
     <div class="main-content">
@@ -304,21 +354,21 @@
         </div>
         <div class="right-panel">
             <div class="feature-list">
-                <div class="feature-item">
-                    <span class="feature-icon"><i class="fa-solid fa-robot"></i></span>
-                    <div class="feature-title">智能化语音助手</div>
-                    <div class="feature-desc">实时对话</div>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon"><i class="fa-solid fa-music"></i></span>
-                    <div class="feature-title">自定义音色配置</div>
-                    <div class="feature-desc">自定义词典</div>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon"><i class="fa-solid fa-briefcase"></i></span>
-                    <div class="feature-title">MCP工具应用</div>
-                    <div class="feature-desc">连接办公</div>
-                </div>
+                                 <div class="feature-item" id="voiceAssistant">
+                     <span class="feature-icon"><i class="fa-solid fa-comments"></i></span>
+                     <div class="feature-title">智能化语音助手</div>
+                     <div class="feature-desc">实时对话</div>
+                 </div>
+                                 <div class="feature-item" id="voiceSettings">
+                     <span class="feature-icon"><i class="fa-solid fa-music"></i></span>
+                     <div class="feature-title">自定义音色配置</div>
+                     <div class="feature-desc">自定义音色</div>
+                 </div>
+                                 <div class="feature-item" id="mcpSubscription">
+                     <span class="feature-icon"><i class="fa-solid fa-briefcase"></i></span>
+                     <div class="feature-title">MCP工具应用</div>
+                     <div class="feature-desc">便捷办公</div>
+                 </div>
             </div>
             <div class="dots">
                 <div class="dot active"></div>
@@ -341,11 +391,11 @@
                 <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
                 <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="28" font-weight="bold" fill="#111" font-style="italic" letter-spacing="5">FRACTAL</text>
             </svg>
-            <div class="footer-icons">
-                <i class="fa-regular fa-envelope"></i>
-                <i class="fa-solid fa-robot"></i>
-                <i class="fa-brands fa-github"></i>
-            </div>
+                         <div class="footer-icons">
+                 <i class="fa-regular fa-envelope" id="emailIcon"></i>
+                 <i class="fa-solid fa-comments" id="chatIcon"></i>
+                 <i class="fa-brands fa-github" id="githubIcon"></i>
+             </div>
         </div>
         <div class="footer-block">
             <div class="footer-title">可连接设备</div>
@@ -357,6 +407,75 @@
         </div>
     </div>
     <script>
+        // 语言切换功能
+        const langToggle = document.getElementById('langToggle');
+        const subtitle = document.querySelector('.subtitle');
+        const webText = document.querySelector('.web-text');
+        const appText = document.querySelector('.app-text');
+        const featureTitles = document.querySelectorAll('.feature-title');
+        const featureDescs = document.querySelectorAll('.feature-desc');
+        const footerTitles = document.querySelectorAll('.footer-title');
+        
+                 // 语言内容配置
+         const translations = {
+             zh: {
+                 langToggle: 'English',
+                 subtitle: '一款人性化的智能语音助手',
+                 webText: '进入网页版',
+                 appText: '获取APP',
+                 featureTitles: ['智能化语音助手', '自定义音色配置', 'MCP工具应用'],
+                 featureDescs: ['实时对话', '自定义音色', '便捷办公'],
+                 footerTitles: ['可连接设备', '关于我们']
+             },
+             en: {
+                 langToggle: '中文',
+                 subtitle: 'A Humanized Intelligent Voice Assistant',
+                 webText: 'Web Version',
+                 appText: 'Get APP',
+                 featureTitles: ['Intelligent Voice Assistant', 'Custom Voice Configuration', 'MCP Tool Applications'],
+                 featureDescs: ['Real-time Dialogue', 'Custom Voice', 'Convenient Office'],
+                 footerTitles: ['Connectable Devices', 'About Us']
+             }
+         };
+        
+        let currentLang = 'zh';
+        
+        // 切换语言函数
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            const lang = translations[currentLang];
+            
+            // 更新语言切换按钮
+            langToggle.textContent = lang.langToggle;
+            
+            // 更新副标题
+            subtitle.textContent = lang.subtitle;
+            
+            // 更新按钮文本
+            webText.textContent = lang.webText;
+            appText.textContent = lang.appText;
+            
+            // 更新功能标题和描述
+            featureTitles.forEach((title, index) => {
+                title.textContent = lang.featureTitles[index];
+            });
+            
+            featureDescs.forEach((desc, index) => {
+                desc.textContent = lang.featureDescs[index];
+            });
+            
+            // 更新页脚标题
+            footerTitles.forEach((title, index) => {
+                title.textContent = lang.footerTitles[index];
+            });
+        }
+        
+        // 添加点击事件
+        if (langToggle) {
+            langToggle.onclick = toggleLanguage;
+            langToggle.style.cursor = 'pointer';
+        }
+        
         // 跳转到登录页
         const webEntryBtn = document.getElementById('webEntryBtn');
         if (webEntryBtn) {
@@ -364,6 +483,227 @@
                 window.location.href = 'login.html';
             };
         }
-    </script>
+        
+        // 页脚图标跳转功能
+        const emailIcon = document.getElementById('emailIcon');
+        const chatIcon = document.getElementById('chatIcon');
+        const githubIcon = document.getElementById('githubIcon');
+        
+        if (emailIcon) {
+            emailIcon.onclick = function() {
+                alert('邮件功能正在开发中...');
+            };
+        }
+        
+        if (chatIcon) {
+            chatIcon.onclick = function() {
+                alert('聊天功能正在开发中...');
+            };
+        }
+        
+                 if (githubIcon) {
+             githubIcon.onclick = function() {
+                 alert('GitHub功能正在开发中...');
+             };
+         }
+         
+         // 功能模块跳转功能
+         const voiceAssistant = document.getElementById('voiceAssistant');
+         const voiceSettings = document.getElementById('voiceSettings');
+         const mcpSubscription = document.getElementById('mcpSubscription');
+         
+         // 用户状态检查函数
+         function checkUserStatus() {
+             // 检查多种可能的登录状态标识
+             const userToken = localStorage.getItem('userToken');
+             const sessionToken = sessionStorage.getItem('userToken');
+             const isLoggedIn = localStorage.getItem('isLoggedIn');
+             const isRegistered = localStorage.getItem('isRegistered');
+             const userId = localStorage.getItem('userId');
+             const userSession = sessionStorage.getItem('userSession');
+             const authToken = localStorage.getItem('authToken');
+             const loginStatus = localStorage.getItem('loginStatus');
+             const userInfo = localStorage.getItem('userInfo');
+             
+             // 检查URL参数中的登录状态
+             const urlParams = new URLSearchParams(window.location.search);
+             const urlToken = urlParams.get('token');
+             const urlUserId = urlParams.get('userId');
+             const urlLoginStatus = urlParams.get('loginStatus');
+             
+             // 如果有URL参数，更新本地存储
+             if (urlToken) {
+                 localStorage.setItem('userToken', urlToken);
+                 sessionStorage.setItem('userToken', urlToken);
+             }
+             if (urlUserId) {
+                 localStorage.setItem('userId', urlUserId);
+             }
+             if (urlLoginStatus) {
+                 localStorage.setItem('loginStatus', urlLoginStatus);
+             }
+             
+             // 检查cookie中的登录状态
+             const cookies = document.cookie.split(';');
+             let cookieToken = null;
+             let cookieUserId = null;
+             
+             cookies.forEach(cookie => {
+                 const [name, value] = cookie.trim().split('=');
+                 if (name === 'userToken' || name === 'authToken') {
+                     cookieToken = value;
+                 }
+                 if (name === 'userId') {
+                     cookieUserId = value;
+                 }
+             });
+             
+             // 如果有cookie中的token，更新本地存储
+             if (cookieToken) {
+                 localStorage.setItem('userToken', cookieToken);
+                 sessionStorage.setItem('userToken', cookieToken);
+             }
+             if (cookieUserId) {
+                 localStorage.setItem('userId', cookieUserId);
+             }
+             
+             // 检查是否有任何登录标识
+             const hasLoginToken = userToken || sessionToken || authToken || cookieToken;
+             const hasUserId = userId || cookieUserId || urlUserId;
+             const hasLoginStatus = isLoggedIn === 'true' || loginStatus === 'true' || urlLoginStatus === 'true';
+             const hasUserSession = userSession || userInfo;
+             
+             // 如果没有任何登录标识，但用户希望默认登录，则设置默认登录状态
+             if (!hasLoginToken && !hasUserId && !hasLoginStatus && !hasUserSession) {
+                 // 设置默认登录状态
+                 localStorage.setItem('userToken', 'default-user-token');
+                 localStorage.setItem('isLoggedIn', 'true');
+                 localStorage.setItem('isRegistered', 'true');
+                 localStorage.setItem('userId', 'default-user-id');
+                 console.log('检测到默认登录状态，已设置登录标识');
+                 return 'loggedIn';
+             }
+             
+             if (hasLoginToken || hasUserId || hasLoginStatus || hasUserSession) {
+                 // 检查是否已注册
+                 const isUserRegistered = isRegistered === 'true' || hasUserId || hasLoginToken;
+                 if (isUserRegistered) {
+                     return 'loggedIn';
+                 } else {
+                     return 'notRegistered';
+                 }
+             } else {
+                 return 'notLoggedIn';
+             }
+         }
+         
+         // 跳转函数
+         function navigateToPage(page) {
+             const userStatus = checkUserStatus();
+             console.log('当前用户状态:', userStatus); // 调试信息
+             
+             switch(userStatus) {
+                 case 'notLoggedIn':
+                     console.log('用户未登录，跳转到登录页');
+                     window.location.href = 'login.html';
+                     break;
+                 case 'notRegistered':
+                     console.log('用户未注册，跳转到注册页');
+                     window.location.href = 'register.html';
+                     break;
+                 case 'loggedIn':
+                     console.log('✅ 用户已登录，跳转到目标页面:', page);
+                     // 添加跳转前的确认提示
+                     if (confirm('确认跳转到 ' + page + ' 页面吗？')) {
+                         window.location.href = page;
+                     }
+                     break;
+                 default:
+                     console.log('未知状态，默认跳转到登录页');
+                     window.location.href = 'login.html';
+             }
+         }
+         
+         // 自动检测登录状态的函数
+         function autoDetectLoginStatus() {
+             // 检查页面加载时的登录状态
+             const initialStatus = checkUserStatus();
+             console.log('页面加载时检测到的登录状态:', initialStatus);
+             
+             // 如果检测到已登录状态，显示登录成功提示
+             if (initialStatus === 'loggedIn') {
+                 console.log('✅ 用户已登录，可以正常使用所有功能');
+                 // 可以在这里添加视觉提示，比如显示用户名或登录状态
+             }
+             
+             // 监听storage事件，当其他页面更新登录状态时自动更新
+             window.addEventListener('storage', function(e) {
+                 if (e.key === 'userToken' || e.key === 'isLoggedIn' || e.key === 'userId') {
+                     console.log('检测到登录状态变化:', e.key, e.newValue);
+                     const newStatus = checkUserStatus();
+                     console.log('更新后的登录状态:', newStatus);
+                 }
+             });
+             
+             // 定期检查登录状态（每30秒检查一次）
+             setInterval(() => {
+                 const currentStatus = checkUserStatus();
+                 console.log('定期检查登录状态:', currentStatus);
+             }, 30000);
+         }
+         
+         // 添加点击事件
+         if (voiceAssistant) {
+             voiceAssistant.onclick = function() {
+                 navigateToPage('voice-simulator.html');
+             };
+         }
+         
+         if (voiceSettings) {
+             voiceSettings.onclick = function() {
+                 navigateToPage('voice-settings.html');
+             };
+         }
+         
+         if (mcpSubscription) {
+             mcpSubscription.onclick = function() {
+                 navigateToPage('mcp-subscription.html');
+             };
+         }
+         
+         // 手动设置登录状态的函数（用于测试）
+         function setLoginStatus(status) {
+             switch(status) {
+                 case 'loggedIn':
+                     localStorage.setItem('userToken', 'test-token-123');
+                     localStorage.setItem('isLoggedIn', 'true');
+                     localStorage.setItem('isRegistered', 'true');
+                     localStorage.setItem('userId', 'user123');
+                     console.log('已设置为已登录状态');
+                     break;
+                 case 'notRegistered':
+                     localStorage.setItem('userToken', 'test-token-123');
+                     localStorage.setItem('isLoggedIn', 'true');
+                     localStorage.removeItem('isRegistered');
+                     console.log('已设置为已登录但未注册状态');
+                     break;
+                 case 'notLoggedIn':
+                     localStorage.clear();
+                     sessionStorage.clear();
+                     console.log('已设置为未登录状态');
+                     break;
+             }
+         }
+         
+         // 页面加载时自动检测登录状态
+         autoDetectLoginStatus();
+         
+         // 在控制台中可以调用以下命令来测试：
+         // setLoginStatus('loggedIn') - 设置为已登录
+         // setLoginStatus('notRegistered') - 设置为已登录但未注册
+         // setLoginStatus('notLoggedIn') - 设置为未登录
+         // checkUserStatus() - 检查当前登录状态
+         
+     </script>
 </body>
 </html>
