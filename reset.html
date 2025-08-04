@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal 密码重置</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: radial-gradient(ellipse at 20% 20%, #b6f0fa 0%, #a2d6f7 40%, #3a2d4a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .reset-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 32px #b6b6e6;
+            width: 650px;
+            max-width: 95vw;
+            padding: 48px 48px 32px 48px;
+            margin: 60px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .reset-header {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .reset-logo {
+            margin-right: 18px;
+        }
+        .reset-logo svg {
+            width: 70px;
+            height: 70px;
+        }
+        .reset-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Orbitron', Arial, sans-serif;
+            color: #111;
+            letter-spacing: 2px;
+            margin-right: 10px;
+        }
+        .reset-welcome {
+            color: #bbb;
+            font-size: 1.05rem;
+            margin-top: 2px;
+            margin-left: 2px;
+            font-weight: 400;
+        }
+        .reset-form {
+            width: 100%;
+            margin-top: 28px;
+        }
+        .form-group {
+            margin-bottom: 28px;
+        }
+        .form-label {
+            font-size: 1.18rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-input {
+            width: 100%;
+            height: 44px;
+            border: 2px solid #bbb;
+            border-radius: 10px;
+            font-size: 1.15rem;
+            padding: 0 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 0;
+        }
+        .form-input:focus {
+            border-color: #6ec6fa;
+        }
+        .form-input.error {
+            border-color: #e74c3c;
+        }
+        .form-input.success {
+            border-color: #2ecc71;
+        }
+        .input-status {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            margin-top: 4px;
+            min-height: 22px;
+        }
+        .input-status i {
+            margin-right: 6px;
+        }
+        .input-status.error {
+            color: #e74c3c;
+        }
+        .input-status.success {
+            color: #2ecc71;
+        }
+        .slider-verify {
+            position: relative;
+            width: 100%;
+            height: 44px;
+            background: #f5f5f5;
+            border: 2px solid #bbb;
+            border-radius: 8px;
+            user-select: none;
+            overflow: hidden;
+        }
+        .slider-bar {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 0;
+            background: #a89bfa44;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .slider-btn {
+            position: absolute;
+            left: 0; top: 0;
+            width: 44px; height: 44px;
+            background: #a89bfa;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            transition: background 0.2s;
+        }
+        .slider-text {
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 1.08rem;
+            pointer-events: none;
+        }
+        .slider-verify.success {
+            border-color: #2ecc71;
+            background: #eaffea;
+        }
+        .slider-verify.success .slider-bar {
+            background: #a8faaa;
+            width: 100% !important;
+        }
+        .slider-verify.success .slider-btn {
+            background: #2ecc71;
+        }
+        .slider-verify.success .slider-text {
+            color: #2ecc71;
+        }
+        .mailcode-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .mailcode-input {
+            width: 180px;
+            min-width: 0;
+        }
+        .resend-btn {
+            height: 44px;
+            border-radius: 8px;
+            border: 2px solid #bbb;
+            background: #f5f5f5;
+            color: #888;
+            font-size: 1.05rem;
+            padding: 0 18px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .resend-btn:disabled {
+            color: #bbb;
+            background: #eee;
+            cursor: not-allowed;
+        }
+        .reset-btn-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            margin-top: 36px;
+        }
+        .reset-btn {
+            width: 180px;
+            height: 48px;
+            border-radius: 12px;
+            font-size: 1.18rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .reset-btn.finish {
+            background: #7ff6f6;
+            color: #222;
+        }
+        .reset-btn.login {
+            background: #a89bfa;
+            color: #222;
+        }
+        .reset-btn:active {
+            filter: brightness(0.95);
+        }
+        @media (max-width: 700px) {
+            .reset-container {
+                padding: 18px 4vw 18px 4vw;
+            }
+            .reset-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .reset-title {
+                margin-top: 10px;
+            }
+            .reset-btn-row {
+                flex-direction: column;
+                gap: 18px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="reset-container">
+        <div class="reset-header">
+            <div class="reset-logo">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="circleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#b6a6f7"/>
+                            <stop offset="50%" stop-color="#6ec6fa"/>
+                            <stop offset="100%" stop-color="#8be6b6"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#circleGradient)" stroke-width="16" stroke-linecap="round"/>
+                    <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
+                    <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="32" font-weight="bold" fill="#111" font-style="italic" letter-spacing="6">FRACTAL</text>
+                </svg>
+            </div>
+            <div>
+                <div class="reset-title">密码重置</div>
+                <div class="reset-welcome">欢迎回到Fractal语音助手</div>
+            </div>
+        </div>
+        <form class="reset-form" id="resetForm" autocomplete="off">
+            <div class="form-group">
+                <label class="form-label" for="reset-email">请输入注册邮箱</label>
+                <input class="form-input" type="email" id="reset-email" name="reset-email" required>
+                <div class="input-status" id="emailStatus"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reset-verify">验证身份</label>
+                <div class="slider-verify" id="sliderVerify">
+                    <div class="slider-bar" id="sliderBar"></div>
+                    <div class="slider-btn" id="sliderBtn"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="slider-text" id="sliderText">拉动滑块验证身份 →</div>
+                </div>
+                <div class="input-status" id="verifyStatus"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reset-mailcode">请输入邮箱验证码</label>
+                <div class="mailcode-row">
+                    <input class="form-input mailcode-input" type="text" id="reset-mailcode" name="reset-mailcode" required>
+                    <button type="button" class="resend-btn" id="resendBtn">发送验证码</button>
+                </div>
+                <div class="input-status" id="mailcodeStatus"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reset-password">输入新密码</label>
+                <input class="form-input" type="password" id="reset-password" name="reset-password" required>
+                <div class="input-status" id="passStatus"></div>
+            </div>
+            <div class="reset-btn-row">
+                <button type="submit" class="reset-btn finish" id="finishBtn">完成</button>
+                <button type="button" class="reset-btn login" id="toLogin">返回登录</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // 校验邮箱
+        const resetEmail = document.getElementById('reset-email');
+        const emailStatus = document.getElementById('emailStatus');
+        resetEmail.addEventListener('input', function() {
+            if(!/^\S+@\S+\.\S+$/.test(resetEmail.value)) {
+                resetEmail.className = 'form-input error';
+                emailStatus.innerHTML = '<span style="color:#e74c3c">请输入有效的邮箱地址</span>';
+                emailStatus.className = 'input-status error';
+            } else {
+                resetEmail.className = 'form-input success';
+                emailStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                emailStatus.className = 'input-status success';
+            }
+        });
+        // 滑块验证
+        const sliderVerify = document.getElementById('sliderVerify');
+        const sliderBtn = document.getElementById('sliderBtn');
+        const sliderBar = document.getElementById('sliderBar');
+        const sliderText = document.getElementById('sliderText');
+        const verifyStatus = document.getElementById('verifyStatus');
+        let sliderDown = false, sliderStartX = 0, sliderMax = 0;
+        let sliderVerified = false;
+        sliderBtn.addEventListener('mousedown', function(e) {
+            if(sliderVerified) return;
+            sliderDown = true;
+            sliderStartX = e.clientX - sliderBtn.offsetLeft;
+            sliderMax = sliderVerify.offsetWidth - sliderBtn.offsetWidth;
+            document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', function(e) {
+            if(!sliderDown || sliderVerified) return;
+            let x = e.clientX - sliderStartX;
+            if(x < 0) x = 0;
+            if(x > sliderMax) x = sliderMax;
+            sliderBtn.style.left = x + 'px';
+            sliderBar.style.width = (x + sliderBtn.offsetWidth/2) + 'px';
+            if(x >= sliderMax) {
+                sliderVerified = true;
+                sliderDown = false;
+                sliderBtn.style.left = sliderMax + 'px';
+                sliderBar.style.width = '100%';
+                sliderVerify.classList.add('success');
+                sliderText.textContent = '已通过';
+                verifyStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> 已通过';
+                verifyStatus.className = 'input-status success';
+            }
+        });
+        document.addEventListener('mouseup', function(e) {
+            if(sliderDown && !sliderVerified) {
+                sliderBtn.style.left = '0px';
+                sliderBar.style.width = '0px';
+                sliderDown = false;
+            }
+            document.body.style.userSelect = '';
+        });
+        // 邮箱验证码
+        const resetMailcode = document.getElementById('reset-mailcode');
+        const mailcodeStatus = document.getElementById('mailcodeStatus');
+        const resendBtn = document.getElementById('resendBtn');
+        let resendTimer = 0, resendCount = 60;
+        resendBtn.onclick = function() {
+            if(resendBtn.disabled) return;
+            resendBtn.disabled = true;
+            let count = resendCount;
+            resendBtn.textContent = `重新发送验证码  ${count}s`;
+            let timer = setInterval(()=>{
+                count--;
+                resendBtn.textContent = `重新发送验证码  ${count}s`;
+                if(count <= 0) {
+                    clearInterval(timer);
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = '发送验证码';
+                }
+            }, 1000);
+        };
+        resetMailcode.addEventListener('input', function() {
+            if(/^\d{6}$/.test(resetMailcode.value)) {
+                resetMailcode.className = 'form-input mailcode-input success';
+                mailcodeStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                mailcodeStatus.className = 'input-status success';
+            } else {
+                resetMailcode.className = 'form-input mailcode-input error';
+                mailcodeStatus.innerHTML = '<span style="color:#e74c3c">请输入有效验证码</span>';
+                mailcodeStatus.className = 'input-status error';
+            }
+        });
+        // 新密码校验
+        const resetPassword = document.getElementById('reset-password');
+        const passStatus = document.getElementById('passStatus');
+        resetPassword.addEventListener('input', function() {
+            if(/[^a-zA-Z0-9]/.test(resetPassword.value)) {
+                resetPassword.className = 'form-input error';
+                passStatus.innerHTML = '<span style="color:#e74c3c">密码包含有非法字符</span>';
+                passStatus.className = 'input-status error';
+            } else if(resetPassword.value.length < 8) {
+                resetPassword.className = 'form-input error';
+                passStatus.innerHTML = '<span style="color:#e74c3c">请输入8位及以上新密码</span>';
+                passStatus.className = 'input-status error';
+            } else {
+                resetPassword.className = 'form-input success';
+                passStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                passStatus.className = 'input-status success';
+            }
+        });
+        // 完成按钮
+        const finishBtn = document.getElementById('finishBtn');
+        finishBtn.onclick = function(e) {
+            e.preventDefault();
+            if(
+                resetEmail.classList.contains('success') &&
+                sliderVerify.classList.contains('success') &&
+                resetMailcode.classList.contains('success') &&
+                resetPassword.classList.contains('success')
+            ) {
+                finishBtn.textContent = '重置成功';
+                finishBtn.style.background = '#2ecc71';
+                setTimeout(()=>{
+                    window.location.href = 'login.html';
+                }, 1200);
+            } else {
+                finishBtn.textContent = '请完善所有信息';
+                finishBtn.style.background = '#e74c3c';
+                setTimeout(()=>{
+                    finishBtn.textContent = '完成';
+                    finishBtn.style.background = '#7ff6f6';
+                }, 1200);
+            }
+        };
+        // 返回登录
+        document.getElementById('toLogin').onclick = function(){
+            window.location.href = 'login.html';
+        };
+    </script>
+</body>
+</html>

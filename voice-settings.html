@@ -1,0 +1,2989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal 音色设置</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar {
+            width: 340px;
+            background: #e9d3d6;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 14px 0 0 14px;
+            border: 2px solid #d6c6c6;
+            border-right: none;
+            min-width: 240px;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 0 18px 0;
+            border-bottom: 2px solid #d6c6c6;
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-logo svg {
+            width: 80px;
+            height: 80px;
+        }
+        
+
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 0 0 0 0;
+            margin-top: 18px;
+        }
+        
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            display: flex;
+            align-items: center;
+            font-size: 1.18rem;
+            padding: 32px 0 32px 38px;
+            cursor: pointer;
+            color: #333;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+            margin-bottom: 18px;
+            border-radius: 0 16px 16px 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .sidebar-menu li.active, .sidebar-menu li:hover {
+            background: #e3d6f7;
+            border-left: 4px solid #6ec6fa;
+            color: #2d1ed6;
+        }
+        
+        .sidebar-menu li i {
+            margin-right: 18px;
+            font-size: 1.3em;
+            min-width: 28px;
+            text-align: left;
+        }
+        
+        .logo-blue-italic {
+            color: #1a1ed6;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .logo-large {
+            font-size: 2.7rem;
+            margin-top: 8px;
+        }
+        .sidebar-logo-title {
+            font-size: 2.2rem;
+            margin-bottom: 0;
+            margin-top: 10px;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #1a1ed6;
+            letter-spacing: 2px;
+        }
+        .sidebar-logo-sub {
+            font-size: 1.5rem;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #1a1ed6;
+            letter-spacing: 2px;
+        }
+        
+        .sidebar-settings {
+            padding: 22px 24px 18px 24px;
+            border-top: 2px solid #d6c6c6;
+        }
+        
+        .sidebar-setting-btn {
+            width: 100%;
+            height: 48px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            background: #fff;
+            color: #333;
+            font-size: 1.15rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            margin-top: 8px;
+        }
+        
+        .sidebar-setting-btn:hover {
+            border-color: #6ec6fa;
+        }
+        
+        .sidebar-setting-btn i {
+            margin-right: 10px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 顶部标题栏 */
+        .top-header {
+            background: #fff;
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 50%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .user-name {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            display: flex;
+            gap: 32px;
+        }
+        
+        /* 左侧音色分类 */
+        .voice-categories {
+            width: 280px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #555;
+            position: relative;
+        }
+        
+        .category-item:hover {
+            background: rgba(168, 155, 250, 0.1);
+        }
+        
+        .category-item.active {
+            background: rgba(110, 198, 250, 0.15);
+            color: #06b6d4;
+        }
+        
+        .category-item.active::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: #06b6d4;
+            border-radius: 2px;
+        }
+        
+        .category-item i {
+            font-size: 1.3rem;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .category-item span {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* 右侧内容区域 */
+        .voice-content {
+            flex: 1;
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .voice-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 16px;
+        }
+        
+        .voice-tab {
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .voice-tab.active {
+            background: #6b46c1;
+            color: #fff;
+        }
+        
+        .voice-tab:hover:not(.active) {
+            background: rgba(107, 70, 193, 0.1);
+        }
+        
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .voice-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .voice-card:hover {
+            border-color: #6b46c1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107, 70, 193, 0.15);
+        }
+        
+        .voice-card.selected {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.05);
+        }
+        
+        .voice-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 50%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .voice-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .voice-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        /* 收藏按钮样式 */
+        .favorite-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            opacity: 0;
+        }
+        
+        .voice-card:hover .favorite-btn {
+            opacity: 1;
+        }
+        
+        .favorite-btn:hover {
+            background: #fff;
+            border-color: #ff6b6b;
+            transform: scale(1.1);
+        }
+        
+        .favorite-btn.favorited {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            color: #fff;
+        }
+        
+        .favorite-btn.favorited:hover {
+            background: #ff5252;
+            border-color: #ff5252;
+        }
+        
+        .favorite-btn i {
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .favorite-btn.favorited i {
+            animation: heartBeat 0.6s ease-in-out;
+        }
+        
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 音频设置 */
+        .audio-settings {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-top: 32px;
+        }
+        
+        .audio-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 24px;
+        }
+        
+        .audio-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .audio-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .audio-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .audio-input {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .audio-input:focus {
+            outline: none;
+            border-color: #6b46c1;
+        }
+        
+        .volume-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #6b46c1;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #6b46c1;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .volume-value {
+            text-align: center;
+            font-size: 1rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        /* 搜索栏样式 */
+        .search-container {
+            margin-bottom: 24px;
+            display: none;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #6b46c1;
+        }
+        
+        .search-input::placeholder {
+            color: #999;
+        }
+        
+        /* 标签页容器 */
+        .tabs-container {
+            display: none;
+        }
+        
+        .tabs-container.show {
+            display: block;
+        }
+        
+        /* 训练界面样式 */
+        .training-container {
+            display: none;
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 32px;
+        }
+        
+        .training-container.show {
+            display: block;
+        }
+        
+        .training-status {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            background: #fafafa;
+            margin-bottom: 24px;
+        }
+        
+        .training-status.training {
+            border-color: #6ec6fa;
+            background: rgba(110, 198, 250, 0.05);
+        }
+        
+        .training-status.completed {
+            border-color: #8be6b6;
+            background: rgba(139, 230, 182, 0.05);
+        }
+        
+        .training-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .training-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 50%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        
+        .training-text {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .training-subtext {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 24px;
+        }
+        
+        .upload-area:hover {
+            border-color: #6b46c1;
+            background: rgba(107, 70, 193, 0.05);
+        }
+        
+        .upload-area.dragover {
+            border-color: #6b46c1;
+            background: rgba(107, 70, 193, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #6b46c1;
+            margin-bottom: 16px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .upload-btn {
+            background: #6b46c1;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background: #5a3aa8;
+        }
+        
+        /* 文件列表样式 */
+        .file-list {
+            margin-top: 24px;
+            display: none;
+        }
+        
+        .file-list.show {
+            display: block;
+        }
+        
+        .file-list-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .file-icon {
+            color: #6b46c1;
+            font-size: 1.2rem;
+        }
+        
+        .file-name {
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .file-size {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .remove-file {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .remove-file:hover {
+            background: #c82333;
+        }
+        
+        .start-training-btn {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 16px;
+            display: none;
+        }
+        
+        .start-training-btn.show {
+            display: inline-block;
+        }
+        
+        .start-training-btn:hover {
+            background: #218838;
+        }
+        
+        .start-training-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .cancel-btn {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .cancel-btn:hover {
+            background: #c82333;
+        }
+        
+        /* 完成训练后的界面 */
+        .completion-container {
+            display: none;
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 32px;
+        }
+        
+        .completion-container.show {
+            display: block;
+        }
+        
+        .completion-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .completion-emoji {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        
+        .completion-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .completion-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        
+        .cover-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cover-upload:hover {
+            border-color: #6b46c1;
+            background: rgba(107, 70, 193, 0.05);
+        }
+        
+        .cover-upload.has-image {
+            border-color: #8be6b6;
+            background: rgba(139, 230, 182, 0.05);
+        }
+        
+        .cover-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin: 0 auto 16px;
+            display: none;
+        }
+        
+        .cover-text {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            transition: border-color 0.3s ease;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            border-color: #6b46c1;
+        }
+        
+        .share-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #8be6b6;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .complete-btn {
+            background: #6b46c1;
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 24px;
+        }
+        
+        .complete-btn:hover {
+            background: #5a3aa8;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .voice-categories {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .voice-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+            }
+            
+            .content-area {
+                padding: 16px;
+            }
+        }
+        
+        /* 我的音色编辑模式样式 */
+        .edit-mode {
+            position: relative;
+        }
+        
+        .edit-mode .voice-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-mode .voice-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .edit-mode .voice-card.selected {
+            border: 3px solid #6b46c1 !important;
+            background: rgba(107, 70, 193, 0.1) !important;
+            box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.3) !important;
+        }
+        
+        .edit-controls {
+            display: none;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .edit-controls.show {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .edit-btn {
+            background: #6b46c1;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+            min-width: 80px;
+        }
+        
+        .edit-btn:hover {
+            background: #5a3aa8;
+        }
+        
+        .edit-btn.danger {
+            background: #dc3545;
+        }
+        
+        .edit-btn.danger:hover {
+            background: #c82333;
+        }
+        
+        .edit-btn.secondary {
+            background: #6c757d;
+        }
+        
+        .edit-btn.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .no-models-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 1.1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #e0e0e0;
+        }
+        
+        .no-models-message i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        /* 编辑弹窗样式 */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .edit-modal.show {
+            display: flex;
+        }
+        
+        .edit-modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .edit-modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .edit-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .edit-modal-close:hover {
+            color: #333;
+        }
+        
+        .edit-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .edit-form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .edit-form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .edit-form-input:focus {
+            outline: none;
+            border-color: #6b46c1;
+        }
+        
+        .edit-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        /* 设置模态框样式 */
+        .settings-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .settings-modal {
+            background: #fff;
+            border-radius: 14px;
+            border: 2px solid #d6c6c6;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .settings-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px;
+            border-bottom: 2px solid #d6c6c6;
+            background: #fff;
+            border-radius: 14px 14px 0 0;
+        }
+        
+        .settings-modal-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .settings-modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-modal-close:hover {
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .settings-modal-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        /* 设置区域样式 */
+        .settings-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            color: #6ec6fa;
+            font-size: 1.2em;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .setting-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 开关样式 */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #ccc;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #6ec6fa;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(28px);
+        }
+        
+        /* 按钮样式 */
+        .button-control {
+            background: #6ec6fa;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .button-control:hover {
+            background: #5bb5e9;
+        }
+        
+        .button-control.danger {
+            background: #dc3545;
+        }
+        
+        .button-control.danger:hover {
+            background: #c82333;
+        }
+        
+        /* 选择框样式 */
+        .select-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .select-control:focus {
+            outline: none;
+            border-color: #6ec6fa;
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #6ec6fa;
+        }
+        
+        .verification-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .verification-input {
+            flex: 1;
+        }
+        
+        .send-code-btn {
+            background: #fff;
+            color: #333;
+            border: 1px solid #333;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .send-code-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .send-code-btn.sent {
+            background: #6c757d;
+            color: #fff;
+            border-color: #6c757d;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: none;
+        }
+        
+        .modal-btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+        
+        .modal-btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .modal-btn-primary {
+            background: #6ec6fa;
+            color: #fff;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #5bb5e9;
+        }
+        
+        .modal-btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+        
+        .modal-btn-danger:hover {
+            background: #c82333;
+        }
+        
+        /* 成功消息样式 */
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-emoji {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        .success-text {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 500;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div style="display:flex;align-items:center;">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:110px;">
+                    <defs>
+                        <linearGradient id="circleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#b6a6f7"/>
+                            <stop offset="50%" stop-color="#6ec6fa"/>
+                            <stop offset="100%" stop-color="#8be6b6"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#circleGradient)" stroke-width="16" stroke-linecap="round"/>
+                    <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
+                    <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="38" font-weight="bold" fill="#111" font-style="italic" letter-spacing="4">FRACTAL</text>
+                </svg>
+                <div style="display:flex;flex-direction:column;justify-content:center;margin-left:18px;">
+                    <span class="sidebar-logo-title logo-blue-italic">Fractal</span>
+                    <span class="sidebar-logo-sub logo-blue-italic logo-large">语音助手</span>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <ul>
+                <li onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i>首页</li>
+                <li onclick="window.location.href='voice-simulator.html'"><i class="fa-solid fa-comments"></i>语音模拟器</li>
+                <li onclick="window.location.href='device-management.html'"><i class="fa-solid fa-tablet-screen-button"></i>设备管理</li>
+                <li class="active"><i class="fa-solid fa-user-gear"></i>音色设置</li>
+                <li onclick="window.location.href='mcp-subscription.html'"><i class="fa-solid fa-desktop"></i>MCP订阅</li>
+            </ul>
+        </nav>
+        <div class="sidebar-settings">
+            <button class="sidebar-setting-btn" onclick="showSettingsModal()"><i class="fa-solid fa-gear"></i>设置</button>
+        </div>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 顶部标题栏 -->
+        <div class="top-header">
+            <h1 class="page-title">音色设置</h1>
+            <div class="user-profile">
+                <div class="user-avatar">U</div>
+                <span class="user-name">user name</span>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content-area">
+            <!-- 左侧音色分类 -->
+            <div class="voice-categories">
+                <div class="category-item">
+                    <i class="fa-solid fa-thumbs-up"></i>
+                    <span>推荐音色</span>
+                </div>
+                <div class="category-item">
+                    <i class="fa-solid fa-th-large"></i>
+                    <span>音色大全</span>
+                </div>
+                <div class="category-item active">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>自训练音色</span>
+                </div>
+                <div class="category-item">
+                    <i class="fa-solid fa-user"></i>
+                    <span>我的音色</span>
+                </div>
+            </div>
+            
+            <!-- 右侧内容区域 -->
+            <div class="voice-content">
+                <!-- 搜索栏 -->
+                <div class="search-container" id="searchContainer">
+                    <input type="text" class="search-input" placeholder="搜索音色..." id="searchInput">
+                </div>
+                
+                <!-- 标签页容器 -->
+                <div class="tabs-container" id="tabsContainer">
+                    <div class="voice-tabs">
+                        <div class="voice-tab active">使用历史</div>
+                        <div class="voice-tab">我的收藏</div>
+                        <div class="voice-tab">我的模型</div>
+                    </div>
+                </div>
+                
+                <!-- 编辑控制栏 -->
+                <div class="edit-controls" id="editControls">
+                    <button class="edit-btn" id="editModeBtn">
+                        <i class="fa-solid fa-edit"></i> 编辑
+                    </button>
+                    <button class="edit-btn danger" id="deleteSelectedBtn" style="display: none;">
+                        <i class="fa-solid fa-trash"></i> 删除选中
+                    </button>
+                    <button class="edit-btn" id="renameSelectedBtn" style="display: none;">
+                        <i class="fa-solid fa-pen"></i> 重命名
+                    </button>
+                    <button class="edit-btn" id="changeCoverBtn" style="display: none;">
+                        <i class="fa-solid fa-image"></i> 修改封面
+                    </button>
+                    <button class="edit-btn secondary" id="cancelEditBtn" style="display: none;">
+                        <i class="fa-solid fa-times"></i> 取消编辑
+                    </button>
+                </div>
+                
+                <!-- 训练界面 -->
+                <div class="training-container" id="trainingContainer">
+                    <!-- 上传区域 -->
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fa-solid fa-file-audio"></i>
+                        </div>
+                        <div class="upload-text">在此处将需要训练的声音文件拖入</div>
+                        <div class="upload-subtext">(训练内容越多效果越好呦)</div>
+                        <button class="upload-btn" id="uploadBtn">选择文件导入</button>
+                    </div>
+                    
+                    <!-- 文件列表 -->
+                    <div class="file-list" id="fileList">
+                        <div class="file-list-title">已上传的文件</div>
+                        <div id="fileItems"></div>
+                        <button class="start-training-btn" id="startTrainingBtn">开始训练</button>
+                    </div>
+                    
+                    <!-- 训练状态 -->
+                    <div class="training-status" id="trainingStatus" style="display: none;">
+                        <div class="training-icons">
+                            <div class="training-icon">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                            <div class="training-icon">
+                                <i class="fa-solid fa-file-audio"></i>
+                            </div>
+                            <div class="training-icon">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                        </div>
+                        <div class="training-text">模型正在训练中,请稍等...</div>
+                        <button class="cancel-btn" id="cancelBtn">取消训练</button>
+                    </div>
+                </div>
+                
+                <!-- 完成训练后的界面 -->
+                <div class="completion-container" id="completionContainer">
+                    <div class="completion-header">
+                        <div class="completion-emoji">^o^</div>
+                        <div class="completion-title">模型训练完成</div>
+                    </div>
+                    <div class="completion-form">
+                        <div class="cover-upload" id="coverUpload">
+                            <img class="cover-preview" id="coverPreview" alt="封面预览">
+                            <div class="cover-text">点击此处上传音色封面</div>
+                        </div>
+                        <div>
+                            <input type="text" class="name-input" id="voiceNameInput" placeholder="点此输入音色名称">
+                            <div class="share-toggle">
+                                <div class="toggle-switch" id="shareToggle">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div class="share-text">是否上传该音色至公共分享声库</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="complete-btn" id="completeBtn">完成</button>
+                    </div>
+                </div>
+                
+                <!-- 音色网格 -->
+                <div class="voice-grid" id="voiceGrid">
+                    <div class="voice-card" data-voice-id="1">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '1', '音色1', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">1</div>
+                        <div class="voice-name">音色1</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="2">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '2', '音色2', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">2</div>
+                        <div class="voice-name">音色2</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="3">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '3', '音色3', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">3</div>
+                        <div class="voice-name">音色3</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="4">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '4', '音色4', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">4</div>
+                        <div class="voice-name">音色4</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="5">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '5', '音色5', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">5</div>
+                        <div class="voice-name">音色5</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="6">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '6', '音色6', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">6</div>
+                        <div class="voice-name">音色6</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="7">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '7', '音色7', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">7</div>
+                        <div class="voice-name">音色7</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="8">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '8', '音色8', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">8</div>
+                        <div class="voice-name">音色8</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                    <div class="voice-card" data-voice-id="9">
+                        <button class="favorite-btn" onclick="toggleFavorite(this, '9', '音色9', '推荐音色')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">9</div>
+                        <div class="voice-name">音色9</div>
+                        <div class="voice-description">推荐音色</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 音频设置 -->
+        <div class="audio-settings">
+            <h2 class="audio-title">音频设置</h2>
+            <div class="audio-controls">
+                <div class="audio-control">
+                    <label class="audio-label">输入设备</label>
+                    <select class="audio-input">
+                        <option>请选择设备</option>
+                        <option>麦克风 1</option>
+                        <option>麦克风 2</option>
+                    </select>
+                </div>
+                <div class="audio-control">
+                    <label class="audio-label">输出设备</label>
+                    <select class="audio-input">
+                        <option>请选择设备</option>
+                        <option>扬声器 1</option>
+                        <option>扬声器 2</option>
+                    </select>
+                </div>
+                <div class="audio-control">
+                    <label class="audio-label">输出音量</label>
+                    <input type="range" class="volume-slider" min="0" max="100" value="50" id="volumeSlider">
+                    <div class="volume-value" id="volumeValue">50</div>
+                </div>
+                <div class="audio-control">
+                    <label class="audio-label">监听设备</label>
+                    <select class="audio-input">
+                        <option>请选择设备</option>
+                        <option>耳机 1</option>
+                        <option>耳机 2</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 编辑弹窗 -->
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <div class="edit-modal-title" id="editModalTitle">编辑音色</div>
+                <button class="edit-modal-close" id="editModalClose">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="edit-modal-body">
+                <div class="edit-form-group">
+                    <label class="edit-form-label">音色名称</label>
+                    <input type="text" class="edit-form-input" id="editVoiceName" placeholder="请输入音色名称">
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label">音色封面</label>
+                    <div class="cover-upload" id="editCoverUpload">
+                        <img class="cover-preview" id="editCoverPreview" alt="封面预览" style="display: none;">
+                        <div class="cover-text" id="editCoverText">点击此处上传音色封面</div>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-modal-actions">
+                <button class="edit-btn secondary" id="editModalCancel">取消</button>
+                <button class="edit-btn" id="editModalSave">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 解析URL参数函数
+        function getQueryParam(name) {
+            const url = window.location.search;
+            const params = new URLSearchParams(url);
+            return params.get(name) || '';
+        }
+        
+        // 音量滑块交互
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        
+        volumeSlider.addEventListener('input', function() {
+            volumeValue.textContent = this.value;
+        });
+        
+        // 音色卡片选择 - 只在非编辑模式下工作
+        function setupVoiceCardSelection() {
+            const voiceCards = document.querySelectorAll('.voice-card');
+            voiceCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果在编辑模式下，不执行普通选择逻辑
+                    if (isEditMode) {
+                        return;
+                    }
+                    
+                    // 移除其他卡片的选中状态
+                    voiceCards.forEach(c => c.classList.remove('selected'));
+                    // 添加当前卡片的选中状态
+                    this.classList.add('selected');
+                });
+            });
+        }
+        
+        // 初始化音色卡片选择
+        setupVoiceCardSelection();
+        
+        // 标签页切换
+        const voiceTabs = document.querySelectorAll('.voice-tab');
+        voiceTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                voiceTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 处理不同的标签页
+                if (this.textContent === '我的模型') {
+                    showUserTrainedModels();
+                } else if (this.textContent === '我的收藏') {
+                    showFavoritedVoices();
+                } else {
+                    // 显示所有音色卡片（使用历史）
+                    const allVoiceCards = document.querySelectorAll('.voice-card');
+                    allVoiceCards.forEach(card => {
+                        card.style.display = 'block';
+                    });
+                    
+                    // 移除"无模型"消息
+                    const noModelsMessage = document.querySelector('.no-models-message');
+                    if (noModelsMessage) {
+                        noModelsMessage.remove();
+                    }
+                    
+                    // 重新初始化收藏状态
+                    initializeFavoriteStates();
+                }
+            });
+        });
+        
+        // 显示用户训练的音色模型
+        function showUserTrainedModels() {
+            // 动态获取所有音色卡片
+            const allVoiceCards = document.querySelectorAll('.voice-card');
+            
+            // 隐藏所有音色卡片
+            allVoiceCards.forEach(card => {
+                card.style.display = 'none';
+            });
+            
+            // 移除现有的"无模型"消息
+            const existingNoModelsMessage = document.querySelector('.no-models-message');
+            if (existingNoModelsMessage) {
+                existingNoModelsMessage.remove();
+            }
+            
+            // 过滤出用户训练的音色卡片
+            const userTrainedCards = Array.from(allVoiceCards).filter(card => {
+                const description = card.querySelector('.voice-description').textContent;
+                return description === '自定义音色';
+            });
+            
+            if (userTrainedCards.length === 0) {
+                // 显示"无模型"消息
+                const noModelsMessage = document.createElement('div');
+                noModelsMessage.className = 'no-models-message';
+                noModelsMessage.innerHTML = `
+                    <i class="fa-solid fa-microphone-slash"></i>
+                    <div>您还没有训练模型</div>
+                `;
+                voiceGrid.appendChild(noModelsMessage);
+            } else {
+                // 显示用户训练的音色卡片
+                userTrainedCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+            }
+        }
+        
+        // 音色分类切换
+        const categoryItems = document.querySelectorAll('.category-item');
+        const searchContainer = document.getElementById('searchContainer');
+        const tabsContainer = document.getElementById('tabsContainer');
+        const trainingContainer = document.getElementById('trainingContainer');
+        const completionContainer = document.getElementById('completionContainer');
+        const voiceGrid = document.getElementById('voiceGrid');
+        
+        categoryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // 移除所有分类的选中状态
+                categoryItems.forEach(i => i.classList.remove('active'));
+                // 添加当前分类的选中状态
+                this.classList.add('active');
+                
+                // 根据分类显示不同的内容
+                const categoryText = this.querySelector('span').textContent;
+                
+                // 隐藏所有特殊界面
+                searchContainer.style.display = 'none';
+                tabsContainer.classList.remove('show');
+                trainingContainer.classList.remove('show');
+                completionContainer.classList.remove('show');
+                voiceGrid.style.display = 'grid';
+                
+                // 重置搜索状态：清空搜索输入框并显示所有音色卡片
+                searchInput.value = '';
+                const allVoiceCards = document.querySelectorAll('.voice-card');
+                allVoiceCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                
+                if (categoryText === '推荐音色') {
+                    // 推荐音色：只显示音色网格
+                    voiceGrid.style.display = 'grid';
+                    editControls.classList.remove('show'); // 隐藏编辑控制栏
+                    
+                    // 恢复推荐音色的原始卡片
+                    restoreRecommendedVoices();
+                } else if (categoryText === '音色大全') {
+                    // 音色大全：显示搜索栏和音色网格
+                    searchContainer.style.display = 'block';
+                    voiceGrid.style.display = 'grid';
+                    editControls.classList.remove('show'); // 隐藏编辑控制栏
+                    
+                    // 为音色大全添加更多音色卡片
+                    addVoiceLibraryCards();
+                } else if (categoryText === '自训练音色') {
+                    // 自训练音色：显示训练界面
+                    trainingContainer.classList.add('show');
+                    voiceGrid.style.display = 'none';
+                    editControls.classList.remove('show'); // 隐藏编辑控制栏
+                } else if (categoryText === '我的音色') {
+                    // 我的音色：显示标签页、音色网格和编辑控制栏
+                    tabsContainer.classList.add('show');
+                    voiceGrid.style.display = 'grid';
+                    editControls.classList.add('show'); // 显示编辑控制栏
+                    console.log('我的音色 selected, edit controls should be visible');
+                    
+                    // 默认显示"使用历史"标签页
+                    voiceTabs.forEach(tab => tab.classList.remove('active'));
+                    voiceTabs[0].classList.add('active');
+                } else {
+                    // 其他分类：显示标签页和音色网格
+                    tabsContainer.classList.add('show');
+                    voiceGrid.style.display = 'grid';
+                    editControls.classList.remove('show'); // 隐藏编辑控制栏
+                }
+            });
+        });
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            // 动态获取所有音色卡片（包括新创建的）
+            const allVoiceCards = document.querySelectorAll('.voice-card');
+            
+            allVoiceCards.forEach(card => {
+                const voiceName = card.querySelector('.voice-name').textContent.toLowerCase();
+                const voiceDesc = card.querySelector('.voice-description').textContent.toLowerCase();
+                
+                if (voiceName.includes(searchTerm) || voiceDesc.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // 训练功能
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileList = document.getElementById('fileList');
+        const fileItems = document.getElementById('fileItems');
+        const startTrainingBtn = document.getElementById('startTrainingBtn');
+        const trainingStatus = document.getElementById('trainingStatus');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const coverUpload = document.getElementById('coverUpload');
+        const coverPreview = document.getElementById('coverPreview');
+        const voiceNameInput = document.getElementById('voiceNameInput');
+        const shareToggle = document.getElementById('shareToggle');
+        const completeBtn = document.getElementById('completeBtn');
+        
+        // 存储上传的文件
+        let uploadedFiles = [];
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 更新文件列表显示
+        function updateFileList() {
+            fileItems.innerHTML = '';
+            
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <i class="fa-solid fa-file-audio file-icon"></i>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatFileSize(file.size)}</div>
+                        </div>
+                    </div>
+                    <button class="remove-file" onclick="removeFile(${index})">删除</button>
+                `;
+                fileItems.appendChild(fileItem);
+            });
+            
+            // 显示/隐藏文件列表和开始训练按钮
+            if (uploadedFiles.length > 0) {
+                fileList.classList.add('show');
+                startTrainingBtn.classList.add('show');
+            } else {
+                fileList.classList.remove('show');
+                startTrainingBtn.classList.remove('show');
+            }
+        }
+        
+        // 删除文件
+        window.removeFile = function(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileList();
+        };
+        
+        // 文件上传处理
+        function handleFileUpload(file) {
+            if (file && file.type.startsWith('audio/')) {
+                // 检查是否已存在同名文件
+                const existingFile = uploadedFiles.find(f => f.name === file.name);
+                if (existingFile) {
+                    alert('文件已存在！');
+                    return;
+                }
+                
+                // 添加到文件列表
+                uploadedFiles.push(file);
+                updateFileList();
+            } else {
+                alert('请选择音频文件！');
+            }
+        }
+        
+        // 上传按钮点击
+        uploadBtn.addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*';
+            input.multiple = true; // 允许多选
+            input.onchange = function(e) {
+                if (e.target.files.length > 0) {
+                    Array.from(e.target.files).forEach(file => {
+                        handleFileUpload(file);
+                    });
+                }
+            };
+            input.click();
+        });
+        
+        // 拖拽上传
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                Array.from(e.dataTransfer.files).forEach(file => {
+                    handleFileUpload(file);
+                });
+            }
+        });
+        
+        // 开始训练按钮
+        startTrainingBtn.addEventListener('click', function() {
+            if (uploadedFiles.length === 0) {
+                alert('请先上传音频文件！');
+                return;
+            }
+            
+            // 隐藏上传区域和文件列表，显示训练状态
+            uploadArea.style.display = 'none';
+            fileList.style.display = 'none';
+            trainingStatus.style.display = 'block';
+            trainingStatus.classList.add('training');
+            
+            // 模拟训练过程
+            setTimeout(() => {
+                trainingStatus.classList.remove('training');
+                trainingStatus.classList.add('completed');
+                trainingStatus.querySelector('.training-text').textContent = '模型训练完成！';
+                
+                // 3秒后显示完成界面
+                setTimeout(() => {
+                    trainingContainer.classList.remove('show');
+                    completionContainer.classList.add('show');
+                }, 3000);
+            }, 5000); // 5秒训练时间
+        });
+        
+        // 取消训练
+        cancelBtn.addEventListener('click', function() {
+            trainingStatus.style.display = 'none';
+            uploadArea.style.display = 'block';
+            fileList.style.display = 'block';
+            trainingStatus.classList.remove('training', 'completed');
+            trainingStatus.querySelector('.training-text').textContent = '模型正在训练中,请稍等...';
+        });
+        
+        // 封面上传
+        coverUpload.addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        coverPreview.src = e.target.result;
+                        coverPreview.style.display = 'block';
+                        coverUpload.classList.add('has-image');
+                        coverUpload.querySelector('.cover-text').textContent = '封面已上传';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+        
+        // 分享开关
+        shareToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+        
+        // 完成按钮
+        completeBtn.addEventListener('click', function() {
+            const voiceName = voiceNameInput.value.trim();
+            if (!voiceName) {
+                alert('请输入音色名称！');
+                return;
+            }
+            
+            if (!coverPreview.src) {
+                alert('请上传音色封面！');
+                return;
+            }
+            
+            // 创建新的音色卡片
+            const newVoiceCard = document.createElement('div');
+            newVoiceCard.className = 'voice-card';
+            newVoiceCard.innerHTML = `
+                <div class="voice-avatar">${voiceName.charAt(0).toUpperCase()}</div>
+                <div class="voice-name">${voiceName}</div>
+                <div class="voice-description">自定义音色</div>
+            `;
+            
+            // 添加到音色网格
+            voiceGrid.appendChild(newVoiceCard);
+            
+            // 添加到用户训练模型数组
+            userTrainedModels.push({
+                name: voiceName,
+                description: '自定义音色',
+                cover: coverPreview.src
+            });
+            
+            // 为新卡片设置原始名称属性（用于编辑时的重命名）
+            newVoiceCard.setAttribute('data-original-name', voiceName);
+            
+            // 重置界面
+            completionContainer.classList.remove('show');
+            trainingContainer.classList.add('show');
+            uploadArea.style.display = 'block';
+            fileList.style.display = 'none';
+            trainingStatus.style.display = 'none';
+            trainingStatus.classList.remove('training', 'completed');
+            trainingStatus.querySelector('.training-text').textContent = '模型正在训练中,请稍等...';
+            uploadedFiles = []; // 清空文件列表
+            updateFileList(); // 更新显示
+            voiceNameInput.value = '';
+            coverPreview.style.display = 'none';
+            coverUpload.classList.remove('has-image');
+            coverUpload.querySelector('.cover-text').textContent = '点击此处上传音色封面';
+            shareToggle.classList.remove('active');
+            
+            alert('音色创建成功！');
+        });
+        
+        // 我的音色编辑功能相关变量
+        let isEditMode = false;
+        let selectedCards = [];
+        let userTrainedModels = []; // 存储用户训练的音色模型
+        
+        // 收藏功能相关变量
+        let favoritedVoices = JSON.parse(localStorage.getItem('favoritedVoices') || '[]');
+        
+        // 编辑模式相关元素
+        const editControls = document.getElementById('editControls');
+        const editModeBtn = document.getElementById('editModeBtn');
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        const renameSelectedBtn = document.getElementById('renameSelectedBtn');
+        const changeCoverBtn = document.getElementById('changeCoverBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editModal = document.getElementById('editModal');
+        const editModalClose = document.getElementById('editModalClose');
+        const editModalCancel = document.getElementById('editModalCancel');
+        const editModalSave = document.getElementById('editModalSave');
+        const editVoiceName = document.getElementById('editVoiceName');
+        const editCoverUpload = document.getElementById('editCoverUpload');
+        const editCoverPreview = document.getElementById('editCoverPreview');
+        const editCoverText = document.getElementById('editCoverText');
+        
+        // 编辑模式切换
+        editModeBtn.addEventListener('click', function() {
+            console.log('Edit mode button clicked');
+            isEditMode = true;
+            editModeBtn.style.display = 'none';
+            deleteSelectedBtn.style.display = 'inline-block';
+            renameSelectedBtn.style.display = 'inline-block';
+            changeCoverBtn.style.display = 'inline-block';
+            cancelEditBtn.style.display = 'inline-block';
+            voiceGrid.classList.add('edit-mode');
+            console.log('Edit mode activated, isEditMode:', isEditMode);
+            
+            // 确保所有卡片都没有选中状态
+            const allVoiceCards = document.querySelectorAll('.voice-card');
+            allVoiceCards.forEach(card => {
+                card.classList.remove('selected');
+            });
+            selectedCards = [];
+        });
+        
+        // 取消编辑模式
+        cancelEditBtn.addEventListener('click', function() {
+            exitEditMode();
+        });
+        
+        function exitEditMode() {
+            isEditMode = false;
+            selectedCards = [];
+            editModeBtn.style.display = 'inline-block';
+            deleteSelectedBtn.style.display = 'none';
+            renameSelectedBtn.style.display = 'none';
+            changeCoverBtn.style.display = 'none';
+            cancelEditBtn.style.display = 'none';
+            voiceGrid.classList.remove('edit-mode');
+            
+            // 清除所有选中状态
+            const allVoiceCards = document.querySelectorAll('.voice-card');
+            allVoiceCards.forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 重新设置音色卡片选择功能
+            setupVoiceCardSelection();
+        }
+        
+        // 编辑模式下的卡片点击（使用事件委托）
+        voiceGrid.addEventListener('click', function(e) {
+            // 检查是否点击了音色卡片或其子元素
+            const card = e.target.closest('.voice-card');
+            if (card && isEditMode) {
+                // 切换选中状态
+                card.classList.toggle('selected');
+                
+                if (card.classList.contains('selected')) {
+                    // 添加到选中数组（避免重复）
+                    if (!selectedCards.includes(card)) {
+                        selectedCards.push(card);
+                    }
+                } else {
+                    // 从选中数组中移除
+                    selectedCards = selectedCards.filter(c => c !== card);
+                }
+                
+                console.log('Card clicked, selected cards:', selectedCards.length);
+            }
+        });
+        
+        // 删除选中的卡片
+        deleteSelectedBtn.addEventListener('click', function() {
+            if (selectedCards.length === 0) {
+                alert('请先选择要删除的音色卡片！');
+                return;
+            }
+            
+            if (confirm(`确定要删除选中的 ${selectedCards.length} 个音色吗？`)) {
+                selectedCards.forEach(card => {
+                    // 如果是用户训练的音色，从数组中移除
+                    const voiceName = card.querySelector('.voice-name').textContent;
+                    userTrainedModels = userTrainedModels.filter(model => model.name !== voiceName);
+                    card.remove();
+                });
+                selectedCards = [];
+                exitEditMode();
+            }
+        });
+        
+        // 重命名选中的卡片
+        renameSelectedBtn.addEventListener('click', function() {
+            if (selectedCards.length !== 1) {
+                alert('请选择一个音色进行重命名！');
+                return;
+            }
+            
+            const selectedCard = selectedCards[0];
+            const currentName = selectedCard.querySelector('.voice-name').textContent;
+            editVoiceName.value = currentName;
+            editModal.classList.add('show');
+        });
+        
+        // 修改封面
+        changeCoverBtn.addEventListener('click', function() {
+            if (selectedCards.length !== 1) {
+                alert('请选择一个音色修改封面！');
+                return;
+            }
+            
+            editCoverPreview.style.display = 'none';
+            editCoverText.textContent = '点击此处上传音色封面';
+            editModal.classList.add('show');
+        });
+        
+        // 编辑弹窗封面上传
+        editCoverUpload.addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        editCoverPreview.src = e.target.result;
+                        editCoverPreview.style.display = 'block';
+                        editCoverText.textContent = '封面已上传';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+        
+        // 关闭编辑弹窗
+        editModalClose.addEventListener('click', function() {
+            editModal.classList.remove('show');
+        });
+        
+        editModalCancel.addEventListener('click', function() {
+            editModal.classList.remove('show');
+        });
+        
+        // 保存编辑
+        editModalSave.addEventListener('click', function() {
+            if (selectedCards.length !== 1) {
+                alert('请选择一个音色进行编辑！');
+                return;
+            }
+            
+            const selectedCard = selectedCards[0];
+            const newName = editVoiceName.value.trim();
+            
+            if (!newName) {
+                alert('请输入音色名称！');
+                return;
+            }
+            
+            // 更新卡片信息
+            selectedCard.querySelector('.voice-name').textContent = newName;
+            selectedCard.querySelector('.voice-avatar').textContent = newName.charAt(0).toUpperCase();
+            
+            // 如果有新封面，更新封面（这里简化处理，实际可以存储封面数据）
+            if (editCoverPreview.style.display !== 'none') {
+                // 可以在这里添加封面更新逻辑
+            }
+            
+            // 如果是用户训练的音色，更新数组中的信息
+            const oldName = selectedCard.getAttribute('data-original-name') || newName;
+            const modelIndex = userTrainedModels.findIndex(model => model.name === oldName);
+            if (modelIndex !== -1) {
+                userTrainedModels[modelIndex].name = newName;
+            }
+            
+            editModal.classList.remove('show');
+            exitEditMode();
+        });
+        
+        // 收藏功能
+        function toggleFavorite(button, voiceId, voiceName, voiceDescription) {
+            event.stopPropagation(); // 阻止事件冒泡
+            
+            const isFavorited = button.classList.contains('favorited');
+            const voiceData = {
+                id: voiceId,
+                name: voiceName,
+                description: voiceDescription,
+                avatar: voiceName.charAt(0).toUpperCase()
+            };
+            
+            if (isFavorited) {
+                // 取消收藏
+                button.classList.remove('favorited');
+                button.querySelector('i').className = 'fa-regular fa-heart';
+                favoritedVoices = favoritedVoices.filter(voice => voice.id !== voiceId);
+            } else {
+                // 添加收藏
+                button.classList.add('favorited');
+                button.querySelector('i').className = 'fa-solid fa-heart';
+                favoritedVoices.push(voiceData);
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('favoritedVoices', JSON.stringify(favoritedVoices));
+            
+            // 如果当前在"我的收藏"标签页，刷新显示
+            const activeTab = document.querySelector('.voice-tab.active');
+            if (activeTab && activeTab.textContent === '我的收藏') {
+                showFavoritedVoices();
+            }
+        }
+        
+        // 显示收藏的音色
+        function showFavoritedVoices() {
+            const voiceGrid = document.getElementById('voiceGrid');
+            
+            // 清空现有内容
+            voiceGrid.innerHTML = '';
+            
+            if (favoritedVoices.length === 0) {
+                // 显示空状态
+                const noFavoritesMessage = document.createElement('div');
+                noFavoritesMessage.className = 'no-models-message';
+                noFavoritesMessage.innerHTML = `
+                    <i class="fa-regular fa-heart"></i>
+                    <div>您还没有收藏任何音色</div>
+                `;
+                voiceGrid.appendChild(noFavoritesMessage);
+            } else {
+                // 显示收藏的音色
+                favoritedVoices.forEach(voice => {
+                    const voiceCard = document.createElement('div');
+                    voiceCard.className = 'voice-card';
+                    voiceCard.setAttribute('data-voice-id', voice.id);
+                    voiceCard.innerHTML = `
+                        <button class="favorite-btn favorited" onclick="toggleFavorite(this, '${voice.id}', '${voice.name}', '${voice.description}')">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                        <div class="voice-avatar">${voice.avatar}</div>
+                        <div class="voice-name">${voice.name}</div>
+                        <div class="voice-description">${voice.description}</div>
+                    `;
+                    voiceGrid.appendChild(voiceCard);
+                });
+            }
+        }
+        
+        // 初始化收藏状态
+        function initializeFavoriteStates() {
+            const voiceCards = document.querySelectorAll('.voice-card');
+            voiceCards.forEach(card => {
+                const voiceId = card.getAttribute('data-voice-id');
+                if (voiceId) {
+                    const isFavorited = favoritedVoices.some(voice => voice.id === voiceId);
+                    const favoriteBtn = card.querySelector('.favorite-btn');
+                    if (favoriteBtn) {
+                        if (isFavorited) {
+                            favoriteBtn.classList.add('favorited');
+                            favoriteBtn.querySelector('i').className = 'fa-solid fa-heart';
+                        } else {
+                            favoriteBtn.classList.remove('favorited');
+                            favoriteBtn.querySelector('i').className = 'fa-regular fa-heart';
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 添加音色大全卡片
+        function addVoiceLibraryCards() {
+            const voiceGrid = document.getElementById('voiceGrid');
+            
+            // 清空现有内容
+            voiceGrid.innerHTML = '';
+            
+            // 音色大全的示例数据
+            const voiceLibraryData = [
+                { id: 'lib1', name: '温柔女声', description: '音色大全' },
+                { id: 'lib2', name: '磁性男声', description: '音色大全' },
+                { id: 'lib3', name: '甜美童声', description: '音色大全' },
+                { id: 'lib4', name: '成熟女声', description: '音色大全' },
+                { id: 'lib5', name: '活力男声', description: '音色大全' },
+                { id: 'lib6', name: '优雅女声', description: '音色大全' },
+                { id: 'lib7', name: '深沉男声', description: '音色大全' },
+                { id: 'lib8', name: '清新女声', description: '音色大全' },
+                { id: 'lib9', name: '阳光男声', description: '音色大全' },
+                { id: 'lib10', name: '知性女声', description: '音色大全' },
+                { id: 'lib11', name: '稳重男声', description: '音色大全' },
+                { id: 'lib12', name: '可爱女声', description: '音色大全' }
+            ];
+            
+            voiceLibraryData.forEach(voice => {
+                const voiceCard = document.createElement('div');
+                voiceCard.className = 'voice-card';
+                voiceCard.setAttribute('data-voice-id', voice.id);
+                voiceCard.innerHTML = `
+                    <button class="favorite-btn" onclick="toggleFavorite(this, '${voice.id}', '${voice.name}', '${voice.description}')">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                    <div class="voice-avatar">${voice.name.charAt(0)}</div>
+                    <div class="voice-name">${voice.name}</div>
+                    <div class="voice-description">${voice.description}</div>
+                `;
+                voiceGrid.appendChild(voiceCard);
+            });
+            
+            // 初始化收藏状态
+            initializeFavoriteStates();
+        }
+        
+        // 恢复推荐音色卡片
+        function restoreRecommendedVoices() {
+            const voiceGrid = document.getElementById('voiceGrid');
+            
+            // 清空现有内容
+            voiceGrid.innerHTML = '';
+            
+            // 推荐音色的原始数据
+            const recommendedVoicesData = [
+                { id: '1', name: '音色1', description: '推荐音色' },
+                { id: '2', name: '音色2', description: '推荐音色' },
+                { id: '3', name: '音色3', description: '推荐音色' },
+                { id: '4', name: '音色4', description: '推荐音色' },
+                { id: '5', name: '音色5', description: '推荐音色' },
+                { id: '6', name: '音色6', description: '推荐音色' },
+                { id: '7', name: '音色7', description: '推荐音色' },
+                { id: '8', name: '音色8', description: '推荐音色' },
+                { id: '9', name: '音色9', description: '推荐音色' }
+            ];
+            
+            recommendedVoicesData.forEach(voice => {
+                const voiceCard = document.createElement('div');
+                voiceCard.className = 'voice-card';
+                voiceCard.setAttribute('data-voice-id', voice.id);
+                voiceCard.innerHTML = `
+                    <button class="favorite-btn" onclick="toggleFavorite(this, '${voice.id}', '${voice.name}', '${voice.description}')">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                    <div class="voice-avatar">${voice.name.charAt(0)}</div>
+                    <div class="voice-name">${voice.name}</div>
+                    <div class="voice-description">${voice.description}</div>
+                `;
+                voiceGrid.appendChild(voiceCard);
+            });
+            
+            // 初始化收藏状态
+            initializeFavoriteStates();
+        }
+        
+        // 从URL参数获取用户信息
+        window.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const username = params.get('username') || 'user name';
+            const userAvatar = document.querySelector('.user-avatar');
+            const userName = document.querySelector('.user-name');
+            
+            if (username && username !== 'user name') {
+                userAvatar.textContent = username.charAt(0).toUpperCase();
+                userName.textContent = username;
+            }
+            
+            // 初始化：默认显示推荐音色状态
+            searchContainer.style.display = 'none';
+            tabsContainer.classList.remove('show');
+            trainingContainer.classList.remove('show');
+            completionContainer.classList.remove('show');
+            editControls.classList.remove('show'); // 确保编辑控制栏初始隐藏
+            console.log('Initialization complete, edit controls hidden');
+            
+            // 初始化收藏状态
+            initializeFavoriteStates();
+        });
+        
+        // 设置模态框相关函数
+        function showSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            loadUserInfo();
+        }
+        
+        function hideSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        // 从localStorage获取用户信息
+        function loadUserInfo() {
+            const username = localStorage.getItem('username') || 'User name';
+            const email = localStorage.getItem('email') || 'e-mail.address@163.com';
+            
+            document.getElementById('currentUsername').textContent = username;
+            document.getElementById('currentEmail').textContent = email;
+        }
+        
+        // 切换设置开关
+        function toggleSetting(settingName) {
+            const toggle = event.target;
+            toggle.classList.toggle('active');
+            localStorage.setItem(settingName, toggle.classList.contains('active'));
+        }
+        
+        // 换绑邮箱相关函数
+        function showRebindModal() {
+            document.getElementById('rebindModal').style.display = 'flex';
+        }
+        
+        function hideRebindModal() {
+            document.getElementById('rebindModal').style.display = 'none';
+            // 清空表单
+            document.getElementById('oldEmail').value = '';
+            document.getElementById('newEmail').value = '';
+            document.getElementById('verificationCode').value = '';
+            // 重置发送验证码按钮
+            const sendBtn = document.getElementById('sendCodeBtn');
+            sendBtn.textContent = '发送验证码';
+            sendBtn.classList.remove('sent');
+        }
+        
+        function sendVerificationCode() {
+            const sendBtn = document.getElementById('sendCodeBtn');
+            sendBtn.textContent = '已发送验证码（60s）';
+            sendBtn.classList.add('sent');
+            
+            let countdown = 60;
+            const timer = setInterval(() => {
+                countdown--;
+                sendBtn.textContent = `已发送验证码（${countdown}s）`;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    sendBtn.textContent = '发送验证码';
+                    sendBtn.classList.remove('sent');
+                }
+            }, 1000);
+        }
+        
+        function handleRebind(event) {
+            event.preventDefault();
+            const verificationCode = document.getElementById('verificationCode').value;
+            
+            if (verificationCode === '1234') {
+                alert('换绑成功！');
+                hideRebindModal();
+            } else {
+                alert('验证码错误，请重新输入！');
+                document.getElementById('verificationCode').value = '';
+                document.getElementById('verificationCode').focus();
+            }
+        }
+        
+        // 注销账户相关函数
+        function deleteAccount() {
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+        
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        function confirmLogout() {
+            hideLogoutModal();
+            document.getElementById('logoutSuccessModal').style.display = 'flex';
+            
+            setTimeout(() => {
+                document.getElementById('logoutSuccessModal').style.display = 'none';
+            }, 2000);
+        }
+        
+        // 其他设置函数
+        function changeLanguage(lang) {
+            localStorage.setItem('language', lang);
+            console.log('语言已更改为:', lang);
+        }
+        
+        function changeTheme(theme) {
+            localStorage.setItem('theme', theme);
+            console.log('主题已更改为:', theme);
+        }
+        
+        function changePassword() {
+            alert('密码修改功能开发中...');
+        }
+        
+        function clearData() {
+            if (confirm('确定要清除所有数据吗？此操作不可撤销！')) {
+                localStorage.clear();
+                alert('数据已清除！');
+            }
+        }
+        
+        function checkUpdate() {
+            alert('当前已是最新版本！');
+        }
+        
+        function viewTerms() {
+            alert('使用条款页面开发中...');
+        }
+        
+        // 页面加载时初始化设置状态
+        document.addEventListener('DOMContentLoaded', function() {
+            // 恢复设置状态
+            const settings = ['autoSave', 'dataCollection', 'locationService'];
+            settings.forEach(setting => {
+                const isActive = localStorage.getItem(setting) === 'true';
+                const toggles = document.querySelectorAll(`[onclick*="${setting}"]`);
+                toggles.forEach(toggle => {
+                    if (isActive) {
+                        toggle.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <!-- 设置模态框 -->
+    <div class="settings-modal-overlay" id="settingsModal">
+        <div class="settings-modal">
+            <div class="settings-modal-header">
+                <div class="settings-modal-title">设置</div>
+                <button class="settings-modal-close" onclick="hideSettingsModal()">&times;</button>
+            </div>
+            
+            <div class="settings-modal-content">
+                <!-- 账户设置 -->
+                <div class="settings-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-user"></i>
+                        账户设置
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">用户名</div>
+                            <div class="setting-description">当前登录的用户名</div>
+                        </div>
+                        <div class="setting-control">
+                            <span id="currentUsername">User name</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">邮箱</div>
+                            <div class="setting-description">当前绑定的邮箱地址</div>
+                        </div>
+                        <div class="setting-control">
+                            <span id="currentEmail">e-mail.address@163.com</span>
+                            <button class="button-control" onclick="showRebindModal()">换绑</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">修改密码</div>
+                            <div class="setting-description">更新您的账户密码</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="button-control" onclick="changePassword()">修改</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">账户注销</div>
+                            <div class="setting-description">永久删除您的账户</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="button-control danger" onclick="deleteAccount()">注销</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 应用设置 -->
+                <div class="settings-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-cog"></i>
+                        应用设置
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">语言</div>
+                            <div class="setting-description">选择应用显示语言</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-control" onchange="changeLanguage(this.value)">
+                                <option value="zh">中文</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">主题</div>
+                            <div class="setting-description">选择应用主题</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-control" onchange="changeTheme(this.value)">
+                                <option value="light">浅色</option>
+                                <option value="dark">深色</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">自动保存</div>
+                            <div class="setting-description">自动保存设置和偏好</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="toggle-switch active" onclick="toggleSetting('autoSave')"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 隐私设置 -->
+                <div class="settings-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        隐私设置
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">数据收集</div>
+                            <div class="setting-description">允许收集使用数据以改进服务</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="toggle-switch" onclick="toggleSetting('dataCollection')"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">位置服务</div>
+                            <div class="setting-description">允许应用访问位置信息</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="toggle-switch" onclick="toggleSetting('locationService')"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">清除数据</div>
+                            <div class="setting-description">清除所有本地存储的数据</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="button-control" onclick="clearData()">清除</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 关于 -->
+                <div class="settings-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-info-circle"></i>
+                        关于
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">版本</div>
+                            <div class="setting-description">当前应用版本</div>
+                        </div>
+                        <div class="setting-control">
+                            <span>v1.0.0</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">检查更新</div>
+                            <div class="setting-description">检查是否有新版本可用</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="button-control" onclick="checkUpdate()">检查</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">使用条款</div>
+                            <div class="setting-description">查看应用使用条款</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="button-control" onclick="viewTerms()">查看</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 换绑邮箱模态框 -->
+    <div class="modal-overlay" id="rebindModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">换绑邮箱</h3>
+                <button class="modal-close" onclick="hideRebindModal()">&times;</button>
+            </div>
+            <form class="modal-form" onsubmit="handleRebind(event)">
+                <div class="form-group">
+                    <label class="form-label">填写原邮箱信息</label>
+                    <input type="email" class="form-input" id="oldEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">填写新邮箱信息</label>
+                    <input type="email" class="form-input" id="newEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">填写新邮箱接收的验证码</label>
+                    <div class="verification-group">
+                        <input type="text" class="form-input verification-input" id="verificationCode" required>
+                        <button type="button" class="send-code-btn" id="sendCodeBtn" onclick="sendVerificationCode()">发送验证码</button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="hideRebindModal()">取消</button>
+                    <button type="submit" class="modal-btn modal-btn-primary">确认换绑</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 注销账户模态框 -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">注销账户</h3>
+                <button class="modal-close" onclick="hideLogoutModal()">&times;</button>
+            </div>
+            <div class="modal-form">
+                <div class="form-group">
+                    <p style="color: #666; margin: 0;">确定要注销账户吗？此操作不可撤销！</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="hideLogoutModal()">取消</button>
+                    <button type="button" class="modal-btn modal-btn-danger" onclick="confirmLogout()">确认注销</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 注销成功模态框 -->
+    <div class="modal-overlay" id="logoutSuccessModal">
+        <div class="modal-content">
+            <div class="success-message">
+                <div class="success-emoji">😊</div>
+                <div class="success-text">注销成功！</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

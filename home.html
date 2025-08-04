@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal 语音助手 - 首页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #faf9fa;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 340px;
+            background: #e9d3d6;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 14px 0 0 14px;
+            border: 2px solid #d6c6c6;
+            border-right: none;
+            min-width: 240px;
+        }
+        .sidebar-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 0 18px 0;
+            border-bottom: 2px solid #d6c6c6;
+        }
+        .sidebar-logo svg {
+            width: 80px;
+            height: 80px;
+        }
+        .sidebar-logo-title {
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-size: 2.1rem;
+            font-weight: bold;
+            color: #2d1ed6;
+            letter-spacing: 2px;
+            margin-left: 8px;
+            margin-top: -10px;
+            margin-bottom: 0;
+            display: inline-block;
+        }
+        .sidebar-logo-sub {
+            font-size: 1.5rem;
+            color: #1976d2;
+            font-weight: bold;
+            margin-top: -6px;
+            margin-bottom: 0;
+            margin-left: 8px;
+            letter-spacing: 2px;
+        }
+        .sidebar-menu {
+            flex: 1;
+            padding: 0 0 0 0;
+            margin-top: 18px;
+        }
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li {
+            display: flex;
+            align-items: center;
+            font-size: 1.18rem;
+            padding: 32px 0 32px 38px;
+            cursor: pointer;
+            color: #333;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+            margin-bottom: 18px;
+            border-radius: 0 16px 16px 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        .sidebar-menu li.active, .sidebar-menu li:hover {
+            background: #e3d6f7;
+            border-left: 4px solid #6ec6fa;
+            color: #2d1ed6;
+        }
+        .sidebar-menu li i {
+            margin-right: 18px;
+            font-size: 1.3em;
+            min-width: 28px;
+            text-align: left;
+        }
+        .sidebar-bottom {
+            padding: 22px 24px 18px 24px;
+            border-top: 2px solid #d6c6c6;
+        }
+        .sidebar-setting-btn {
+            width: 100%;
+            height: 48px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            background: #fff;
+            color: #333;
+            font-size: 1.15rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            margin-top: 8px;
+        }
+        .sidebar-setting-btn i {
+            margin-right: 10px;
+        }
+        .main {
+            flex: 1;
+            padding: 36px 36px 36px 0;
+        }
+        .main-title {
+            font-size: 2.3rem;
+            font-weight: bold;
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+        .main-subtitle {
+            color: #bbb;
+            font-size: 1.15rem;
+            margin-bottom: 18px;
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+        .main-title-bar {
+            border-bottom: 2px solid #bbb;
+            margin-bottom: 24px;
+            width: 100%;
+            max-width: 900px;
+        }
+        .main-content-row {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+        .welcome-card {
+            flex: 2;
+            background: linear-gradient(90deg, #e3e6fa 0%, #e3d6f7 100%);
+            border-radius: 16px;
+            padding: 32px 32px 24px 32px;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+        .welcome-avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 32px;
+        }
+        .welcome-avatar svg {
+            width: 80px;
+            height: 80px;
+        }
+        .welcome-user-info {
+            text-align: left;
+            margin-top: 8px;
+        }
+        .welcome-user-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #222;
+        }
+        .welcome-user-email {
+            font-size: 0.95rem;
+            color: #888;
+            margin-top: 2px;
+        }
+        .welcome-user-link {
+            font-size: 0.95rem;
+            color: #1976d2;
+            margin-top: 2px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .welcome-main {
+            flex: 1;
+        }
+        .welcome-main-title {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 8px;
+        }
+        .welcome-main-desc {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+        }
+        .welcome-btns {
+            display: flex;
+            gap: 24px;
+        }
+        .welcome-btn {
+            height: 44px;
+            padding: 0 28px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 2px solid #6ec6fa;
+            background: #fff;
+            color: #1976d2;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .welcome-btn.primary {
+            background: #6ec6fa;
+            color: #fff;
+            border: none;
+        }
+        .welcome-btn i {
+            margin-right: 8px;
+        }
+        .main-content-row .placeholder-card {
+            flex: 1;
+            background: #ccc;
+            border-radius: 10px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #222;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .ad-card {
+            width: 100%;
+            background: #ccc;
+            border-radius: 10px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-size: 2.2rem;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-weight: bold;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 1100px) {
+            .main-content-row {
+                flex-direction: column;
+                gap: 18px;
+            }
+        }
+        @media (max-width: 800px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100vw;
+                min-width: 0;
+                border-radius: 0;
+                border: none;
+            }
+            .sidebar-menu li {
+                padding: 16px 0 16px 18px;
+                margin-bottom: 4px;
+            }
+            .main {
+                padding: 18px 2vw 18px 2vw;
+            }
+        }
+        .logo-blue-italic {
+            color: #1a1ed6;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .logo-large {
+            font-size: 2.7rem;
+            margin-top: 8px;
+        }
+        .sidebar-logo-title {
+            font-size: 2.2rem;
+            margin-bottom: 0;
+            margin-top: 10px;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #1a1ed6;
+            letter-spacing: 2px;
+        }
+        .sidebar-logo-sub {
+            font-size: 1.5rem;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #1a1ed6;
+            letter-spacing: 2px;
+        }
+        .main-title-centered, .main-title-bar-centered, .main-content-row-centered, .ad-card-centered {
+            margin-left: 80px !important;
+            margin-right: 80px !important;
+            max-width: 1400px;
+        }
+        .main-title-centered {
+            text-align: left;
+            margin-top: 30px;
+            margin-bottom: 0;
+            font-size: 3.6rem;
+        }
+        .main-subtitle.main-title-centered {
+            font-size: 0.92rem;
+            margin-top: 18px;
+            margin-bottom: 10px;
+            color: #b0b0b0;
+            letter-spacing: 2px;
+        }
+        .main-title-bar-centered {
+            margin-top: 0;
+            margin-bottom: 32px;
+        }
+        .main-content-row-centered {
+            justify-content: flex-start;
+        }
+        .welcome-card-centered {
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+            max-width: 1100px;
+            min-width: 600px;
+            box-sizing: border-box;
+            background: linear-gradient(90deg, #e3e6fa 0%, #e3d6f7 100%);
+            display: flex;
+            align-items: center;
+            border-radius: 18px;
+            padding: 38px 38px 32px 38px;
+            box-shadow: 0 2px 16px #e3d6f7;
+        }
+        .welcome-avatar-centered {
+            margin-right: 38px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 220px;
+        }
+        .avatar-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 60% 40%, #6ec6fa 0%, #b6a6f7 60%, #8be6b6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 12px #b6b6e6;
+            position: relative;
+        }
+        .avatar-initial {
+            font-size: 3.5rem;
+            color: #fff;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-weight: bold;
+            text-shadow: 0 2px 8px #6ec6fa;
+            letter-spacing: 2px;
+        }
+        .welcome-user-info {
+            text-align: left;
+            margin-top: 2px;
+        }
+        .welcome-user-name {
+            font-size: 1.5rem;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+            font-weight: 500;
+            color: #222;
+            margin-bottom: 2px;
+        }
+        .welcome-user-email {
+            font-size: 1.05rem;
+            color: #888;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+            margin-bottom: 2px;
+        }
+        .welcome-user-link {
+            font-size: 1.05rem;
+            color: #222;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+            text-shadow: 1px 1px #fff, 2px 2px #bbb;
+            margin-top: 2px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .welcome-main-centered {
+            margin-left: 40px;
+            flex: 1;
+        }
+        .welcome-main-title {
+            font-size: 2.7rem;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 8px;
+        }
+        .welcome-main-desc {
+            color: #888;
+            font-size: 1.35rem;
+            margin-bottom: 28px;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+        }
+        .welcome-btns-centered {
+            display: flex;
+            gap: 48px;
+            margin-top: 10px;
+        }
+        .btn-large {
+            font-size: 1.35rem;
+            padding: 0 38px;
+            height: 60px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #b6b6e6;
+            display: flex;
+            align-items: center;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+        }
+        .btn-large.primary {
+            background: #6ec6fa;
+            color: #fff;
+            border: 2px solid #6ec6fa;
+        }
+        .btn-large i {
+            font-size: 2rem;
+            margin-right: 12px;
+        }
+        .btn-large:not(.primary) {
+            background: #fff;
+            color: #222;
+            border: 2px solid #222;
+        }
+        .ad-card-centered {
+            margin-left: 80px !important;
+            margin-right: 80px !important;
+            max-width: 1400px;
+            font-size: 2.2rem;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-weight: bold;
+            background: #ccc;
+            border-radius: 10px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 1200px) {
+            .main-title-centered, .main-title-bar-centered, .main-content-row-centered, .ad-card-centered {
+                margin-left: 10px !important;
+                margin-right: 10px !important;
+                min-width: 0;
+            }
+            .welcome-card-centered {
+                min-width: 0;
+                max-width: 98vw;
+                padding: 18px 4vw 18px 4vw;
+            }
+        }
+        
+        /* 设置模态框样式 */
+        .settings-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .settings-modal {
+            background: #fff;
+            border-radius: 14px;
+            border: 2px solid #d6c6c6;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .settings-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px;
+            border-bottom: 2px solid #d6c6c6;
+            background: #fff;
+            border-radius: 14px 14px 0 0;
+        }
+        
+        .settings-modal-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .settings-modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-modal-close:hover {
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .settings-modal-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        /* 设置区域样式 */
+        .settings-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            color: #6ec6fa;
+            font-size: 1.2em;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .setting-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 开关样式 */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #ccc;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #6ec6fa;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(28px);
+        }
+        
+        /* 按钮样式 */
+        .button-control {
+            background: #6ec6fa;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .button-control:hover {
+            background: #5bb5e9;
+        }
+        
+        .button-control.danger {
+            background: #dc3545;
+        }
+        
+        .button-control.danger:hover {
+            background: #c82333;
+        }
+        
+        /* 选择框样式 */
+        .select-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .select-control:focus {
+            outline: none;
+            border-color: #6ec6fa;
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #6ec6fa;
+        }
+        
+        .verification-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .verification-input {
+            flex: 1;
+        }
+        
+        .send-code-btn {
+            background: #fff;
+            color: #333;
+            border: 1px solid #333;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .send-code-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .send-code-btn.sent {
+            background: #6c757d;
+            color: #fff;
+            border-color: #6c757d;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: none;
+        }
+        
+        .modal-btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+        
+        .modal-btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .modal-btn-primary {
+            background: #6ec6fa;
+            color: #fff;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #5bb5e9;
+        }
+        
+        .modal-btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+        
+        .modal-btn-danger:hover {
+            background: #c82333;
+        }
+        
+        /* 成功消息样式 */
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-emoji {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        .success-text {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 500;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div style="display:flex;align-items:center;">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:110px;">
+                    <defs>
+                        <linearGradient id="circleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#b6a6f7"/>
+                            <stop offset="50%" stop-color="#6ec6fa"/>
+                            <stop offset="100%" stop-color="#8be6b6"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#circleGradient)" stroke-width="16" stroke-linecap="round"/>
+                    <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
+                    <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="38" font-weight="bold" fill="#111" font-style="italic" letter-spacing="4">FRACTAL</text>
+                </svg>
+                <div style="display:flex;flex-direction:column;justify-content:center;margin-left:18px;">
+                    <span class="sidebar-logo-title logo-blue-italic">Fractal</span>
+                    <span class="sidebar-logo-sub logo-blue-italic logo-large">语音助手</span>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <ul>
+                <li class="active"><i class="fa-solid fa-house"></i>首页</li>
+                <li onclick="window.location.href='voice-simulator.html'"><i class="fa-solid fa-comments"></i>语音模拟器</li>
+                <li onclick="window.location.href='device-management.html'"><i class="fa-solid fa-tablet-screen-button"></i>设备管理</li>
+                <li onclick="window.location.href='voice-settings.html'"><i class="fa-solid fa-user-gear"></i>音色设置</li>
+                <li onclick="window.location.href='mcp-subscription.html'"><i class="fa-solid fa-desktop"></i>MCP订阅</li>
+            </ul>
+        </nav>
+                                    <div class="sidebar-bottom">
+            <button class="sidebar-setting-btn" onclick="showSettingsModal()"><i class="fa-solid fa-gear"></i>设置</button>
+        </div>
+    </div>
+    <div class="main">
+        <div class="main-title main-title-centered">首页</div>
+        <div class="main-subtitle main-title-centered">欢迎回到<span style="font-family:'Orbitron',Arial,sans-serif;color:#888;">Fractal</span>助手</div>
+        <div class="main-title-bar main-title-bar-centered"></div>
+        <div class="main-content-row main-content-row-centered">
+            <div class="welcome-card welcome-card-centered">
+                <div class="welcome-avatar welcome-avatar-centered">
+                    <div class="avatar-circle">
+                        <span class="avatar-initial" id="avatarInitial">U</span>
+                    </div>
+                    <div class="welcome-user-info">
+                        <div class="welcome-user-name" id="welcomeUserName">User name</div>
+                        <div class="welcome-user-email" id="welcomeUserEmail">e-mail.address@163.com</div>
+                    </div>
+                </div>
+                <div class="welcome-main welcome-main-centered">
+                    <div class="welcome-main-title" id="welcomeTitle">欢迎回来，User mame!</div>
+                    <div class="welcome-main-desc">您可以开始使用Fractal语音助手进行智能对话</div>
+                    <div class="welcome-btns welcome-btns-centered">
+                        <button class="welcome-btn primary btn-large" onclick="window.location.href='voice-simulator.html'"><i class="fa-regular fa-comments"></i>开始语音对话</button>
+                        <button class="welcome-btn btn-large" onclick="window.location.href='device-management.html'"><i class="fa-solid fa-tablet-screen-button"></i>管理我的设备</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ad-card ad-card-centered">广告位暂缺</div>
+        <div class="main-content-row main-content-row-centered">
+            <div class="placeholder-card"></div>
+            <div class="placeholder-card"></div>
+        </div>
+    </div>
+</div>
+<script>
+// 解析URL参数并动态显示用户名、邮箱、首字母
+function getQueryParam(name) {
+    const url = window.location.search;
+    const params = new URLSearchParams(url);
+    return params.get(name) || '';
+}
+const username = getQueryParam('username') || 'User name';
+const email = getQueryParam('email') || 'e-mail.address@163.com';
+document.getElementById('welcomeUserName').textContent = username;
+document.getElementById('welcomeUserEmail').textContent = email;
+document.getElementById('welcomeTitle').textContent = `欢迎回来，${username}!`;
+document.getElementById('avatarInitial').textContent = username.trim().charAt(0).toUpperCase() || 'U';
+
+// 设置模态框相关函数
+function showSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'flex';
+    loadUserInfo();
+}
+
+function hideSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+}
+
+// 从localStorage获取用户信息
+function loadUserInfo() {
+    const username = localStorage.getItem('username') || 'User name';
+    const email = localStorage.getItem('email') || 'e-mail.address@163.com';
+    
+    document.getElementById('currentUsername').textContent = username;
+    document.getElementById('currentEmail').textContent = email;
+}
+
+// 切换设置开关
+function toggleSetting(settingName) {
+    const toggle = event.target;
+    toggle.classList.toggle('active');
+    localStorage.setItem(settingName, toggle.classList.contains('active'));
+}
+
+// 换绑邮箱相关函数
+function showRebindModal() {
+    document.getElementById('rebindModal').style.display = 'flex';
+}
+
+function hideRebindModal() {
+    document.getElementById('rebindModal').style.display = 'none';
+    // 清空表单
+    document.getElementById('oldEmail').value = '';
+    document.getElementById('newEmail').value = '';
+    document.getElementById('verificationCode').value = '';
+    // 重置发送验证码按钮
+    const sendBtn = document.getElementById('sendCodeBtn');
+    sendBtn.textContent = '发送验证码';
+    sendBtn.classList.remove('sent');
+}
+
+function sendVerificationCode() {
+    const sendBtn = document.getElementById('sendCodeBtn');
+    sendBtn.textContent = '已发送验证码（60s）';
+    sendBtn.classList.add('sent');
+    
+    let countdown = 60;
+    const timer = setInterval(() => {
+        countdown--;
+        sendBtn.textContent = `已发送验证码（${countdown}s）`;
+        
+        if (countdown <= 0) {
+            clearInterval(timer);
+            sendBtn.textContent = '发送验证码';
+            sendBtn.classList.remove('sent');
+        }
+    }, 1000);
+}
+
+function handleRebind(event) {
+    event.preventDefault();
+    const verificationCode = document.getElementById('verificationCode').value;
+    
+    if (verificationCode === '1234') {
+        alert('换绑成功！');
+        hideRebindModal();
+    } else {
+        alert('验证码错误，请重新输入！');
+        document.getElementById('verificationCode').value = '';
+        document.getElementById('verificationCode').focus();
+    }
+}
+
+// 注销账户相关函数
+function deleteAccount() {
+    document.getElementById('logoutModal').style.display = 'flex';
+}
+
+function hideLogoutModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function confirmLogout() {
+    hideLogoutModal();
+    document.getElementById('logoutSuccessModal').style.display = 'flex';
+    
+    setTimeout(() => {
+        document.getElementById('logoutSuccessModal').style.display = 'none';
+    }, 2000);
+}
+
+// 其他设置函数
+function changeLanguage(lang) {
+    localStorage.setItem('language', lang);
+    console.log('语言已更改为:', lang);
+}
+
+function changeTheme(theme) {
+    localStorage.setItem('theme', theme);
+    console.log('主题已更改为:', theme);
+}
+
+function changePassword() {
+    alert('密码修改功能开发中...');
+}
+
+function clearData() {
+    if (confirm('确定要清除所有数据吗？此操作不可撤销！')) {
+        localStorage.clear();
+        alert('数据已清除！');
+    }
+}
+
+function checkUpdate() {
+    alert('当前已是最新版本！');
+}
+
+function viewTerms() {
+    alert('使用条款页面开发中...');
+}
+
+// 页面加载时初始化设置状态
+document.addEventListener('DOMContentLoaded', function() {
+    // 恢复设置状态
+    const settings = ['autoSave', 'dataCollection', 'locationService'];
+    settings.forEach(setting => {
+        const isActive = localStorage.getItem(setting) === 'true';
+        const toggles = document.querySelectorAll(`[onclick*="${setting}"]`);
+        toggles.forEach(toggle => {
+            if (isActive) {
+                toggle.classList.add('active');
+            }
+        });
+    });
+    
+    // 检查URL参数，如果包含showSettings=true，则自动显示设置模态框
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('showSettings') === 'true') {
+        console.log('Auto-showing settings modal from URL parameter');
+        // 延迟一点时间确保页面完全加载
+        setTimeout(() => {
+            showSettingsModal();
+        }, 100);
+    }
+});
+</script>
+
+<!-- 设置模态框 -->
+<div class="settings-modal-overlay" id="settingsModal">
+    <div class="settings-modal">
+        <div class="settings-modal-header">
+            <div class="settings-modal-title">设置</div>
+            <button class="settings-modal-close" onclick="hideSettingsModal()">&times;</button>
+        </div>
+        
+        <div class="settings-modal-content">
+            <!-- 账户设置 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-user"></i>
+                    账户设置
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">用户名</div>
+                        <div class="setting-description">当前登录的用户名</div>
+                    </div>
+                    <div class="setting-control">
+                        <span id="currentUsername">User name</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">邮箱</div>
+                        <div class="setting-description">当前绑定的邮箱地址</div>
+                    </div>
+                    <div class="setting-control">
+                        <span id="currentEmail">e-mail.address@163.com</span>
+                        <button class="button-control" onclick="showRebindModal()">换绑</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">修改密码</div>
+                        <div class="setting-description">更新您的账户密码</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="changePassword()">修改</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">账户注销</div>
+                        <div class="setting-description">永久删除您的账户</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control danger" onclick="deleteAccount()">注销</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 应用设置 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-cog"></i>
+                    应用设置
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">语言</div>
+                        <div class="setting-description">选择应用显示语言</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="select-control" onchange="changeLanguage(this.value)">
+                            <option value="zh">中文</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">主题</div>
+                        <div class="setting-description">选择应用主题</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="select-control" onchange="changeTheme(this.value)">
+                            <option value="light">浅色</option>
+                            <option value="dark">深色</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">自动保存</div>
+                        <div class="setting-description">自动保存设置和偏好</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSetting('autoSave')"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 隐私设置 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    隐私设置
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">数据收集</div>
+                        <div class="setting-description">允许收集使用数据以改进服务</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSetting('dataCollection')"></div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">位置服务</div>
+                        <div class="setting-description">允许应用访问位置信息</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSetting('locationService')"></div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">清除数据</div>
+                        <div class="setting-description">清除所有本地存储的数据</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="clearData()">清除</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 关于 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-info-circle"></i>
+                    关于
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">版本</div>
+                        <div class="setting-description">当前应用版本</div>
+                    </div>
+                    <div class="setting-control">
+                        <span>v1.0.0</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">检查更新</div>
+                        <div class="setting-description">检查是否有新版本可用</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="checkUpdate()">检查</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">使用条款</div>
+                        <div class="setting-description">查看应用使用条款</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="viewTerms()">查看</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 换绑邮箱模态框 -->
+<div class="modal-overlay" id="rebindModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">换绑邮箱</h3>
+            <button class="modal-close" onclick="hideRebindModal()">&times;</button>
+        </div>
+        <form class="modal-form" onsubmit="handleRebind(event)">
+            <div class="form-group">
+                <label class="form-label">填写原邮箱信息</label>
+                <input type="email" class="form-input" id="oldEmail" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">填写新邮箱信息</label>
+                <input type="email" class="form-input" id="newEmail" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">填写新邮箱接收的验证码</label>
+                <div class="verification-group">
+                    <input type="text" class="form-input verification-input" id="verificationCode" required>
+                    <button type="button" class="send-code-btn" id="sendCodeBtn" onclick="sendVerificationCode()">发送验证码</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="hideRebindModal()">取消</button>
+                <button type="submit" class="modal-btn modal-btn-primary">确认换绑</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 注销账户模态框 -->
+<div class="modal-overlay" id="logoutModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">注销账户</h3>
+            <button class="modal-close" onclick="hideLogoutModal()">&times;</button>
+        </div>
+        <div class="modal-form">
+            <div class="form-group">
+                <p style="color: #666; margin: 0;">确定要注销账户吗？此操作不可撤销！</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="hideLogoutModal()">取消</button>
+                <button type="button" class="modal-btn modal-btn-danger" onclick="confirmLogout()">确认注销</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 注销成功模态框 -->
+<div class="modal-overlay" id="logoutSuccessModal">
+    <div class="modal-content">
+        <div class="success-message">
+            <div class="success-emoji">😊</div>
+            <div class="success-text">注销成功！</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

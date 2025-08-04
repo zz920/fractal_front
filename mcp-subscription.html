@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal 语音助手 - MCP订阅</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #faf9fa;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 340px;
+            background: #e9d3d6;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 14px 0 0 14px;
+            border: 2px solid #d6c6c6;
+            border-right: none;
+            min-width: 240px;
+        }
+        .sidebar-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 0 18px 0;
+            border-bottom: 2px solid #d6c6c6;
+        }
+        .sidebar-logo svg {
+            width: 80px;
+            height: 80px;
+        }
+        .sidebar-logo-title {
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-size: 2.1rem;
+            font-weight: bold;
+            color: #2d1ed6;
+            letter-spacing: 2px;
+            margin-left: 8px;
+            margin-top: -10px;
+            margin-bottom: 0;
+            display: inline-block;
+        }
+        .sidebar-logo-sub {
+            font-size: 1.5rem;
+            color: #1976d2;
+            font-weight: bold;
+            margin-top: -6px;
+            margin-bottom: 0;
+            margin-left: 8px;
+            letter-spacing: 2px;
+        }
+        .sidebar-menu {
+            flex: 1;
+            padding: 0 0 0 0;
+            margin-top: 18px;
+        }
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li {
+            display: flex;
+            align-items: center;
+            font-size: 1.18rem;
+            padding: 32px 0 32px 38px;
+            cursor: pointer;
+            color: #333;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+            margin-bottom: 18px;
+            border-radius: 0 16px 16px 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        .sidebar-menu li.active, .sidebar-menu li:hover {
+            background: #e3d6f7;
+            border-left: 4px solid #6ec6fa;
+            color: #2d1ed6;
+        }
+        .sidebar-menu li i {
+            margin-right: 18px;
+            font-size: 1.3em;
+            min-width: 28px;
+            text-align: left;
+        }
+        .sidebar-bottom {
+            padding: 22px 24px 18px 24px;
+            border-top: 2px solid #d6c6c6;
+        }
+        .sidebar-setting-btn {
+            width: 100% !important;
+            height: 48px !important;
+            border-radius: 10px !important;
+            border: 2px solid #ccc !important;
+            background: #fff !important;
+            color: #333 !important;
+            font-size: 1.15rem !important;
+            font-weight: bold !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: border-color 0.2s !important;
+            margin-top: 8px !important;
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+        
+        .sidebar-setting-btn:hover {
+            border-color: #6ec6fa;
+            background: #f8f9fa;
+        }
+        .sidebar-setting-btn i {
+            margin-right: 10px;
+        }
+        
+        .logo-blue-italic {
+            color: #1a1ed6;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .logo-large {
+            font-size: 2.7rem;
+            margin-top: 8px;
+        }
+        .sidebar-logo-title {
+            font-size: 2.2rem;
+            margin-bottom: 0;
+            margin-top: 10px;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #1a1ed6;
+            letter-spacing: 2px;
+        }
+        .sidebar-logo-sub {
+            font-size: 1.5rem;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #1a1ed6;
+            letter-spacing: 2px;
+        }
+        
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 顶部标题栏 */
+        .top-header {
+            background: #fff;
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 50%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .user-name {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            background: #f8f9fa;
+        }
+        .subscription-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .subscription-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .subscription-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .subscription-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #6b46c1;
+        }
+        .subscription-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6b46c1, #8b5cf6);
+        }
+        .subscription-period {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d1ed6;
+            margin-bottom: 16px;
+        }
+        .subscription-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .subscription-price .currency {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        .subscription-price .period {
+            font-size: 1rem;
+            color: #888;
+            font-weight: normal;
+        }
+        .subscription-features {
+            margin: 24px 0;
+            text-align: left;
+            flex: 1;
+        }
+        .subscription-features li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 0.95rem;
+            list-style: none;
+            position: relative;
+            padding-left: 20px;
+        }
+        .subscription-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #6b46c1;
+            font-weight: bold;
+        }
+        .subscription-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            margin-top: auto;
+        }
+        .subscription-btn:hover {
+            background: linear-gradient(135deg, #553c9a 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+        }
+        .popular-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .subscription-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                border-bottom: 2px solid #d6c6c6;
+            }
+            .main {
+                padding: 24px 16px;
+            }
+            .subscription-cards {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .subscription-card {
+                padding: 24px 16px;
+            }
+
+        
+        /* 设置模态框样式 - 使用全新的类名避免冲突 */
+        .settings-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 9999999 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-sizing: border-box !important;
+        }
+        
+        .settings-overlay.show {
+            display: flex !important;
+        }
+        
+        /* 使用!important确保所有属性都被应用 */
+        #settingsModal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 9999999 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-sizing: border-box !important;
+        }
+        
+        #settingsModal.show {
+            display: flex !important;
+        }
+        
+        .settings-modal {
+            background: #fff !important;
+            border-radius: 14px !important;
+            border: 2px solid #d6c6c6 !important;
+            max-width: 800px !important;
+            width: 90% !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            z-index: 9999999 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* 使用更高优先级的选择器 */
+        #settingsModal .settings-modal {
+            background: #fff !important;
+            border-radius: 14px !important;
+            border: 2px solid #d6c6c6 !important;
+            max-width: 800px !important;
+            width: 90% !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            z-index: 9999999 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* 使用最高优先级的选择器 */
+        div#settingsModal div.settings-modal {
+            background: #fff !important;
+            border-radius: 14px !important;
+            border: 2px solid #d6c6c6 !important;
+            max-width: 800px !important;
+            width: 90% !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            z-index: 9999999 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .settings-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px;
+            border-bottom: 2px solid #d6c6c6;
+            background: #fff;
+            border-radius: 14px 14px 0 0;
+        }
+        
+        .settings-modal-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .settings-modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-modal-close:hover {
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .settings-modal-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        /* 设置区域样式 */
+        .settings-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            color: #6ec6fa;
+            font-size: 1.2em;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .setting-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 开关样式 */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #ccc;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #6ec6fa;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(28px);
+        }
+        
+        /* 按钮样式 */
+        .button-control {
+            background: #6ec6fa;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .button-control:hover {
+            background: #5bb5e9;
+        }
+        
+        .button-control.danger {
+            background: #dc3545;
+        }
+        
+        .button-control.danger:hover {
+            background: #c82333;
+        }
+        
+        /* 选择框样式 */
+        .select-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .select-control:focus {
+            outline: none;
+            border-color: #6ec6fa;
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 9999998 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-sizing: border-box !important;
+        }
+        
+        .modal-content {
+            background: #fff !important;
+            border-radius: 12px !important;
+            padding: 32px !important;
+            max-width: 500px !important;
+            width: 90% !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+            position: relative !important;
+            z-index: 9999999 !important;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #6ec6fa;
+        }
+        
+        .verification-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .verification-input {
+            flex: 1;
+        }
+        
+        .send-code-btn {
+            background: #fff;
+            color: #333;
+            border: 1px solid #333;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .send-code-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .send-code-btn.sent {
+            background: #6c757d;
+            color: #fff;
+            border-color: #6c757d;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: none;
+        }
+        
+        .modal-btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+        
+        .modal-btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .modal-btn-primary {
+            background: #6ec6fa;
+            color: #fff;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #5bb5e9;
+        }
+        
+        .modal-btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+        
+        .modal-btn-danger:hover {
+            background: #c82333;
+        }
+        
+        /* 成功消息样式 */
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-emoji {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        .success-text {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 500;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div style="display:flex;align-items:center;">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:110px;">
+                    <defs>
+                        <linearGradient id="circleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#b6a6f7"/>
+                            <stop offset="50%" stop-color="#6ec6fa"/>
+                            <stop offset="100%" stop-color="#8be6b6"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#circleGradient)" stroke-width="16" stroke-linecap="round"/>
+                    <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
+                    <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="38" font-weight="bold" fill="#111" font-style="italic" letter-spacing="4">FRACTAL</text>
+                </svg>
+                <div style="display:flex;flex-direction:column;justify-content:center;margin-left:18px;">
+                    <span class="sidebar-logo-title logo-blue-italic">Fractal</span>
+                    <span class="sidebar-logo-sub logo-blue-italic logo-large">语音助手</span>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <ul>
+                <li onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i>首页</li>
+                <li onclick="window.location.href='voice-simulator.html'"><i class="fa-solid fa-comments"></i>语音模拟器</li>
+                <li onclick="window.location.href='device-management.html'"><i class="fa-solid fa-tablet-screen-button"></i>设备管理</li>
+                <li onclick="window.location.href='voice-settings.html'"><i class="fa-solid fa-user-gear"></i>音色设置</li>
+                <li class="active"><i class="fa-solid fa-desktop"></i>MCP订阅</li>
+            </ul>
+        </nav>
+                                    <div class="sidebar-bottom">
+            <button class="sidebar-setting-btn" id="settingsBtn" style="cursor: pointer; background: #ff6b6b; color: white; z-index: 9999; position: relative;"><i class="fa-solid fa-gear"></i>设置</button>
+        </div>
+    </div>
+    <div class="main">
+        <!-- 顶部标题栏 -->
+        <div class="top-header">
+            <div class="page-title">MCP订阅</div>
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-name" id="userName">User name</div>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content-area">
+            <div class="subscription-container">
+            <div class="subscription-cards">
+                <div class="subscription-card">
+                    <div class="subscription-period">月度订阅</div>
+                    <div class="subscription-price">
+                        <span class="currency">¥</span>99
+                        <span class="period">/月</span>
+                    </div>
+                    <div class="subscription-description">
+                        适合短期使用，灵活选择，随时取消
+                    </div>
+                    <ul class="subscription-features">
+                        <li>无限语音对话</li>
+                        <li>所有音色模型</li>
+                        <li>优先客服支持</li>
+                        <li>每月更新</li>
+                    </ul>
+                    <button class="subscription-btn">选择月度</button>
+                </div>
+                
+                <div class="subscription-card">
+                    <div class="popular-badge">推荐</div>
+                    <div class="subscription-period">季度订阅</div>
+                    <div class="subscription-price">
+                        <span class="currency">¥</span>249
+                        <span class="period">/季</span>
+                    </div>
+                    <div class="subscription-description">
+                        性价比最高的选择，享受更多优惠
+                    </div>
+                    <ul class="subscription-features">
+                        <li>无限语音对话</li>
+                        <li>所有音色模型</li>
+                        <li>优先客服支持</li>
+                        <li>每月更新</li>
+                        <li>专属功能预览</li>
+                        <li>节省 ¥48</li>
+                    </ul>
+                    <button class="subscription-btn">选择季度</button>
+                </div>
+                
+                <div class="subscription-card">
+                    <div class="subscription-period">年度订阅</div>
+                    <div class="subscription-price">
+                        <span class="currency">¥</span>899
+                        <span class="period">/年</span>
+                    </div>
+                    <div class="subscription-description">
+                        最经济实惠，享受最大折扣
+                    </div>
+                    <ul class="subscription-features">
+                        <li>无限语音对话</li>
+                        <li>所有音色模型</li>
+                        <li>优先客服支持</li>
+                        <li>每月更新</li>
+                        <li>专属功能预览</li>
+                        <li>VIP专属服务</li>
+                        <li>节省 ¥289</li>
+                    </ul>
+                    <button class="subscription-btn">选择年度</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 设置模态框相关函数 - 全局函数
+function showSettingsModal() {
+    console.log('showSettingsModal called');
+    const settingsModal = document.getElementById('settingsModal');
+    if (settingsModal) {
+        console.log('Settings modal element found');
+        
+        // 强制设置所有必要的样式 - 使用!important来确保覆盖内联样式
+        settingsModal.style.cssText = `
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 9999999 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-sizing: border-box !important;
+        `;
+        
+        // 清除可能存在的错误文本内容
+        const modalContent = settingsModal.querySelector('.settings-modal');
+        if (modalContent) {
+            // 确保模态框内容可见
+            modalContent.style.visibility = 'visible';
+            modalContent.style.opacity = '1';
+            modalContent.style.display = 'flex';
+            
+            // 检查模态框内容是否正确
+            console.log('Modal content innerHTML length:', modalContent.innerHTML.length);
+            console.log('Modal content children count:', modalContent.children.length);
+            console.log('Modal content first child:', modalContent.children[0]);
+            
+                    // 强制设置所有样式
+        modalContent.style.background = '#fff';
+        modalContent.style.borderRadius = '14px';
+        modalContent.style.border = '2px solid #d6c6c6';
+        modalContent.style.maxWidth = '800px';
+        modalContent.style.width = '90%';
+        modalContent.style.maxHeight = '90vh';
+        modalContent.style.overflowY = 'auto';
+        modalContent.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2)';
+        modalContent.style.display = 'flex';
+        modalContent.style.flexDirection = 'column';
+        modalContent.style.position = 'relative';
+        modalContent.style.zIndex = '9999999';
+        modalContent.style.margin = '0';
+        modalContent.style.padding = '0';
+        
+        // 确保所有子元素可见
+        const header = modalContent.querySelector('.settings-modal-header');
+        const content = modalContent.querySelector('.settings-modal-content');
+        if (header) {
+            header.style.display = 'flex';
+            header.style.visibility = 'visible';
+            header.style.opacity = '1';
+            header.style.background = '#fff';
+            header.style.padding = '32px 40px';
+            header.style.borderBottom = '2px solid #d6c6c6';
+            console.log('Header found and made visible');
+        }
+        if (content) {
+            content.style.display = 'block';
+            content.style.visibility = 'visible';
+            content.style.opacity = '1';
+            content.style.flex = '1';
+            content.style.padding = '40px';
+            content.style.overflowY = 'auto';
+            console.log('Content found and made visible');
+        }
+            
+            // 添加调试信息
+            console.log('Modal content styles applied via JavaScript');
+            console.log('Modal content background:', modalContent.style.background);
+            console.log('Modal content display:', modalContent.style.display);
+            console.log('Modal content width:', modalContent.style.width);
+            console.log('Modal content computed styles:', window.getComputedStyle(modalContent));
+        }
+        
+        console.log('Modal CSS properties set');
+        console.log('Modal computed styles:', window.getComputedStyle(settingsModal));
+        console.log('Modal offsetParent:', settingsModal.offsetParent);
+        console.log('Modal offsetTop:', settingsModal.offsetTop);
+        console.log('Modal offsetLeft:', settingsModal.offsetLeft);
+        console.log('Modal clientWidth:', settingsModal.clientWidth);
+        console.log('Modal clientHeight:', settingsModal.clientHeight);
+        
+        // 检查模态框内容
+        if (modalContent) {
+            console.log('Modal content found:', modalContent);
+            console.log('Modal content styles:', window.getComputedStyle(modalContent));
+            console.log('Modal content display:', window.getComputedStyle(modalContent).display);
+            console.log('Modal content background:', window.getComputedStyle(modalContent).background);
+            console.log('Modal content width:', window.getComputedStyle(modalContent).width);
+            console.log('Modal content height:', window.getComputedStyle(modalContent).height);
+                    console.log('Modal content className:', modalContent.className);
+        
+        // 检查模态框是否真的可见
+        console.log('Modal visibility:', window.getComputedStyle(settingsModal).visibility);
+        console.log('Modal opacity:', window.getComputedStyle(settingsModal).opacity);
+        console.log('Modal z-index:', window.getComputedStyle(settingsModal).zIndex);
+        console.log('Modal position:', window.getComputedStyle(settingsModal).position);
+        console.log('Modal top:', window.getComputedStyle(settingsModal).top);
+        console.log('Modal left:', window.getComputedStyle(settingsModal).left);
+        
+        // 检查模态框头部和内容
+        const modalHeader = modalContent.querySelector('.settings-modal-header');
+        const modalContentDiv = modalContent.querySelector('.settings-modal-content');
+        if (modalHeader) {
+            console.log('Modal header found:', modalHeader);
+            console.log('Modal header styles:', window.getComputedStyle(modalHeader));
+        }
+        if (modalContentDiv) {
+            console.log('Modal content div found:', modalContentDiv);
+            console.log('Modal content div styles:', window.getComputedStyle(modalContentDiv));
+        }
+        } else {
+            console.error('Modal content not found');
+        }
+        
+        loadUserInfo();
+        console.log('Settings modal displayed successfully');
+    } else {
+        console.error('Settings modal element not found');
+        alert('设置模态框元素未找到');
+    }
+}
+
+function hideSettingsModal() {
+    const settingsModal = document.getElementById('settingsModal');
+    if (settingsModal) {
+        settingsModal.classList.remove('show');
+        settingsModal.style.display = 'none';
+        console.log('Settings modal hidden');
+    }
+}
+
+// 换绑邮箱模态框
+function showRebindModal() {
+    alert('换绑邮箱功能开发中...');
+}
+
+// 修改密码
+function changePassword() {
+    alert('修改密码功能开发中...');
+}
+
+// 删除账户
+function deleteAccount() {
+    if (confirm('确定要删除账户吗？此操作不可撤销。')) {
+        alert('账户删除功能开发中...');
+    }
+}
+
+// 切换设置
+function toggleSetting(setting) {
+    const toggle = event.target;
+    toggle.classList.toggle('active');
+    console.log(`${setting} 设置已切换`);
+}
+
+// 清除数据
+function clearData() {
+    if (confirm('确定要清除所有本地数据吗？')) {
+        localStorage.clear();
+        alert('数据已清除');
+    }
+}
+
+// 检查更新
+function checkUpdate() {
+    alert('当前已是最新版本 v1.0.0');
+}
+
+// 查看使用条款
+function viewTerms() {
+    alert('使用条款功能开发中...');
+}
+
+// 切换语言
+function changeLanguage(lang) {
+    console.log(`语言已切换为: ${lang}`);
+}
+
+// 切换主题
+function changeTheme(theme) {
+    console.log(`主题已切换为: ${theme}`);
+}
+
+// 从localStorage获取用户信息
+function loadUserInfo() {
+    const username = localStorage.getItem('username') || 'User name';
+    const email = localStorage.getItem('email') || 'e-mail.address@163.com';
+    
+    document.getElementById('currentUsername').textContent = username;
+    document.getElementById('currentEmail').textContent = email;
+}
+
+// 解析URL参数并动态显示用户名、头像
+function getQueryParam(name) {
+    const url = window.location.search;
+    const params = new URLSearchParams(url);
+    return params.get(name) || '';
+}
+
+// 页面加载时执行
+document.addEventListener('DOMContentLoaded', function() {
+    const username = getQueryParam('username') || 'User name';
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    
+    // 添加设置按钮事件监听器 - 跳转到首页并显示设置
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', function() {
+            console.log('Settings button clicked - redirecting to home page');
+            // 跳转到首页并传递参数表示要显示设置
+            window.location.href = 'home.html?showSettings=true';
+        });
+        console.log('Settings button event listener added');
+    } else {
+        console.error('Settings button not found');
+    }
+    
+    // 设置用户名
+    userName.textContent = username;
+    
+    // 设置头像首字母
+    userAvatar.textContent = username.trim().charAt(0).toUpperCase() || 'U';
+    
+    // 订阅按钮点击事件
+    const subscriptionBtns = document.querySelectorAll('.subscription-btn');
+    
+    subscriptionBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const card = this.closest('.subscription-card');
+            const period = card.querySelector('.subscription-period').textContent;
+            const price = card.querySelector('.subscription-price').textContent;
+            
+            alert(`您选择了${period}，价格：${price}\n\n此功能正在开发中，敬请期待！`);
+        });
+    });
+    
+    // 切换设置开关
+    function toggleSetting(settingName) {
+        const toggle = event.target;
+        toggle.classList.toggle('active');
+        localStorage.setItem(settingName, toggle.classList.contains('active'));
+    }
+    
+    // 换绑邮箱相关函数
+    function showRebindModal() {
+        document.getElementById('rebindModal').style.display = 'flex';
+    }
+    
+    function hideRebindModal() {
+        document.getElementById('rebindModal').style.display = 'none';
+        // 清空表单
+        document.getElementById('oldEmail').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('verificationCode').value = '';
+        // 重置发送验证码按钮
+        const sendBtn = document.getElementById('sendCodeBtn');
+        sendBtn.textContent = '发送验证码';
+        sendBtn.classList.remove('sent');
+    }
+    
+    function sendVerificationCode() {
+        const sendBtn = document.getElementById('sendCodeBtn');
+        sendBtn.textContent = '已发送验证码（60s）';
+        sendBtn.classList.add('sent');
+        
+        let countdown = 60;
+        const timer = setInterval(() => {
+            countdown--;
+            sendBtn.textContent = `已发送验证码（${countdown}s）`;
+            
+            if (countdown <= 0) {
+                clearInterval(timer);
+                sendBtn.textContent = '发送验证码';
+                sendBtn.classList.remove('sent');
+            }
+        }, 1000);
+    }
+    
+    function handleRebind(event) {
+        event.preventDefault();
+        const verificationCode = document.getElementById('verificationCode').value;
+        
+        if (verificationCode === '1234') {
+            alert('换绑成功！');
+            hideRebindModal();
+        } else {
+            alert('验证码错误，请重新输入！');
+            document.getElementById('verificationCode').value = '';
+            document.getElementById('verificationCode').focus();
+        }
+    }
+    
+    // 注销账户相关函数
+    function deleteAccount() {
+        document.getElementById('logoutModal').style.display = 'flex';
+    }
+    
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'none';
+    }
+    
+    function confirmLogout() {
+        hideLogoutModal();
+        document.getElementById('logoutSuccessModal').style.display = 'flex';
+        
+        setTimeout(() => {
+            document.getElementById('logoutSuccessModal').style.display = 'none';
+        }, 2000);
+    }
+    
+    // 其他设置函数
+    function changeLanguage(lang) {
+        localStorage.setItem('language', lang);
+        console.log('语言已更改为:', lang);
+    }
+    
+    function changeTheme(theme) {
+        localStorage.setItem('theme', theme);
+        console.log('主题已更改为:', theme);
+    }
+    
+    function changePassword() {
+        alert('密码修改功能开发中...');
+    }
+    
+    function clearData() {
+        if (confirm('确定要清除所有数据吗？此操作不可撤销！')) {
+            localStorage.clear();
+            alert('数据已清除！');
+        }
+    }
+    
+    function checkUpdate() {
+        alert('当前已是最新版本！');
+    }
+    
+    function viewTerms() {
+        alert('使用条款页面开发中...');
+    }
+    
+    // 页面加载时初始化设置状态
+    document.addEventListener('DOMContentLoaded', function() {
+        // 恢复设置状态
+        const settings = ['autoSave', 'dataCollection', 'locationService'];
+        settings.forEach(setting => {
+            const isActive = localStorage.getItem(setting) === 'true';
+            const toggles = document.querySelectorAll(`[onclick*="${setting}"]`);
+            toggles.forEach(toggle => {
+                if (isActive) {
+                    toggle.classList.add('active');
+                }
+            });
+        });
+        
+        // 确保设置按钮可点击
+        const settingsBtn = document.getElementById('settingsBtn');
+        if (settingsBtn) {
+            console.log('Settings button found');
+            
+            // 测试按钮是否可以被点击
+            settingsBtn.onclick = function(e) {
+                console.log('Settings button clicked via onclick');
+                e.preventDefault();
+                e.stopPropagation();
+                alert('设置按钮被点击了！');
+                showSettingsModal();
+            };
+            
+            settingsBtn.addEventListener('click', function(e) {
+                console.log('Settings button clicked via addEventListener');
+                e.preventDefault();
+                e.stopPropagation();
+                alert('设置按钮被点击了！');
+                showSettingsModal();
+            });
+            
+            // 添加鼠标悬停效果
+            settingsBtn.addEventListener('mouseenter', function() {
+                console.log('Mouse entered settings button');
+            });
+            
+            settingsBtn.addEventListener('mouseleave', function() {
+                console.log('Mouse left settings button');
+            });
+            
+            // 测试按钮是否可见和可交互
+            console.log('Button styles:', window.getComputedStyle(settingsBtn));
+            console.log('Button offsetParent:', settingsBtn.offsetParent);
+            console.log('Button display:', window.getComputedStyle(settingsBtn).display);
+            console.log('Button visibility:', window.getComputedStyle(settingsBtn).visibility);
+            console.log('Button pointer-events:', window.getComputedStyle(settingsBtn).pointerEvents);
+        } else {
+            console.error('Settings button not found');
+            alert('设置按钮未找到！');
+        }
+        
+        // 延迟测试按钮
+        setTimeout(function() {
+            const testBtn = document.getElementById('settingsBtn');
+            if (testBtn) {
+                console.log('Delayed test: Settings button found');
+                testBtn.style.border = '3px solid red';
+                testBtn.style.background = 'yellow';
+                testBtn.style.color = 'black';
+                console.log('Button made visible with red border and yellow background');
+            } else {
+                console.error('Delayed test: Settings button not found');
+            }
+        }, 2000);
+        
+        // 测试模态框是否可以被显示
+        setTimeout(function() {
+            console.log('Testing modal display...');
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                console.log('Modal element found, testing display...');
+                
+                // 只改变display属性
+                modal.style.display = 'flex';
+                modal.style.border = '5px solid green';
+                
+                console.log('Modal should now be visible with green border');
+            } else {
+                console.error('Modal element not found in delayed test');
+            }
+        }, 3000);
+    });
+});
+</script>
+
+<!-- 设置模态框 -->
+<div class="settings-overlay" id="settingsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9999999; width: 100vw; height: 100vh; overflow: hidden; margin: 0; padding: 0; border: none; box-sizing: border-box;">
+    <div class="settings-modal">
+        <div class="settings-modal-header">
+            <div class="settings-modal-title">设置</div>
+            <button class="settings-modal-close" onclick="hideSettingsModal()">&times;</button>
+        </div>
+        
+        <div class="settings-modal-content">
+            <!-- 账户设置 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-user"></i>
+                    账户设置
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">用户名</div>
+                        <div class="setting-description">当前登录的用户名</div>
+                    </div>
+                    <div class="setting-control">
+                        <span id="currentUsername">User name</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">邮箱</div>
+                        <div class="setting-description">当前绑定的邮箱地址</div>
+                    </div>
+                    <div class="setting-control">
+                        <span id="currentEmail">e-mail.address@163.com</span>
+                        <button class="button-control" onclick="showRebindModal()">换绑</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">修改密码</div>
+                        <div class="setting-description">更新您的账户密码</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="changePassword()">修改</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">账户注销</div>
+                        <div class="setting-description">永久删除您的账户</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control danger" onclick="deleteAccount()">注销</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 应用设置 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-cog"></i>
+                    应用设置
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">语言</div>
+                        <div class="setting-description">选择应用显示语言</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="select-control" id="languageSelect" name="language" onchange="changeLanguage(this.value)" title="选择应用显示语言" aria-label="选择应用显示语言">
+                            <option value="zh">中文</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">主题</div>
+                        <div class="setting-description">选择应用主题</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="select-control" id="themeSelect" name="theme" onchange="changeTheme(this.value)" title="选择应用主题" aria-label="选择应用主题">
+                            <option value="light">浅色</option>
+                            <option value="dark">深色</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">自动保存</div>
+                        <div class="setting-description">自动保存设置和偏好</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSetting('autoSave')"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 隐私设置 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    隐私设置
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">数据收集</div>
+                        <div class="setting-description">允许收集使用数据以改进服务</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSetting('dataCollection')"></div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">位置服务</div>
+                        <div class="setting-description">允许应用访问位置信息</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSetting('locationService')"></div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">清除数据</div>
+                        <div class="setting-description">清除所有本地存储的数据</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="clearData()">清除</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 关于 -->
+            <div class="settings-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-info-circle"></i>
+                    关于
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">版本</div>
+                        <div class="setting-description">当前应用版本</div>
+                    </div>
+                    <div class="setting-control">
+                        <span>v1.0.0</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">检查更新</div>
+                        <div class="setting-description">检查是否有新版本可用</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="checkUpdate()">检查</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">使用条款</div>
+                        <div class="setting-description">查看应用使用条款</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="button-control" onclick="viewTerms()">查看</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 换绑邮箱模态框 -->
+<div class="modal-overlay" id="rebindModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9999998; width: 100vw; height: 100vh; overflow: hidden; margin: 0; padding: 0; border: none; box-sizing: border-box;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">换绑邮箱</h3>
+            <button class="modal-close" onclick="hideRebindModal()">&times;</button>
+        </div>
+        <form class="modal-form" onsubmit="handleRebind(event)">
+            <div class="form-group">
+                <label class="form-label" for="oldEmail">填写原邮箱信息</label>
+                <input type="email" class="form-input" id="oldEmail" name="oldEmail" placeholder="请输入原邮箱地址" title="原邮箱地址" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="newEmail">填写新邮箱信息</label>
+                <input type="email" class="form-input" id="newEmail" name="newEmail" placeholder="请输入新邮箱地址" title="新邮箱地址" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="verificationCode">填写新邮箱接收的验证码</label>
+                <div class="verification-group">
+                    <input type="text" class="form-input verification-input" id="verificationCode" name="verificationCode" placeholder="请输入验证码" title="验证码" required>
+                    <button type="button" class="send-code-btn" id="sendCodeBtn" onclick="sendVerificationCode()">发送验证码</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="hideRebindModal()">取消</button>
+                <button type="submit" class="modal-btn modal-btn-primary">确认换绑</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 注销账户模态框 -->
+<div class="modal-overlay" id="logoutModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9999998; width: 100vw; height: 100vh; overflow: hidden; margin: 0; padding: 0; border: none; box-sizing: border-box;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">注销账户</h3>
+            <button class="modal-close" onclick="hideLogoutModal()">&times;</button>
+        </div>
+        <div class="modal-form">
+            <div class="form-group">
+                <p style="color: #666; margin: 0;">确定要注销账户吗？此操作不可撤销！</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="hideLogoutModal()">取消</button>
+                <button type="button" class="modal-btn modal-btn-danger" onclick="confirmLogout()">确认注销</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 注销成功模态框 -->
+<div class="modal-overlay" id="logoutSuccessModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9999998; width: 100vw; height: 100vh; overflow: hidden; margin: 0; padding: 0; border: none; box-sizing: border-box;">
+    <div class="modal-content">
+        <div class="success-message">
+            <div class="success-emoji">😊</div>
+            <div class="success-text">注销成功！</div>
+        </div>
+    </div>
+</div>
+</body>
+</html> 
