@@ -1,0 +1,185 @@
+/* 全局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fff 0%, #fff 18%, #e3c6f7 30%, #a2b6e9 70%, #fff 82%, #fff 100%);
+}
+
+/* 通用样式 */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  padding: 32px 32px 32px 312px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2d1ed6;
+  margin-bottom: 8px;
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+
+.main-title-centered {
+  text-align: center;
+}
+
+.main-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.main-title-bar {
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #6ec6fa, #4fc3f7);
+  border-radius: 2px;
+  margin-bottom: 48px;
+}
+
+.main-title-bar-centered {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.main-content-row {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 32px;
+}
+
+.main-content-row-centered {
+  display: flex;
+  justify-content: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 1100px) {
+  .main-content-row {
+    flex-direction: column;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 800px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .main {
+    padding: 18px 2vw 18px 2vw;
+  }
+}
+
+/* 工具类 */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+/* 动画类 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter-from {
+  transform: translateX(-100%);
+}
+
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6ec6fa;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4fc3f7;
+}
+
+/* 选择文本样式 */
+::selection {
+  background: #6ec6fa;
+  color: #fff;
+}
+
+::-moz-selection {
+  background: #6ec6fa;
+  color: #fff;
+} 

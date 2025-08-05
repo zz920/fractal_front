@@ -236,24 +236,229 @@
         .welcome-btn {
             height: 44px;
             padding: 0 28px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1.1rem;
             font-weight: bold;
             border: 2px solid #6ec6fa;
             background: #fff;
             color: #1976d2;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(110, 198, 250, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
+        
+        .welcome-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(110, 198, 250, 0.3);
+            border-color: #4fc3f7;
+        }
+        
+        .welcome-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(110, 198, 250, 0.2);
+        }
+        
         .welcome-btn.primary {
-            background: #6ec6fa;
+            background: linear-gradient(135deg, #6ec6fa 0%, #4fc3f7 100%);
             color: #fff;
             border: none;
+            box-shadow: 0 2px 8px rgba(110, 198, 250, 0.3);
+            position: relative;
         }
+        
+        .welcome-btn.primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 添加按钮背景动画 */
+        .welcome-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .welcome-btn:hover::before {
+            left: 100%;
+        }
+        
+        .welcome-btn.primary:hover::after {
+            opacity: 1;
+        }
+        
+        .welcome-btn.primary:hover {
+            box-shadow: 0 6px 16px rgba(110, 198, 250, 0.4);
+        }
+        
+        .welcome-btn.primary > * {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 添加按钮的3D效果 */
+        .welcome-btn {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .welcome-btn:hover {
+            transform: translateY(-2px) rotateX(5deg);
+        }
+        
+        /* 添加按钮内容的3D效果 */
+        .welcome-btn > * {
+            transform: translateZ(10px);
+        }
+        
         .welcome-btn i {
             margin-right: 8px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .welcome-btn:hover i {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .welcome-btn.primary i {
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .welcome-btn.primary:hover i {
+            animation: none;
+            transform: scale(1.2) rotate(10deg);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        /* 添加脉冲动画效果 */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(110, 198, 250, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(110, 198, 250, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(110, 198, 250, 0);
+            }
+        }
+        
+        .welcome-btn.primary {
+            animation: pulse 2s infinite;
+        }
+        
+        .welcome-btn.primary:hover {
+            animation: none;
+        }
+        
+        /* 添加点击波纹效果 */
+        .welcome-btn .ripple {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .welcome-btn:active .ripple {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* 添加按钮内容的前景层级 */
+        .welcome-btn > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 添加按钮悬停时的边框发光效果 */
+        .welcome-btn:not(.primary):hover {
+            border-color: #4fc3f7;
+            box-shadow: 0 4px 12px rgba(110, 198, 250, 0.3), 0 0 0 3px rgba(110, 198, 250, 0.1);
+        }
+        
+        /* 添加按钮按下时的缩放效果 */
+        .welcome-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        /* 添加按钮焦点状态的样式 */
+        .welcome-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(110, 198, 250, 0.3);
+        }
+        
+        .welcome-btn.primary:focus {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* 添加触摸设备的反馈效果 */
+        @media (hover: none) and (pointer: coarse) {
+            .welcome-btn:hover {
+                transform: none;
+                box-shadow: 0 2px 4px rgba(110, 198, 250, 0.1);
+            }
+            
+            .welcome-btn:active {
+                transform: scale(0.95);
+                box-shadow: 0 1px 3px rgba(110, 198, 250, 0.2);
+            }
+            
+            .welcome-btn.primary:active {
+                transform: scale(0.95);
+                box-shadow: 0 1px 3px rgba(110, 198, 250, 0.3);
+            }
+        }
+        
+        /* 添加按钮加载状态 */
+        .welcome-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .welcome-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
         .main-content-row .placeholder-card {
             flex: 1;
@@ -1106,7 +1311,93 @@ document.addEventListener('DOMContentLoaded', function() {
             showSettingsModal();
         }, 100);
     }
+    
+    // 为欢迎按钮添加增强的交互效果
+    const welcomeButtons = document.querySelectorAll('.welcome-btn');
+    welcomeButtons.forEach(button => {
+        // 添加鼠标进入时的音效反馈（可选）
+        button.addEventListener('mouseenter', function() {
+            // 可以在这里添加音效或触觉反馈
+            this.style.transform = 'translateY(-2px) scale(1.02)';
+        });
+        
+        // 添加鼠标离开时的效果
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+        
+        // 添加点击时的反馈
+        button.addEventListener('click', function(e) {
+            // 创建点击波纹效果
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+                z-index: 1;
+            `;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+            
+            // 添加按钮点击音效（可选）
+            // 可以在这里添加音效代码
+            
+            // 添加触觉反馈（如果支持）
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            // 添加加载状态（可选）
+            const originalText = this.innerHTML;
+            const originalOnClick = this.onclick;
+            
+            this.classList.add('loading');
+            this.innerHTML = '<i class="fa-solid fa-spinner"></i>处理中...';
+            this.onclick = null;
+            
+            // 模拟加载延迟，实际使用时可以移除
+            setTimeout(() => {
+                this.classList.remove('loading');
+                this.innerHTML = originalText;
+                this.onclick = originalOnClick;
+                
+                // 执行原始点击事件
+                if (originalOnClick) {
+                    originalOnClick.call(this, e);
+                }
+            }, 800);
+        });
+    });
 });
+
+// 添加波纹动画
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 <!-- 设置模态框 -->
