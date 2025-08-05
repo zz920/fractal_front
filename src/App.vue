@@ -53,7 +53,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(to bottom, #fff 0%, #fff 18%, #e3c6f7 30%, #a2b6e9 70%, #fff 82%, #fff 100%);
+  background: rgb(238, 235, 245);
 }
 
 .container {

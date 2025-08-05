@@ -86,6 +86,7 @@ export default {
 <style scoped>
 .home-content {
   width: 100%;
+  background: rgb(238,235,245);
 }
 
 .main-title {

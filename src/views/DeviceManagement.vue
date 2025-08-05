@@ -272,6 +272,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: rgb(238,235,245);
 }
 
 /* 顶部标题栏 */

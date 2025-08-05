@@ -42,12 +42,12 @@
             <div class="feature-title">{{ translations[currentLang].featureTitles[0] }}</div>
             <div class="feature-desc">{{ translations[currentLang].featureDescs[0] }}</div>
           </div>
-          <div class="feature-item" @click="navigateToFeature('device-management')">
+          <div class="feature-item" @click="navigateToFeature('voice-settings')">
             <span class="feature-icon"><i class="fa-solid fa-music"></i></span>
             <div class="feature-title">{{ translations[currentLang].featureTitles[1] }}</div>
             <div class="feature-desc">{{ translations[currentLang].featureDescs[1] }}</div>
           </div>
-          <div class="feature-item" @click="navigateToFeature('home')">
+          <div class="feature-item" @click="navigateToFeature('device-management')">
             <span class="feature-icon"><i class="fa-solid fa-briefcase"></i></span>
             <div class="feature-title">{{ translations[currentLang].featureTitles[2] }}</div>
             <div class="feature-desc">{{ translations[currentLang].featureDescs[2] }}</div>
@@ -59,29 +59,36 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 export default {
   name: 'Landing',
   setup() {
     const router = useRouter()
+    const userStore = useUserStore()
     const currentLang = ref('zh')
+    
+    // 检查用户是否已登录
+    const isLoggedIn = computed(() => {
+      return userStore.userInfo && userStore.userInfo.username
+    })
     
     const translations = {
       zh: {
         subtitle: '一款人性化的智能语音助手',
         webText: '进入网页版',
         appText: '获取APP',
-        featureTitles: ['智能化语音助手', '设备管理', '用户主页'],
-        featureDescs: ['实时对话', '设备配置', '个人中心']
+        featureTitles: ['智能化语音助手', '自定义音色配置', 'MCP工具应用'],
+        featureDescs: ['实时对话', '自定义声线', '便捷办公']
       },
       en: {
         subtitle: 'A Humanized Intelligent Voice Assistant',
         webText: 'Web Version',
         appText: 'Get APP',
-        featureTitles: ['Intelligent Voice Assistant', 'Device Management', 'User Home'],
-        featureDescs: ['Real-time Dialogue', 'Device Config', 'Personal Center']
+        featureTitles: ['Intelligent Voice Assistant', 'Custom Tone Configuration', 'MCP Tool Application'],
+        featureDescs: ['Real-time Dialogue', 'Custom Voice Line', 'Convenient Office']
       }
     }
     
@@ -94,12 +101,32 @@ export default {
     }
     
     const navigateToFeature = (route) => {
-      router.push(`/${route}`)
+      if (!isLoggedIn.value) {
+        alert('请先登录后再使用此功能')
+        router.push('/login')
+        return
+      }
+      
+      // 根据功能类型跳转到相应页面
+      switch (route) {
+        case 'voice-simulator':
+          router.push('/voice-simulator')
+          break
+        case 'voice-settings':
+          router.push('/voice-settings')
+          break
+        case 'device-management':
+          router.push('/device-management')
+          break
+        default:
+          router.push('/home')
+      }
     }
     
     return {
       currentLang,
       translations,
+      isLoggedIn,
       toggleLanguage,
       goToLogin,
       navigateToFeature

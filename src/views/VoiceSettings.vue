@@ -151,6 +151,23 @@
         
         <!-- 音色网格 -->
         <div class="voice-grid" v-show="showVoiceGrid">
+          <!-- 空状态提示 -->
+          <div v-if="filteredVoices.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <i class="fa-solid fa-microphone-slash"></i>
+            </div>
+            <div class="empty-title">
+              {{ getEmptyStateTitle() }}
+            </div>
+            <div class="empty-description">
+              {{ getEmptyStateDescription() }}
+            </div>
+            <button v-if="activeCategory === 'training'" class="empty-action-btn" @click="selectCategory('training')">
+              <i class="fa-solid fa-plus"></i> 开始训练音色
+            </button>
+          </div>
+          
+          <!-- 音色卡片 -->
           <div 
             v-for="voice in filteredVoices" 
             :key="voice.id"
@@ -265,15 +282,33 @@ export default {
     
     // 音色数据
     const voices = ref([
-      { id: '1', name: '音色1', description: '推荐音色', avatar: '1', isFavorited: false },
-      { id: '2', name: '音色2', description: '推荐音色', avatar: '2', isFavorited: false },
-      { id: '3', name: '音色3', description: '推荐音色', avatar: '3', isFavorited: false },
-      { id: '4', name: '音色4', description: '推荐音色', avatar: '4', isFavorited: false },
-      { id: '5', name: '音色5', description: '推荐音色', avatar: '5', isFavorited: false },
-      { id: '6', name: '音色6', description: '推荐音色', avatar: '6', isFavorited: false },
-      { id: '7', name: '音色7', description: '推荐音色', avatar: '7', isFavorited: false },
-      { id: '8', name: '音色8', description: '推荐音色', avatar: '8', isFavorited: false },
-      { id: '9', name: '音色9', description: '推荐音色', avatar: '9', isFavorited: false }
+      // 推荐音色
+      { id: '1', name: '温柔女声', description: '推荐音色', avatar: '👩', isFavorited: false },
+      { id: '2', name: '磁性男声', description: '推荐音色', avatar: '👨', isFavorited: false },
+      { id: '3', name: '可爱童声', description: '推荐音色', avatar: '👶', isFavorited: false },
+      { id: '4', name: '成熟女声', description: '推荐音色', avatar: '👩‍💼', isFavorited: false },
+      { id: '5', name: '活力男声', description: '推荐音色', avatar: '👨‍💼', isFavorited: false },
+      
+      // 音色大全
+      { id: '6', name: '甜美少女', description: '音色大全', avatar: '🌸', isFavorited: false },
+      { id: '7', name: '深沉大叔', description: '音色大全', avatar: '🧔', isFavorited: false },
+      { id: '8', name: '活泼少年', description: '音色大全', avatar: '👦', isFavorited: false },
+      { id: '9', name: '优雅女士', description: '音色大全', avatar: '👩‍🦰', isFavorited: false },
+      { id: '10', name: '稳重男士', description: '音色大全', avatar: '👨‍🦰', isFavorited: false },
+      { id: '11', name: '可爱萝莉', description: '音色大全', avatar: '👧', isFavorited: false },
+      { id: '12', name: '成熟御姐', description: '音色大全', avatar: '👩‍🦳', isFavorited: false },
+      { id: '13', name: '阳光男孩', description: '音色大全', avatar: '👨‍🦱', isFavorited: false },
+      { id: '14', name: '知性女性', description: '音色大全', avatar: '👩‍🦲', isFavorited: false },
+      { id: '15', name: '魅力大叔', description: '音色大全', avatar: '👨‍🦲', isFavorited: false },
+      { id: '16', name: '清纯少女', description: '音色大全', avatar: '🌺', isFavorited: false },
+      { id: '17', name: '硬朗男人', description: '音色大全', avatar: '💪', isFavorited: false },
+      { id: '18', name: '温柔妈妈', description: '音色大全', avatar: '👩‍👧', isFavorited: false },
+      { id: '19', name: '慈祥爸爸', description: '音色大全', avatar: '👨‍👧', isFavorited: false },
+      { id: '20', name: '活力女孩', description: '音色大全', avatar: '🏃‍♀️', isFavorited: false },
+      
+      // 自定义音色（我的模型）
+      { id: '21', name: '我的音色1', description: '自定义音色', avatar: '🎤', isFavorited: true },
+      { id: '22', name: '我的音色2', description: '自定义音色', avatar: '🎵', isFavorited: false }
     ])
     
     // 计算属性
@@ -521,6 +556,37 @@ export default {
       selectedVoices.value = []
     }
     
+    // 空状态提示方法
+    const getEmptyStateTitle = () => {
+      if (activeCategory.value === 'my') {
+        if (activeTab.value === 'favorites') {
+          return '暂无收藏音色'
+        } else if (activeTab.value === 'models') {
+          return '暂无训练音色'
+        } else {
+          return '暂无使用历史'
+        }
+      } else if (activeCategory.value === 'library') {
+        return '暂无搜索结果'
+      }
+      return '暂无音色'
+    }
+    
+    const getEmptyStateDescription = () => {
+      if (activeCategory.value === 'my') {
+        if (activeTab.value === 'favorites') {
+          return '您还没有收藏任何音色，快去发现喜欢的音色吧！'
+        } else if (activeTab.value === 'models') {
+          return '您还没有训练任何音色，点击下方按钮开始训练您的专属音色吧！'
+        } else {
+          return '您还没有使用过任何音色，快去体验各种音色吧！'
+        }
+      } else if (activeCategory.value === 'library') {
+        return '没有找到匹配的音色，请尝试其他搜索关键词'
+      }
+      return '暂无可用音色'
+    }
+    
     onMounted(() => {
       userStore.initializeFromStorage()
     })
@@ -569,7 +635,9 @@ export default {
       deleteSelected,
       renameSelected,
       changeCover,
-      cancelEdit
+      cancelEdit,
+      getEmptyStateTitle,
+      getEmptyStateDescription
     }
   }
 }
@@ -1298,6 +1366,56 @@ export default {
   background: #6b46c1;
   cursor: pointer;
   border: none;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #ccc;
+  margin-bottom: 24px;
+}
+
+.empty-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.empty-description {
+  font-size: 1rem;
+  color: #999;
+  margin-bottom: 32px;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.empty-action-btn {
+  background: #6b46c1;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-action-btn:hover {
+  background: #5a3aa8;
 }
 
 .volume-value {
