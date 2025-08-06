@@ -56,6 +56,15 @@ export default {
   background: rgb(238, 235, 245);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .container {
   display: flex;
   min-height: 100vh;
