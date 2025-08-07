@@ -1,84 +1,85 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '../stores/user.js'
 
-// 页面组件导入
-const Login = () => import('../pages/auth/Login.vue')
-const Register = () => import('../pages/auth/Register.vue')
-const Dashboard = () => import('../pages/dashboard/Dashboard.vue')
-const Overview = () => import('../pages/dashboard/Overview.vue')
-const VoiceSimulator = () => import('../pages/dashboard/VoiceSimulator.vue')
-const Device = () => import('../pages/dashboard/Device.vue')
+// 异步组件加载，带错误处理
+const asyncComponent = (componentName) => {
+  return () => import(`@/pages/${componentName}.vue`).catch(error => {
+    console.error(`❌ 组件加载失败: ${componentName}`, error)
+    // 返回一个简单的错误组件
+    return Promise.resolve({
+      template: `
+        <div style="padding: 2rem; text-align: center; color: #666;">
+          <h3>页面加载失败</h3>
+          <p>抱歉，${componentName} 页面暂时无法加载。</p>
+          <p>请刷新页面或稍后重试。</p>
+          <button @click="$router.go(-1)" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            返回上一页
+          </button>
+        </div>
+      `
+    })
+  })
+}
 
-// 路由配置
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    name: 'Landing',
+    component: asyncComponent('Landing')
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: asyncComponent('Home')
   },
   {
     path: '/login',
     name: 'Login',
-    component: Login,
-    meta: {
-      title: '登录 - Fractal语音助手',
-      requiresGuest: true // 需要未登录状态
-    }
+    component: asyncComponent('Login')
   },
   {
-    path: '/register', 
+    path: '/register',
     name: 'Register',
-    component: Register,
-    meta: {
-      title: '注册 - Fractal语音助手',
-      requiresGuest: true // 需要未登录状态
-    }
+    component: asyncComponent('Register')
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Dashboard,
-    meta: {
-      title: '控制台 - Fractal语音助手',
-      requiresAuth: true // 需要登录状态
-    },
-    children: [
-      {
-        path: '',
-        redirect: '/dashboard/overview'
-      },
-      {
-        path: 'overview',
-        name: 'Overview',
-        component: Overview,
-        meta: {
-          title: '概览 - Fractal语音助手',
-          requiresAuth: true
-        }
-      },
-              {
-          path: 'voice',
-          name: 'VoiceSimulator', 
-          component: VoiceSimulator,
-          meta: {
-            title: '语音模拟器 - Fractal语音助手',
-            requiresAuth: true
-          }
-        },
-        {
-          path: 'device',
-          name: 'Device',
-          component: Device,
-          meta: {
-            title: '设备管理 - Fractal语音助手',
-            requiresAuth: true
-          }
-        }
-    ]
+    path: '/reset',
+    name: 'Reset',
+    component: asyncComponent('Reset')
   },
   {
-    // 404页面处理
-    path: '/:pathMatch(.*)*',
-    redirect: '/dashboard'
+    path: '/voice-simulator',
+    name: 'VoiceSimulator',
+    component: asyncComponent('VoiceSimulator')
+  },
+  {
+    path: '/device-management',
+    name: 'DeviceManagement',
+    component: asyncComponent('DeviceManagement')
+  },
+  {
+    path: '/voice-settings',
+    name: 'VoiceSettings',
+    component: asyncComponent('VoiceSettings')
+  },
+  {
+    path: '/mcp-subscription',
+    name: 'McpSubscription',
+    component: asyncComponent('McpSubscription')
+  },
+  {
+    path: '/mcp-features',
+    name: 'McpFeatures',
+    component: asyncComponent('McpFeatures')
+  },
+  {
+    path: '/device-binding',
+    name: 'DeviceBinding',
+    component: asyncComponent('DeviceBinding')
+  },
+  {
+    path: '/server-connection',
+    name: 'ServerConnection',
+    component: asyncComponent('ServerConnection')
   }
 ]
 
@@ -98,39 +99,13 @@ const router = createRouter({
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
-  const userStore = useUserStore()
-  
   // 设置页面标题
   if (to.meta.title) {
     document.title = to.meta.title
   }
   
-  // 初始化用户状态（仅在首次加载时）
-  if (!userStore.user && userStore.token) {
-    try {
-      await userStore.initUserState()
-    } catch (error) {
-      console.error('初始化用户状态失败:', error)
-      // 如果初始化失败，清除认证数据
-      userStore.clearAuthData()
-    }
-  }
-  
-  // 检查路由权限
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
-  const isAuthenticated = userStore.isAuthenticated
-  
-  if (requiresAuth && !isAuthenticated) {
-    // 需要登录但未登录，跳转到登录页面
-    next('/login')
-  } else if (requiresGuest && isAuthenticated) {
-    // 需要未登录状态但已登录，跳转到Dashboard
-    next('/dashboard')
-  } else {
-    // 权限检查通过，继续导航
-    next()
-  }
+  // 权限检查通过，继续导航
+  next()
 })
 
 // 全局后置钩子
