@@ -27,7 +27,7 @@
               <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3,13H11V3H3M3,21H11V15H3M13,21H21V11H13M13,3V9H21V3"/>
               </svg>
-              <span>Overview</span>
+              <span>概览</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -39,7 +39,8 @@
               <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9,9H15V15H9M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
               </svg>
-              <span>Voice Simu</span>
+
+              <span>语音模拟器</span>
             </router-link>
           </li>
           <li class="nav-item">
