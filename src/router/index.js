@@ -2,18 +2,27 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '../stores/user.js'
 
 // 页面组件导入
+const Landing = () => import('../pages/Landing.vue')
 const Login = () => import('../pages/auth/Login.vue')
 const Register = () => import('../pages/auth/Register.vue')
+const ResetPassword = () => import('../pages/auth/ResetPassword.vue')
 const Dashboard = () => import('../pages/dashboard/Dashboard.vue')
 const Overview = () => import('../pages/dashboard/Overview.vue')
 const VoiceSimulator = () => import('../pages/dashboard/VoiceSimulator.vue')
 const Device = () => import('../pages/dashboard/Device.vue')
+const ToneSettings = () => import('../pages/dashboard/ToneSettings.vue')
+const MCPSubscription = () => import('../pages/dashboard/MCPSubscription.vue')
+const Settings = () => import('../pages/dashboard/Settings.vue')
 
 // 路由配置
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    name: 'Landing',
+    component: Landing,
+    meta: {
+      title: 'Fractal 语音智能助手'
+    }
   },
   {
     path: '/login',
@@ -30,6 +39,15 @@ const routes = [
     component: Register,
     meta: {
       title: '注册 - Fractal语音助手',
+      requiresGuest: true // 需要未登录状态
+    }
+  },
+  {
+    path: '/reset',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    meta: {
+      title: '重置密码 - Fractal语音助手',
       requiresGuest: true // 需要未登录状态
     }
   },
@@ -51,34 +69,61 @@ const routes = [
         name: 'Overview',
         component: Overview,
         meta: {
-          title: '概览 - Fractal语音助手',
+          title: '首页 - Fractal语音助手',
           requiresAuth: true
         }
       },
-              {
-          path: 'voice',
-          name: 'VoiceSimulator', 
-          component: VoiceSimulator,
-          meta: {
-            title: '语音模拟器 - Fractal语音助手',
-            requiresAuth: true
-          }
-        },
-        {
-          path: 'device',
-          name: 'Device',
-          component: Device,
-          meta: {
-            title: '设备管理 - Fractal语音助手',
-            requiresAuth: true
-          }
+      {
+        path: 'voice',
+        name: 'VoiceSimulator', 
+        component: VoiceSimulator,
+        meta: {
+          title: '语音模拟器 - Fractal语音助手',
+          requiresAuth: true
         }
+      },
+      {
+        path: 'device',
+        name: 'Device',
+        component: Device,
+        meta: {
+          title: '设备管理 - Fractal语音助手',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'tone',
+        name: 'ToneSettings',
+        component: ToneSettings,
+        meta: {
+          title: '音色设置 - Fractal语音助手',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'mcp',
+        name: 'MCPSubscription',
+        component: MCPSubscription,
+        meta: {
+          title: 'MCP订阅 - Fractal语音助手',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: Settings,
+        meta: {
+          title: '设置 - Fractal语音助手',
+          requiresAuth: true
+        }
+      }
     ]
   },
   {
     // 404页面处理
     path: '/:pathMatch(.*)*',
-    redirect: '/dashboard'
+    redirect: '/'
   }
 ]
 

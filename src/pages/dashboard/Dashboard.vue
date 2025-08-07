@@ -2,16 +2,31 @@
   <div class="dashboard">
     <!-- 左侧导航栏 -->
     <aside class="sidebar">
-      <!-- 用户信息区域 -->
-      <div class="user-info">
-        <div class="user-avatar">
-          <div class="avatar-placeholder">
-            {{ userInitials }}
+      <!-- 品牌区域 -->
+      <div class="brand-section">
+        <div class="brand-logo">
+          <div class="beme-logo">
+            <span class="beme-text">BEME</span>
           </div>
-        </div>
-        <div class="user-details">
-          <h3 class="user-name">{{ user?.user_name || '用户' }}</h3>
-          <p class="user-email">{{ user?.email || '' }}</p>
+          <div class="logo-container">
+            <div class="fractal-logo">
+              <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="logoGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#6ec6fa"/>
+                    <stop offset="100%" stop-color="#b6a6f7"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#logoGradient)" stroke-width="16" stroke-linecap="round"/>
+                <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
+                <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="32" font-weight="bold" fill="#1e3a8a" font-style="italic" letter-spacing="4">FRACTAL</text>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <div class="fractal-title">Fractal</div>
+              <div class="fractal-subtitle">语音助手</div>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -24,10 +39,8 @@
               class="nav-link"
               :class="{ active: $route.path === '/dashboard/overview' || $route.path === '/dashboard' }"
             >
-              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3,13H11V3H3M3,21H11V15H3M13,21H21V11H13M13,3V9H21V3"/>
-              </svg>
-              <span>概览</span>
+              <i class="nav-icon fas fa-home"></i>
+              <span>首页</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -36,10 +49,7 @@
               class="nav-link"
               :class="{ active: $route.path === '/dashboard/voice' }"
             >
-              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9,9H15V15H9M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
-              </svg>
-
+              <i class="nav-icon fas fa-comments"></i>
               <span>语音模拟器</span>
             </router-link>
           </li>
@@ -49,23 +59,39 @@
               class="nav-link"
               :class="{ active: $route.path === '/dashboard/device' }"
             >
-              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17,3H7A2,2 0 0,0 5,5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V5A2,2 0 0,0 17,3M17,19H7V5H17V19M16,10H13V7H16V10M12,7V10H9V7H12M16,11V14H13V11H16M12,11V14H9V11H12M16,15V18H13V15H16M12,15V18H9V15H12"/>
-              </svg>
+              <i class="nav-icon fas fa-desktop"></i>
               <span>设备管理</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              to="/dashboard/tone"
+              class="nav-link"
+              :class="{ active: $route.path === '/dashboard/tone' }"
+            >
+              <i class="nav-icon fas fa-user"></i>
+              <span>音色设置</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              to="/dashboard/mcp"
+              class="nav-link"
+              :class="{ active: $route.path === '/dashboard/mcp' }"
+            >
+              <i class="nav-icon fas fa-cube"></i>
+              <span>MCP订阅</span>
             </router-link>
           </li>
         </ul>
       </nav>
       
-      <!-- 登出按钮 -->
+      <!-- 设置按钮 -->
       <div class="sidebar-footer">
-        <button @click="handleLogout" class="logout-btn">
-          <svg class="logout-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z"/>
-          </svg>
-          <span>登出</span>
-        </button>
+        <router-link to="/dashboard/settings" class="settings-btn">
+          <i class="settings-icon fas fa-cog"></i>
+          <span>设置</span>
+        </router-link>
       </div>
     </aside>
     
@@ -100,13 +126,11 @@ export default {
         router.push('/login')
       } catch (error) {
         console.error('登出失败:', error)
-        // 即使登出失败，也要跳转到登录页面
-        router.push('/login')
       }
     }
     
     return {
-      user: userStore.user,
+      user: computed(() => userStore.user),
       userInitials,
       handleLogout
     }
@@ -118,74 +142,115 @@ export default {
 .dashboard {
   display: flex;
   min-height: 100vh;
-  background: #f8f9fa;
+  background-color: rgb(238, 235, 245);
 }
 
+/* 左侧导航栏 */
 .sidebar {
-  width: 280px;
-  background: white;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  width: 20%;
+  min-width: 250px;
+  background: #fff;
+  border-right: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
   height: 100vh;
-  z-index: 100;
+  left: 0;
+  top: 0;
 }
 
-.user-info {
-  padding: 2rem 1.5rem;
+/* 品牌区域 */
+.brand-section {
+  padding: 24px 20px;
   border-bottom: 1px solid #e9ecef;
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 1rem;
 }
 
-.user-avatar {
+.brand-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+.fractal-logo {
   flex-shrink: 0;
 }
 
-.avatar-placeholder {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.logo-svg {
+  width: 80px;
+  height: 80px;
+}
+
+.brand-text {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 600;
 }
 
-.user-details {
-  flex: 1;
-  min-width: 0;
+.fractal-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1e3a8a;
+  font-family: 'Orbitron', 'Arial', sans-serif;
+  letter-spacing: 2px;
+  font-style: italic;
 }
 
-.user-name {
+.fractal-subtitle {
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 0.25rem 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #1e3a8a;
+  font-weight: 500;
+  margin-top: 4px;
 }
 
-.user-email {
-  font-size: 0.85rem;
-  color: #6c757d;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.beme-logo {
+  margin-bottom: 8px;
 }
 
+.beme-text {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #1e3a8a;
+  font-family: 'Arial', sans-serif;
+  text-shadow: 
+    3px 3px 0px rgba(30, 58, 138, 0.8),
+    6px 6px 0px rgba(110, 198, 250, 0.4),
+    0 0 10px rgba(110, 198, 250, 0.6);
+  letter-spacing: 6px;
+  filter: drop-shadow(0 0 4px rgba(110, 198, 250, 0.8));
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #6ec6fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.beme-text::before {
+  content: 'BEME';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  color: rgba(110, 198, 250, 0.3);
+  z-index: -1;
+  text-shadow: none;
+  -webkit-text-fill-color: rgba(110, 198, 250, 0.3);
+}
+
+/* 导航菜单 */
 .nav-menu {
   flex: 1;
-  padding: 1rem 0;
+  padding: 20px 0;
 }
 
 .nav-list {
@@ -195,84 +260,97 @@ export default {
 }
 
 .nav-item {
-  margin-bottom: 0.5rem;
+  margin: 0;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  color: #6c757d;
+  padding: 12px 20px;
+  color: #333;
   text-decoration: none;
   transition: all 0.3s ease;
-  border-right: 3px solid transparent;
+  border-radius: 8px;
+  margin: 4px 12px;
 }
 
 .nav-link:hover {
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
+  background-color: #f8f9fa;
+  color: #6ec6fa;
 }
 
 .nav-link.active {
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
-  border-right-color: #667eea;
+  background-color: #e3f2fd;
+  color: #6ec6fa;
+  font-weight: 500;
 }
 
 .nav-icon {
   width: 20px;
-  height: 20px;
-  flex-shrink: 0;
+  margin-right: 12px;
+  font-size: 1rem;
 }
 
+.nav-link span {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* 设置按钮 */
 .sidebar-footer {
-  padding: 1rem 1.5rem;
+  padding: 20px;
   border-top: 1px solid #e9ecef;
 }
 
-.logout-btn {
+.settings-btn {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: none;
+  padding: 12px 16px;
+  background: #fff;
   border: 1px solid #e9ecef;
   border-radius: 8px;
-  color: #6c757d;
-  cursor: pointer;
+  color: #333;
+  text-decoration: none;
   transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.logout-btn:hover {
-  background: #f8f9fa;
-  border-color: #dee2e6;
-  color: #495057;
+.settings-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #6ec6fa;
+  color: #6ec6fa;
 }
 
-.logout-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
+.settings-icon {
+  width: 16px;
+  margin-right: 8px;
+  font-size: 0.9rem;
 }
 
+/* 主内容区域 */
 .main-content {
   flex: 1;
-  margin-left: 280px;
-  padding: 2rem;
+  margin-left: 20%;
   min-height: 100vh;
+  background-color: rgb(238, 235, 245);
+  padding: 0;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .sidebar {
-    transform: translateX(-100%);
+    width: 100%;
+    position: relative;
+    height: auto;
   }
   
   .main-content {
     margin-left: 0;
-    padding: 1rem;
+  }
+  
+  .dashboard {
+    flex-direction: column;
   }
 }
 </style> 

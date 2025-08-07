@@ -128,6 +128,14 @@ export const useUserStore = defineStore('user', () => {
     updateUserInfo,
     checkUserAuthStatus,
     clearErrors,
-    clearAuthData
+    clearAuthData,
+    // 直接暴露认证服务的方法
+    register,
+    login,
+    logout,
+    getProfile,
+    updateProfile,
+    checkAuthStatus,
+    initAuth
   }
 }) 

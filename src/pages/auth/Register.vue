@@ -1,103 +1,139 @@
 <template>
   <div class="register-page">
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <h1>注册</h1>
-          <p>创建您的 Fractal 语音助手账户</p>
+    <div class="register-container">
+      <div class="register-header">
+        <div class="register-logo">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="circleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#b6a6f7"/>
+                <stop offset="50%" stop-color="#6ec6fa"/>
+                <stop offset="100%" stop-color="#8be6b6"/>
+              </linearGradient>
+            </defs>
+            <path d="M 180 100 A 80 80 0 1 1 20 100" fill="none" stroke="url(#circleGradient)" stroke-width="16" stroke-linecap="round"/>
+            <rect x="92" y="18" width="16" height="18" rx="3" fill="#fff"/>
+            <text x="100" y="120" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="32" font-weight="bold" fill="#111" font-style="italic" letter-spacing="4">FRACTAL</text>
+          </svg>
+        </div>
+        <div>
+          <div class="register-title">Fractal</div>
+          <div class="register-welcome">创建您的语音助手账户</div>
+        </div>
+      </div>
+      
+      <form @submit.prevent="handleRegister" class="register-form">
+        <div class="form-group">
+          <label class="form-label" for="username">用户名</label>
+          <input
+            id="username"
+            v-model="formData.username"
+            type="text"
+            class="form-input"
+            :class="{ 'error': errors.username, 'success': successFields.username }"
+            placeholder="请输入用户名"
+            required
+          />
+          <div class="input-status">
+            <span v-if="errors.username" class="error-status">
+              <i class="fas fa-times"></i>{{ errors.username }}
+            </span>
+            <span v-else-if="successFields.username" class="success-status">
+              <i class="fas fa-check"></i>用户名可用
+            </span>
+          </div>
         </div>
         
-        <form @submit.prevent="handleRegister" class="auth-form">
-          <div class="form-group">
-            <label for="username">用户名</label>
-            <input
-              id="username"
-              v-model="formData.username"
-              type="text"
-              :class="{ 'error': errors.username }"
-              placeholder="请输入用户名"
-              required
-            />
-            <span v-if="errors.username" class="error-message">
-              {{ errors.username }}
+        <div class="form-group">
+          <label class="form-label" for="email">邮箱</label>
+          <input
+            id="email"
+            v-model="formData.email"
+            type="email"
+            class="form-input"
+            :class="{ 'error': errors.email, 'success': successFields.email }"
+            placeholder="请输入邮箱地址"
+            required
+          />
+          <div class="input-status">
+            <span v-if="errors.email" class="error-status">
+              <i class="fas fa-times"></i>{{ errors.email }}
+            </span>
+            <span v-else-if="successFields.email" class="success-status">
+              <i class="fas fa-check"></i>邮箱格式正确
             </span>
           </div>
-          
-          <div class="form-group">
-            <label for="email">邮箱</label>
-            <input
-              id="email"
-              v-model="formData.email"
-              type="email"
-              :class="{ 'error': errors.email }"
-              placeholder="请输入邮箱地址"
-              required
-            />
-            <span v-if="errors.email" class="error-message">
-              {{ errors.email }}
-            </span>
-          </div>
-          
-          <div class="form-group">
-            <label for="password">密码</label>
-            <input
-              id="password"
-              v-model="formData.password"
-              type="password"
-              :class="{ 'error': errors.password }"
-              placeholder="请输入密码（8-30位，包含数字和字母）"
-              required
-            />
-            <span v-if="errors.password" class="error-message">
-              {{ errors.password }}
-            </span>
-          </div>
-          
-          <div class="form-group">
-            <label for="confirmPassword">确认密码</label>
-            <input
-              id="confirmPassword"
-              v-model="formData.confirmPassword"
-              type="password"
-              :class="{ 'error': errors.confirmPassword }"
-              placeholder="请再次输入密码"
-              required
-            />
-            <span v-if="errors.confirmPassword" class="error-message">
-              {{ errors.confirmPassword }}
-            </span>
-          </div>
-          
-          <div class="form-actions">
-            <button
-              type="submit"
-              class="auth-button primary"
-              :disabled="isLoading"
-            >
-              <span v-if="isLoading" class="loading-spinner"></span>
-              {{ isLoading ? '注册中...' : '注册' }}
-            </button>
-          </div>
-          
-          <div v-if="registerError" class="auth-error">
-            {{ registerError }}
-          </div>
-          
-          <div v-if="registerSuccess" class="auth-success">
-            {{ registerSuccess }}
-          </div>
-        </form>
-        
-        <div class="auth-footer">
-          <p>已有账号？ <router-link to="/login">立即登录</router-link></p>
         </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="password">密码</label>
+          <input
+            id="password"
+            v-model="formData.password"
+            type="password"
+            class="form-input"
+            :class="{ 'error': errors.password, 'success': successFields.password }"
+            placeholder="请输入密码（8-30位，包含数字和字母）"
+            required
+          />
+          <div class="input-status">
+            <span v-if="errors.password" class="error-status">
+              <i class="fas fa-times"></i>{{ errors.password }}
+            </span>
+            <span v-else-if="successFields.password" class="success-status">
+              <i class="fas fa-check"></i>密码强度良好
+            </span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">确认密码</label>
+          <input
+            id="confirmPassword"
+            v-model="formData.confirmPassword"
+            type="password"
+            class="form-input"
+            :class="{ 'error': errors.confirmPassword, 'success': successFields.confirmPassword }"
+            placeholder="请再次输入密码"
+            required
+          />
+          <div class="input-status">
+            <span v-if="errors.confirmPassword" class="error-status">
+              <i class="fas fa-times"></i>{{ errors.confirmPassword }}
+            </span>
+            <span v-else-if="successFields.confirmPassword" class="success-status">
+              <i class="fas fa-check"></i>密码匹配
+            </span>
+          </div>
+        </div>
+        
+        <button
+          type="submit"
+          class="register-btn"
+          :disabled="isLoading"
+        >
+          <span v-if="isLoading" class="loading-spinner"></span>
+          {{ isLoading ? '注册中...' : '注册' }}
+        </button>
+        
+        <div v-if="registerError" class="register-error">
+          {{ registerError }}
+        </div>
+        
+        <div v-if="registerSuccess" class="register-success">
+          {{ registerSuccess }}
+        </div>
+      </form>
+      
+      <div class="register-footer">
+        <p>已有账号？ <router-link to="/login">立即登录</router-link></p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user.js'
 
@@ -123,7 +159,16 @@ export default {
       confirmPassword: ''
     })
     
-    // 注册成功信息
+    // 成功状态
+    const successFields = reactive({
+      username: false,
+      email: false,
+      password: false,
+      confirmPassword: false
+    })
+    
+    const isLoading = ref(false)
+    const registerError = ref('')
     const registerSuccess = ref('')
     
     // 清除错误信息
@@ -132,28 +177,89 @@ export default {
       errors.email = ''
       errors.password = ''
       errors.confirmPassword = ''
-      registerSuccess.value = ''
-      userStore.clearErrors()
+      registerError.value = ''
     }
     
-    // 邮箱验证
+    // 验证用户名
+    const validateUsername = (username) => {
+      if (!username.trim()) {
+        errors.username = '请输入用户名'
+        successFields.username = false
+        return false
+      } else if (username.length < 3) {
+        errors.username = '用户名至少3个字符'
+        successFields.username = false
+        return false
+      } else if (username.length > 20) {
+        errors.username = '用户名不能超过20个字符'
+        successFields.username = false
+        return false
+      } else {
+        errors.username = ''
+        successFields.username = true
+        return true
+      }
+    }
+    
+    // 验证邮箱
     const validateEmail = (email) => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(email)
+      if (!email.trim()) {
+        errors.email = '请输入邮箱'
+        successFields.email = false
+        return false
+      } else if (!emailRegex.test(email)) {
+        errors.email = '请输入有效的邮箱地址'
+        successFields.email = false
+        return false
+      } else {
+        errors.email = ''
+        successFields.email = true
+        return true
+      }
     }
     
-    // 密码强度验证
+    // 验证密码
     const validatePassword = (password) => {
-      // 检查长度：8-30位
-      if (password.length < 8 || password.length > 30) {
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$/
+      if (!password.trim()) {
+        errors.password = '请输入密码'
+        successFields.password = false
         return false
+      } else if (password.length < 8) {
+        errors.password = '密码至少8个字符'
+        successFields.password = false
+        return false
+      } else if (password.length > 30) {
+        errors.password = '密码不能超过30个字符'
+        successFields.password = false
+        return false
+      } else if (!passwordRegex.test(password)) {
+        errors.password = '密码必须包含数字和字母'
+        successFields.password = false
+        return false
+      } else {
+        errors.password = ''
+        successFields.password = true
+        return true
       }
-      
-      // 检查是否包含数字和字母
-      const hasNumber = /\d/.test(password)
-      const hasLetter = /[a-zA-Z]/.test(password)
-      
-      return hasNumber && hasLetter
+    }
+    
+    // 验证确认密码
+    const validateConfirmPassword = (confirmPassword) => {
+      if (!confirmPassword.trim()) {
+        errors.confirmPassword = '请确认密码'
+        successFields.confirmPassword = false
+        return false
+      } else if (confirmPassword !== formData.password) {
+        errors.confirmPassword = '两次输入的密码不一致'
+        successFields.confirmPassword = false
+        return false
+      } else {
+        errors.confirmPassword = ''
+        successFields.confirmPassword = true
+        return true
+      }
     }
     
     // 表单验证
@@ -161,50 +267,10 @@ export default {
       clearErrors()
       let isValid = true
       
-      // 用户名验证：3-50位
-      if (!formData.username.trim()) {
-        errors.username = '请输入用户名'
-        isValid = false
-      } else if (formData.username.length < 3) {
-        errors.username = '用户名至少3个字符'
-        isValid = false
-      } else if (formData.username.length > 50) {
-        errors.username = '用户名不能超过50个字符'
-        isValid = false
-      }
-      
-      // 邮箱验证
-      if (!formData.email.trim()) {
-        errors.email = '请输入邮箱地址'
-        isValid = false
-      } else if (!validateEmail(formData.email)) {
-        errors.email = '请输入有效的邮箱地址'
-        isValid = false
-      }
-      
-      // 密码验证：8-30位，数字字母组合
-      if (!formData.password.trim()) {
-        errors.password = '请输入密码'
-        isValid = false
-      } else if (!validatePassword(formData.password)) {
-        if (formData.password.length < 8) {
-          errors.password = '密码至少8个字符'
-        } else if (formData.password.length > 30) {
-          errors.password = '密码不能超过30个字符'
-        } else {
-          errors.password = '密码必须包含数字和字母'
-        }
-        isValid = false
-      }
-      
-      // 确认密码验证
-      if (!formData.confirmPassword.trim()) {
-        errors.confirmPassword = '请确认密码'
-        isValid = false
-      } else if (formData.password !== formData.confirmPassword) {
-        errors.confirmPassword = '两次输入的密码不一致'
-        isValid = false
-      }
+      isValid = validateUsername(formData.username) && isValid
+      isValid = validateEmail(formData.email) && isValid
+      isValid = validatePassword(formData.password) && isValid
+      isValid = validateConfirmPassword(formData.confirmPassword) && isValid
       
       return isValid
     }
@@ -215,51 +281,42 @@ export default {
         return
       }
       
+      isLoading.value = true
+      registerError.value = ''
+      registerSuccess.value = ''
+      
       try {
-        await userStore.userRegister({
+        await userStore.register({
           username: formData.username,
           email: formData.email,
           password: formData.password
         })
         
-        // 注册成功
-        registerSuccess.value = '注册成功！即将跳转到登录页面...'
-        
-        // 3秒后跳转到登录页面
+        registerSuccess.value = '注册成功！正在跳转到登录页面...'
         setTimeout(() => {
           router.push('/login')
-        }, 3000)
-        
+        }, 2000)
       } catch (error) {
-        console.error('注册失败:', error)
-        
-        // 处理特定的用户已存在错误
-        const errorMessage = error.message || ''
-        if (errorMessage.includes('用户已存在') || errorMessage.includes('用户API错误')) {
-          // 检查是用户名还是邮箱冲突
-          if (errorMessage.includes('用户名') || formData.username) {
-            errors.username = '该用户名已被注册，请使用其他用户名'
-          }
-          if (errorMessage.includes('邮箱') || formData.email) {
-            errors.email = '该邮箱已被注册，请使用其他邮箱'
-          }
-          // 如果不能确定具体冲突字段，显示通用提示
-          if (!errors.username && !errors.email) {
-            errors.username = '该用户名已被注册'
-            errors.email = '该邮箱可能已被注册'
-          }
-        }
-        // 其他错误信息已经在store中处理
+        registerError.value = error.message || '注册失败，请稍后重试'
+      } finally {
+        isLoading.value = false
       }
     }
+    
+    // 监听表单字段变化
+    watch(() => formData.username, validateUsername)
+    watch(() => formData.email, validateEmail)
+    watch(() => formData.password, validatePassword)
+    watch(() => formData.confirmPassword, validateConfirmPassword)
     
     return {
       formData,
       errors,
+      successFields,
+      isLoading,
+      registerError,
       registerSuccess,
-      handleRegister,
-      isLoading: userStore.isLoading,
-      registerError: userStore.registerError
+      handleRegister
     }
   }
 }
@@ -267,207 +324,191 @@ export default {
 
 <style scoped>
 .register-page {
+  margin: 0;
   min-height: 100vh;
+  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  background: radial-gradient(ellipse at 20% 20%, #b6f0fa 0%, #a2d6f7 40%, #3a2d4a 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 2rem;
 }
 
-.auth-container {
+.register-container {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 32px #b6b6e6;
+  width: 600px;
+  max-width: 95vw;
+  padding: 48px 48px 32px 48px;
+  margin: 60px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-header {
+  display: flex;
+  align-items: center;
   width: 100%;
-  max-width: 400px;
+  margin-bottom: 10px;
 }
 
-.auth-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  padding: 2rem;
-  animation: fadeIn 0.5s ease-out;
+.register-logo {
+  margin-right: 18px;
 }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.register-logo svg {
+  width: 70px;
+  height: 70px;
 }
 
-.auth-header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.5rem;
+.register-title {
+  font-size: 2.6rem;
+  font-weight: bold;
+  font-family: 'Orbitron', Arial, sans-serif;
+  color: #111;
+  letter-spacing: 2px;
+  margin-right: 18px;
 }
 
-.auth-header p {
-  color: #6c757d;
-  font-size: 0.9rem;
+.register-welcome {
+  color: #bbb;
+  font-size: 1.05rem;
+  margin-top: 2px;
+  margin-left: 2px;
+  font-weight: 400;
 }
 
-.auth-form {
-  margin-bottom: 1.5rem;
+.register-form {
+  width: 100%;
+  margin-top: 38px;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 28px;
 }
 
-.form-group label {
+.form-label {
+  font-size: 1.18rem;
+  font-weight: bold;
+  margin-bottom: 8px;
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #495057;
-  font-size: 0.9rem;
 }
 
-.form-group input {
+.form-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.form-group input:focus {
+  height: 44px;
+  border: 2px solid #bbb;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  padding: 0 14px;
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transition: border-color 0.2s;
+  margin-bottom: 0;
 }
 
-.form-group input.error {
-  border-color: #dc3545;
+.form-input:focus {
+  border-color: #6ec6fa;
 }
 
-.form-group input.error:focus {
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+.form-input.error {
+  border-color: #e74c3c;
 }
 
-.error-message {
-  color: #dc3545;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-  display: block;
+.form-input.success {
+  border-color: #2ecc71;
 }
 
-.form-actions {
-  margin-top: 2rem;
-}
-
-.auth-button {
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
+.input-status {
+  display: flex;
+  align-items: center;
   font-size: 1rem;
-  font-weight: 500;
+  margin-top: 4px;
+  min-height: 22px;
+}
+
+.input-status i {
+  margin-right: 6px;
+}
+
+.error-status {
+  color: #e74c3c;
+}
+
+.success-status {
+  color: #2ecc71;
+}
+
+.register-btn {
+  width: 220px;
+  height: 44px;
+  background: #6ec6fa;
+  color: #222;
+  font-size: 1.18rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 }
 
-.auth-button.primary {
-  background: #667eea;
-  color: white;
+.register-btn:hover {
+  background: #5bb5e9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(110, 198, 250, 0.3);
 }
 
-.auth-button.primary:hover:not(:disabled) {
-  background: #5a6fd8;
-  transform: translateY(-1px);
-}
-
-.auth-button:disabled {
-  opacity: 0.6;
+.register-btn:disabled {
+  background: #ccc;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .loading-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
+  border: 2px solid #fff;
+  border-top: 2px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-right: 8px;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.auth-error {
-  background: #f8d7da;
-  color: #721c24;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
+.register-error {
+  color: #e74c3c;
   font-size: 0.9rem;
-  border: 1px solid #f5c6cb;
-}
-
-.auth-success {
-  background: #d4edda;
-  color: #155724;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  border: 1px solid #c3e6cb;
-}
-
-.auth-footer {
+  margin-top: 12px;
   text-align: center;
-  padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
 }
 
-.auth-footer p {
-  color: #6c757d;
+.register-success {
+  color: #2ecc71;
   font-size: 0.9rem;
+  margin-top: 12px;
+  text-align: center;
 }
 
-.auth-footer a {
-  color: #667eea;
+.register-footer {
+  margin-top: 24px;
+  text-align: center;
+  color: #666;
+}
+
+.register-footer a {
+  color: #3498f7;
   text-decoration: none;
-  font-weight: 500;
 }
 
-.auth-footer a:hover {
-  color: #5a6fd8;
+.register-footer a:hover {
   text-decoration: underline;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .register-page {
-    padding: 1rem;
-  }
-  
-  .auth-card {
-    padding: 1.5rem;
-  }
-  
-  .auth-header h1 {
-    font-size: 1.5rem;
-  }
-}
-
-/* 动画效果 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 </style> 

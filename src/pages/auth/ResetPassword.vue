@@ -1,8 +1,8 @@
 <template>
-  <div class="login-page">
-    <div class="login-container">
-      <div class="login-header">
-        <div class="login-logo">
+  <div class="reset-page">
+    <div class="reset-container">
+      <div class="reset-header">
+        <div class="reset-logo">
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="circleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -17,60 +17,46 @@
           </svg>
         </div>
         <div>
-          <div class="login-title">Fractal</div>
-          <div class="login-welcome">欢迎回到语音助手</div>
+          <div class="reset-title">Fractal</div>
+          <div class="reset-welcome">重置密码</div>
         </div>
       </div>
       
-      <form @submit.prevent="handleLogin" class="login-form">
-        <label class="form-label" for="usernameOrEmail">用户名或邮箱</label>
+      <form @submit.prevent="handleReset" class="reset-form">
+        <label class="form-label" for="email">邮箱地址</label>
         <input
-          id="usernameOrEmail"
-          v-model="formData.usernameOrEmail"
-          type="text"
+          id="email"
+          v-model="formData.email"
+          type="email"
           class="form-input"
-          :class="{ 'error': errors.usernameOrEmail }"
-          placeholder="请输入用户名或邮箱"
+          :class="{ 'error': errors.email }"
+          placeholder="请输入您的邮箱地址"
           required
         />
-        <span v-if="errors.usernameOrEmail" class="error-message">
-          {{ errors.usernameOrEmail }}
+        <span v-if="errors.email" class="error-message">
+          {{ errors.email }}
         </span>
-        
-        <label class="form-label" for="password">密码</label>
-        <input
-          id="password"
-          v-model="formData.password"
-          type="password"
-          class="form-input"
-          :class="{ 'error': errors.password }"
-          placeholder="请输入密码"
-          required
-        />
-        <span v-if="errors.password" class="error-message">
-          {{ errors.password }}
-        </span>
-        
-        <div class="forgot-link">
-          <router-link to="/reset">忘记密码？</router-link>
-        </div>
         
         <button
           type="submit"
-          class="login-btn"
+          class="reset-btn"
           :disabled="isLoading"
         >
           <span v-if="isLoading" class="loading-spinner"></span>
-          {{ isLoading ? '登录中...' : '登录' }}
+          {{ isLoading ? '发送中...' : '发送重置链接' }}
         </button>
         
-        <div v-if="loginError" class="login-error">
-          {{ loginError }}
+        <div v-if="resetError" class="reset-error">
+          {{ resetError }}
+        </div>
+        
+        <div v-if="resetSuccess" class="reset-success">
+          {{ resetSuccess }}
         </div>
       </form>
       
-      <div class="login-footer">
-        <p>还没有账号？ <router-link to="/register">立即注册</router-link></p>
+      <div class="reset-footer">
+        <p>想起密码了？ <router-link to="/login">立即登录</router-link></p>
       </div>
     </div>
   </div>
@@ -79,34 +65,30 @@
 <script>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '../../stores/user.js'
 
 export default {
-  name: 'Login',
+  name: 'ResetPassword',
   setup() {
     const router = useRouter()
-    const userStore = useUserStore()
     
     // 表单数据
     const formData = reactive({
-      usernameOrEmail: '',
-      password: ''
+      email: ''
     })
     
     // 表单验证错误
     const errors = reactive({
-      usernameOrEmail: '',
-      password: ''
+      email: ''
     })
     
     const isLoading = ref(false)
-    const loginError = ref('')
+    const resetError = ref('')
+    const resetSuccess = ref('')
     
     // 清除错误信息
     const clearErrors = () => {
-      errors.usernameOrEmail = ''
-      errors.password = ''
-      loginError.value = ''
+      errors.email = ''
+      resetError.value = ''
     }
     
     // 表单验证
@@ -114,36 +96,43 @@ export default {
       clearErrors()
       let isValid = true
       
-      if (!formData.usernameOrEmail.trim()) {
-        errors.usernameOrEmail = '请输入用户名或邮箱'
+      if (!formData.email.trim()) {
+        errors.email = '请输入邮箱地址'
         isValid = false
-      }
-      
-      if (!formData.password.trim()) {
-        errors.password = '请输入密码'
-        isValid = false
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(formData.email)) {
+          errors.email = '请输入有效的邮箱地址'
+          isValid = false
+        }
       }
       
       return isValid
     }
     
-    // 处理登录
-    const handleLogin = async () => {
+    // 处理重置密码
+    const handleReset = async () => {
       if (!validateForm()) {
         return
       }
       
       isLoading.value = true
-      loginError.value = ''
+      resetError.value = ''
+      resetSuccess.value = ''
       
       try {
-        await userStore.login({
-          usernameOrEmail: formData.usernameOrEmail,
-          password: formData.password
-        })
-        router.push('/dashboard')
+        // 这里应该调用重置密码的API
+        // 暂时模拟成功
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        
+        resetSuccess.value = '重置链接已发送到您的邮箱，请查收邮件并按照提示重置密码。'
+        
+        // 3秒后跳转到登录页面
+        setTimeout(() => {
+          router.push('/login')
+        }, 3000)
       } catch (error) {
-        loginError.value = error.message || '登录失败，请检查用户名和密码'
+        resetError.value = error.message || '发送重置链接失败，请稍后重试'
       } finally {
         isLoading.value = false
       }
@@ -153,15 +142,16 @@ export default {
       formData,
       errors,
       isLoading,
-      loginError,
-      handleLogin
+      resetError,
+      resetSuccess,
+      handleReset
     }
   }
 }
 </script>
 
 <style scoped>
-.login-page {
+.reset-page {
   margin: 0;
   min-height: 100vh;
   font-family: 'Microsoft YaHei', Arial, sans-serif;
@@ -171,7 +161,7 @@ export default {
   justify-content: center;
 }
 
-.login-container {
+.reset-container {
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 4px 32px #b6b6e6;
@@ -184,23 +174,23 @@ export default {
   align-items: center;
 }
 
-.login-header {
+.reset-header {
   display: flex;
   align-items: center;
   width: 100%;
   margin-bottom: 10px;
 }
 
-.login-logo {
+.reset-logo {
   margin-right: 18px;
 }
 
-.login-logo svg {
+.reset-logo svg {
   width: 70px;
   height: 70px;
 }
 
-.login-title {
+.reset-title {
   font-size: 2.3rem;
   font-weight: bold;
   font-family: 'Orbitron', Arial, sans-serif;
@@ -209,7 +199,7 @@ export default {
   margin-right: 10px;
 }
 
-.login-welcome {
+.reset-welcome {
   color: #bbb;
   font-size: 1.05rem;
   margin-top: 2px;
@@ -217,7 +207,7 @@ export default {
   font-weight: 400;
 }
 
-.login-form {
+.reset-form {
   width: 100%;
   margin-top: 18px;
 }
@@ -257,15 +247,7 @@ export default {
   display: block;
 }
 
-.forgot-link {
-  color: #3498f7;
-  font-size: 1rem;
-  text-decoration: underline;
-  margin-bottom: 18px;
-  display: inline-block;
-}
-
-.login-btn {
+.reset-btn {
   width: 220px;
   height: 44px;
   background: #6ec6fa;
@@ -279,15 +261,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
 }
 
-.login-btn:hover {
+.reset-btn:hover {
   background: #5bb5e9;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(110, 198, 250, 0.3);
 }
 
-.login-btn:disabled {
+.reset-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
   transform: none;
@@ -309,25 +292,32 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
-.login-error {
+.reset-error {
   color: #e74c3c;
   font-size: 0.9rem;
   margin-top: 12px;
   text-align: center;
 }
 
-.login-footer {
+.reset-success {
+  color: #2ecc71;
+  font-size: 0.9rem;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.reset-footer {
   margin-top: 24px;
   text-align: center;
   color: #666;
 }
 
-.login-footer a {
+.reset-footer a {
   color: #3498f7;
   text-decoration: none;
 }
 
-.login-footer a:hover {
+.reset-footer a:hover {
   text-decoration: underline;
 }
 </style> 

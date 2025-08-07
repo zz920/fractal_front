@@ -70,8 +70,14 @@ export function useAuth() {
   // 处理API响应
   const handleApiResponse = async (response) => {
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      const errorMessage = errorData.message || `HTTP错误 ${response.status}`
+      let errorMessage = `HTTP错误 ${response.status}`
+      try {
+        const errorData = await response.json()
+        errorMessage = errorData.message || errorData.error || errorMessage
+      } catch (e) {
+        // 如果无法解析JSON，使用默认错误信息
+        console.error('无法解析错误响应:', e)
+      }
       throw new Error(errorMessage)
     }
     
@@ -114,6 +120,8 @@ export function useAuth() {
     error.value = null
     
     try {
+      console.log('登录请求数据:', credentials) // 调试信息
+      
       const response = await fetch(`${API_BASE_URL}/api/users/login`, {
         method: 'POST',
         headers: {
@@ -125,7 +133,11 @@ export function useAuth() {
         })
       })
       
+      console.log('登录响应状态:', response.status) // 调试信息
+      
       const result = await handleApiResponse(response)
+      
+      console.log('登录响应数据:', result) // 调试信息
       
       // 登录成功，保存认证信息
       const { token: tokenData, user: userData } = result.data
@@ -133,6 +145,7 @@ export function useAuth() {
       
       return userData
     } catch (err) {
+      console.error('登录错误:', err) // 调试信息
       error.value = err.message
       throw err
     } finally {
