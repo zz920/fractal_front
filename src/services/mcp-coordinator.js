@@ -1,5 +1,5 @@
 // MCP协调器 - 智能消息路由和意图分析
-import deepseekService from './deepseek.js'
+import deepseekV3Service from './deepseek-v3.js'
 import browserbaseMcpService from './browserbase-mcp.js'
 import navigationMcpService from './navigation-mcp.js'
 import intentRecognitionMcpService from './intent-recognition-mcp.js'
@@ -9,7 +9,7 @@ import contextManagementMcpService from './context-management-mcp.js'
 class McpCoordinator {
   constructor() {
     this.services = {
-      deepseek: deepseekService,
+      deepseekV3: deepseekV3Service,
       browserbase: browserbaseMcpService,
       navigation: navigationMcpService,
       intentRecognition: intentRecognitionMcpService,
@@ -415,7 +415,7 @@ class McpCoordinator {
     try {
       console.log('💬 处理一般查询...')
       
-      const result = await this.services.deepseek.sendMessage(message)
+      const result = await this.services.deepseekV3.sendMessage(message)
       
       return {
         type: 'ai_chat',

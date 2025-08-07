@@ -55,6 +55,15 @@ export const API_ENDPOINTS = {
     CONFIG: '/api/deepseek/config'
   },
 
+  // DeepSeek-V3 AI相关
+  DEEPSEEK_V3: {
+    CHAT: '/api/deepseek-v3/chat',
+    STREAM_CHAT: '/api/deepseek-v3/stream-chat',
+    HEALTH: '/api/deepseek-v3/health',
+    MODELS: '/api/deepseek-v3/models',
+    CONFIG: '/api/deepseek-v3/config'
+  },
+
   // Browserbase MCP相关
   BROWSERBASE: {
     HEALTH: '/api/browserbase/health',
@@ -67,6 +76,17 @@ export const API_ENDPOINTS = {
     CLOSE: '/api/browserbase/close',
     SESSIONS: '/api/browserbase/sessions'
   }
+}
+
+// DeepSeek-V3 模型配置
+export const DEEPSEEK_V3_CONFIG = {
+  MODEL_NAME: 'deepseek-v3',
+  TEMPERATURE: 0.7,
+  MAX_TOKENS: 2048,
+  TOP_P: 1,
+  FREQUENCY_PENALTY: 0,
+  PRESENCE_PENALTY: 0,
+  SYSTEM_PROMPT: '你是一个智能助手，能够理解并执行用户的指令，提供帮助和信息。'
 }
 
 // 请求配置

@@ -6,6 +6,8 @@ export { default as httpService } from './http.js'
 export { default as serverConnection } from './server-connection.js'
 export { default as serverIntegration } from './server-integration.js'
 export { default as deepseekService } from './deepseek.js'
+export { default as deepseekV3Service } from './deepseek-v3.js'
+export { default as deepseekV3ApiService } from './deepseek-v3-api.js'
 export { default as mcpCoordinator } from './mcp-coordinator.js'
 export { default as browserbaseMcpService } from './browserbase-mcp.js'
 export { default as navigationMcpService } from './navigation-mcp.js'
@@ -22,6 +24,8 @@ export default {
   serverConnection: await import('./server-connection.js').then(m => m.default),
   serverIntegration: await import('./server-integration.js').then(m => m.default),
   deepseekService: await import('./deepseek.js').then(m => m.default),
+  deepseekV3Service: await import('./deepseek-v3.js').then(m => m.default),
+  deepseekV3ApiService: await import('./deepseek-v3-api.js').then(m => m.default),
   mcpCoordinator: await import('./mcp-coordinator.js').then(m => m.default),
   browserbaseMcpService: await import('./browserbase-mcp.js').then(m => m.default),
   navigationMcpService: await import('./navigation-mcp.js').then(m => m.default),
