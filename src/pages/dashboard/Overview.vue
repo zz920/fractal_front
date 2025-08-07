@@ -98,7 +98,7 @@ export default {
 }
 
 .welcome-card {
-  background: #fff;
+  background: linear-gradient(to right, rgb(234, 238, 255), rgb(231, 210, 247));
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 32px;
