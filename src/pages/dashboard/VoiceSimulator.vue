@@ -64,8 +64,8 @@
                   v-model="userInputText"
                   class="user-input-textarea"
                   :placeholder="getInputPlaceholder()"
-                  :disabled="!microphoneEnabled && currentState !== 'ready'"
-                  @input="handleInputChange"
+                  :disabled="true"
+                  readonly
                   ref="userInputRef"
                 ></textarea>
                 <div class="input-actions">
@@ -198,16 +198,7 @@ export default {
       }
     }
     
-    // 处理输入变化
-    const handleInputChange = () => {
-      // 自动调整文本框高度
-      nextTick(() => {
-        if (userInputRef.value) {
-          userInputRef.value.style.height = 'auto'
-          userInputRef.value.style.height = userInputRef.value.scrollHeight + 'px'
-        }
-      })
-    }
+
     
     // 切换麦克风
     const toggleMicrophone = async () => {
@@ -308,10 +299,7 @@ export default {
           
           console.log('生成回复:', assistantResponse.value)
           
-          // 自动朗读生成的回复
-          setTimeout(() => {
-            autoSpeakResponse()
-          }, 500)
+
           
           // 朗读完成后继续录音
           setTimeout(() => {
@@ -540,7 +528,6 @@ export default {
       getStatusEmoji,
       getStatusText,
       getInputPlaceholder,
-      handleInputChange,
       speakResponse,
       autoSpeakResponse,
       startContinuousConversation,
@@ -711,7 +698,9 @@ export default {
   line-height: 1.5;
   resize: none;
   transition: all 0.3s ease;
-  background: #fff;
+  background: #f8f9fa;
+  color: #495057;
+  cursor: not-allowed;
 }
 
 .user-input-textarea:focus {
@@ -722,7 +711,7 @@ export default {
 
 .user-input-textarea:disabled {
   background: #f8f9fa;
-  color: #6c757d;
+  color: #495057;
   cursor: not-allowed;
 }
 
