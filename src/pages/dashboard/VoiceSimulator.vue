@@ -216,25 +216,38 @@ export default {
         await toggleMic() // 调用实际的麦克风切换函数
         currentState.value = 'generating'
         
-        // 检查是否有用户输入，如果没有则使用默认输入
-        const userInput = userInputText.value.trim() || 'Hi'
-        
-        // 模拟处理时间
+        // 模拟语音识别过程
         setTimeout(() => {
-          // 根据用户输入生成不同的回复
-          if (userInput.toLowerCase() === 'hi' || userInput.toLowerCase() === 'hello') {
-            assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
-          } else {
-            assistantResponse.value = `我听到了您说："${userInput}"。这是一个很好的开始！`
-          }
-          currentState.value = 'ready'
-        }, 2000)
+          // 模拟语音识别结果
+          const recognizedText = userInputText.value.trim() || 'Hi'
+          
+          // 将识别结果填入输入框
+          userInputText.value = recognizedText
+          
+          // 根据识别结果生成回复
+          setTimeout(() => {
+            if (recognizedText.toLowerCase() === 'hi' || recognizedText.toLowerCase() === 'hello') {
+              assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
+            } else {
+              assistantResponse.value = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
+            }
+            currentState.value = 'ready'
+          }, 1000)
+        }, 1500)
       } else {
         // 开始录音
         const success = await toggleMic() // 调用实际的麦克风切换函数
         if (success) {
           currentState.value = 'listening'
           userInputText.value = ''
+          
+          // 模拟语音识别过程，在录音期间显示识别结果
+          setTimeout(() => {
+            if (currentState.value === 'listening') {
+              // 模拟实时语音识别
+              userInputText.value = '正在识别您的语音...'
+            }
+          }, 500)
         } else {
           console.error('开启麦克风失败')
         }
