@@ -289,15 +289,49 @@ export default {
           
           console.log('生成回复:', assistantResponse.value)
           
+          // 模拟TTS文字实时显示
+          simulateTTSOutput(assistantResponse.value)
+          
           // 继续录音，等待下一句
           setTimeout(() => {
             if (microphoneEnabled.value) {
               currentState.value = 'listening'
               console.log('继续录音，等待下一句...')
             }
-          }, 2000) // 等待2秒后继续录音
+          }, 4000) // 等待TTS完成后再继续录音
         }, 1000)
       }, 1500)
+    }
+    
+    // 模拟TTS文字实时显示
+    const simulateTTSOutput = (text) => {
+      console.log('开始模拟TTS输出:', text)
+      currentState.value = 'speaking'
+      
+      // 清空之前的回复
+      assistantResponse.value = ''
+      
+      // 逐字显示TTS内容
+      const words = text.split('')
+      let currentIndex = 0
+      
+      const displayInterval = setInterval(() => {
+        if (currentIndex < words.length) {
+          assistantResponse.value += words[currentIndex]
+          currentIndex++
+        } else {
+          clearInterval(displayInterval)
+          console.log('TTS文字显示完成')
+          
+          // TTS显示完成后，继续录音
+          setTimeout(() => {
+            if (microphoneEnabled.value) {
+              currentState.value = 'listening'
+              console.log('TTS完成，继续录音...')
+            }
+          }, 1000)
+        }
+      }, 100) // 每100ms显示一个字
     }
     
     // 自动朗读回复（停止录音后自动触发）
@@ -519,7 +553,8 @@ export default {
       speakResponse,
       autoSpeakResponse,
       startContinuousConversation,
-      processUserSpeech
+      processUserSpeech,
+      simulateTTSOutput
     }
   }
 }
