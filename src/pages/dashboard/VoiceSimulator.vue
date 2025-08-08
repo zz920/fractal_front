@@ -213,7 +213,7 @@ export default {
     const toggleMicrophone = async () => {
       if (microphoneEnabled.value) {
         // 停止录音
-        await stopAudioStream()
+        await toggleMic() // 调用实际的麦克风切换函数
         currentState.value = 'generating'
         
         // 检查是否有用户输入，如果没有则使用默认输入
@@ -231,9 +231,13 @@ export default {
         }, 2000)
       } else {
         // 开始录音
-        await startAudioStream()
-        currentState.value = 'listening'
-        userInputText.value = ''
+        const success = await toggleMic() // 调用实际的麦克风切换函数
+        if (success) {
+          currentState.value = 'listening'
+          userInputText.value = ''
+        } else {
+          console.error('开启麦克风失败')
+        }
       }
     }
     
