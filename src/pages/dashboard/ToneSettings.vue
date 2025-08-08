@@ -61,7 +61,38 @@
               @click="selectTone(tone.id)"
             >
               <div class="tone-icon">
-                <i :class="tone.icon"></i>
+                <!-- 如果有自定义图片，显示图片；否则显示图标 -->
+                <img 
+                  v-if="tone.customImage" 
+                  :src="tone.customImage" 
+                  :alt="tone.name"
+                  class="tone-image"
+                  @click.stop="previewImage(tone.customImage, tone.name)"
+                />
+                <i v-else :class="tone.icon"></i>
+                <!-- 图片上传按钮 -->
+                <div class="image-upload-overlay" @click.stop>
+                  <input 
+                    type="file" 
+                    :ref="`imageInput-${tone.id}`"
+                    @change="handleImageUpload($event, tone.id)"
+                    accept="image/*"
+                    class="image-input"
+                  />
+                  <div class="upload-actions">
+                    <button class="upload-image-btn" @click="$refs[`imageInput-${tone.id}`][0].click()" title="上传封面">
+                      <i class="fas fa-camera"></i>
+                    </button>
+                    <button 
+                      v-if="tone.customImage" 
+                      class="remove-image-btn" 
+                      @click="removeCustomImage(tone.id)"
+                      title="删除封面"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
               <div class="tone-info">
                 <h3>{{ tone.name }}</h3>
@@ -106,7 +137,38 @@
               @click="selectTone(tone.id)"
             >
               <div class="tone-icon">
-                <i :class="tone.icon"></i>
+                <!-- 如果有自定义图片，显示图片；否则显示图标 -->
+                <img 
+                  v-if="tone.customImage" 
+                  :src="tone.customImage" 
+                  :alt="tone.name"
+                  class="tone-image"
+                  @click.stop="previewImage(tone.customImage, tone.name)"
+                />
+                <i v-else :class="tone.icon"></i>
+                <!-- 图片上传按钮 -->
+                <div class="image-upload-overlay" @click.stop>
+                  <input 
+                    type="file" 
+                    :ref="`imageInput-${tone.id}`"
+                    @change="handleImageUpload($event, tone.id)"
+                    accept="image/*"
+                    class="image-input"
+                  />
+                  <div class="upload-actions">
+                    <button class="upload-image-btn" @click="$refs[`imageInput-${tone.id}`][0].click()" title="上传封面">
+                      <i class="fas fa-camera"></i>
+                    </button>
+                    <button 
+                      v-if="tone.customImage" 
+                      class="remove-image-btn" 
+                      @click="removeCustomImage(tone.id)"
+                      title="删除封面"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
               <div class="tone-info">
                 <h3>{{ tone.name }}</h3>
@@ -156,10 +218,27 @@
               </div>
               <div class="completion-form">
                 <div class="completion-upload-section">
-                  <div class="cover-upload">
-                    <i class="fas fa-plus"></i>
-                    <p>点击此处上传音色封面</p>
+                  <div class="cover-upload" @click="$refs.coverInput.click()">
+                    <!-- 如果已上传封面，显示图片；否则显示上传提示 -->
+                    <div v-if="customToneCover" class="cover-preview">
+                      <img :src="customToneCover" alt="封面预览" class="cover-image" />
+                      <div class="cover-overlay">
+                        <button class="change-cover-btn" @click.stop="$refs.coverInput.click()">
+                          <i class="fas fa-camera"></i>
+                          更换封面
+                        </button>
+                        <button class="remove-cover-btn" @click.stop="removeCustomCover">
+                          <i class="fas fa-trash"></i>
+                          删除封面
+                        </button>
+                      </div>
+                    </div>
+                    <div v-else class="cover-upload-placeholder">
+                      <i class="fas fa-plus"></i>
+                      <p>点击此处上传音色封面</p>
+                    </div>
                     <input 
+                      ref="coverInput"
                       type="file" 
                       accept="image/*" 
                       @change="handleCoverUpload" 
@@ -291,7 +370,38 @@
                 @click="selectTone(tone.id)"
               >
                 <div class="tone-icon">
-                  <i :class="tone.icon"></i>
+                  <!-- 如果有自定义图片，显示图片；否则显示图标 -->
+                  <img 
+                    v-if="tone.customImage" 
+                    :src="tone.customImage" 
+                    :alt="tone.name"
+                    class="tone-image"
+                    @click.stop="previewImage(tone.customImage, tone.name)"
+                  />
+                  <i v-else :class="tone.icon"></i>
+                  <!-- 图片上传按钮 -->
+                  <div class="image-upload-overlay" @click.stop>
+                    <input 
+                      type="file" 
+                      :ref="`imageInput-${tone.id}`"
+                      @change="handleImageUpload($event, tone.id)"
+                      accept="image/*"
+                      class="image-input"
+                    />
+                    <div class="upload-actions">
+                      <button class="upload-image-btn" @click="$refs[`imageInput-${tone.id}`][0].click()" title="上传封面">
+                        <i class="fas fa-camera"></i>
+                      </button>
+                      <button 
+                        v-if="tone.customImage" 
+                        class="remove-image-btn" 
+                        @click="removeCustomImage(tone.id)"
+                        title="删除封面"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div class="tone-info">
                   <h3>{{ tone.name }}</h3>
@@ -325,7 +435,38 @@
                 @click="selectTone(tone.id)"
               >
                 <div class="tone-icon">
-                  <i :class="tone.icon"></i>
+                  <!-- 如果有自定义图片，显示图片；否则显示图标 -->
+                  <img 
+                    v-if="tone.customImage" 
+                    :src="tone.customImage" 
+                    :alt="tone.name"
+                    class="tone-image"
+                    @click.stop="previewImage(tone.customImage, tone.name)"
+                  />
+                  <i v-else :class="tone.icon"></i>
+                  <!-- 图片上传按钮 -->
+                  <div class="image-upload-overlay" @click.stop>
+                    <input 
+                      type="file" 
+                      :ref="`imageInput-${tone.id}`"
+                      @change="handleImageUpload($event, tone.id)"
+                      accept="image/*"
+                      class="image-input"
+                    />
+                    <div class="upload-actions">
+                      <button class="upload-image-btn" @click="$refs[`imageInput-${tone.id}`][0].click()" title="上传封面">
+                        <i class="fas fa-camera"></i>
+                      </button>
+                      <button 
+                        v-if="tone.customImage" 
+                        class="remove-image-btn" 
+                        @click="removeCustomImage(tone.id)"
+                        title="删除封面"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div class="tone-info">
                   <h3>{{ tone.name }}</h3>
@@ -364,8 +505,38 @@
                 @click="selectTone(tone.id)"
               >
                 <div class="tone-icon">
-                  <img v-if="tone.cover" :src="tone.cover" :alt="tone.name" class="tone-cover" />
+                  <!-- 如果有自定义图片，显示图片；否则显示图标 -->
+                  <img 
+                    v-if="tone.customImage || tone.cover" 
+                    :src="tone.customImage || tone.cover" 
+                    :alt="tone.name"
+                    class="tone-image"
+                    @click.stop="previewImage(tone.customImage || tone.cover, tone.name)"
+                  />
                   <i v-else :class="tone.icon"></i>
+                  <!-- 图片上传按钮 -->
+                  <div class="image-upload-overlay" @click.stop>
+                    <input 
+                      type="file" 
+                      :ref="`imageInput-${tone.id}`"
+                      @change="handleImageUpload($event, tone.id)"
+                      accept="image/*"
+                      class="image-input"
+                    />
+                    <div class="upload-actions">
+                      <button class="upload-image-btn" @click="$refs[`imageInput-${tone.id}`][0].click()" title="上传封面">
+                        <i class="fas fa-camera"></i>
+                      </button>
+                      <button 
+                        v-if="tone.customImage" 
+                        class="remove-image-btn" 
+                        @click="removeCustomImage(tone.id)"
+                        title="删除封面"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div class="tone-info">
                   <h3>{{ tone.name }}</h3>
@@ -409,6 +580,7 @@ export default {
     const shareToPublic = ref(true)
     const myCustomTones = ref([])
     const isEditMode = ref(false) // 编辑模式开关
+    const customToneCover = ref(null) // 新增：用于存储自定义音色的封面图片URL
 
     // 推荐音色
     const recommendedTones = ref([
@@ -566,14 +738,55 @@ export default {
 
     const handleCoverUpload = (event) => {
       const file = event.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          // 这里可以处理封面图片
-          console.log('封面上传:', e.target.result)
-        }
-        reader.readAsDataURL(file)
+      if (!file) return
+
+      // 验证文件类型
+      if (!file.type.startsWith('image/')) {
+        alert('请选择图片文件')
+        return
       }
+
+      // 验证文件大小（限制为5MB）
+      if (file.size > 5 * 1024 * 1024) {
+        alert('图片文件大小不能超过5MB')
+        return
+      }
+
+      // 显示上传进度
+      const loadingToast = showLoadingToast('正在上传封面图片...')
+
+      // 创建FileReader来读取图片
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const imageUrl = e.target.result
+        
+        // 验证图片尺寸
+        const img = new Image()
+        img.onload = () => {
+          // 检查图片尺寸，建议最小200x200
+          if (img.width < 200 || img.height < 200) {
+            hideLoadingToast(loadingToast)
+            if (!confirm('图片尺寸较小，可能影响显示效果。是否继续使用？')) {
+              return
+            }
+          }
+          
+          // 保存封面图片URL
+          customToneCover.value = imageUrl
+          hideLoadingToast(loadingToast)
+          showSuccessToast('封面图片上传成功！')
+        }
+        img.onerror = () => {
+          hideLoadingToast(loadingToast)
+          showErrorToast('图片加载失败，请重试')
+        }
+        img.src = imageUrl
+      }
+      reader.onerror = () => {
+        hideLoadingToast(loadingToast)
+        showErrorToast('图片读取失败，请重试')
+      }
+      reader.readAsDataURL(file)
     }
 
     const completeTraining = () => {
@@ -588,7 +801,7 @@ export default {
         name: customToneName.value,
         description: '自定义训练音色',
         icon: 'fas fa-cube',
-        cover: null, // 这里可以设置上传的封面
+        cover: customToneCover.value, // 使用上传的封面图片URL
         type: 'custom'
       }
 
@@ -598,6 +811,7 @@ export default {
       trainingStatus.value = 'idle'
       uploadedFiles.value = []
       customToneName.value = ''
+      customToneCover.value = null // 清空封面图片URL
       shareToPublic.value = true
       
       // 切换到我的音色页面
@@ -657,6 +871,204 @@ export default {
       }
     }
 
+    // 处理图片上传
+    const handleImageUpload = (event, toneId) => {
+      const file = event.target.files[0]
+      if (!file) return
+
+      // 验证文件类型
+      if (!file.type.startsWith('image/')) {
+        alert('请选择图片文件')
+        return
+      }
+
+      // 验证文件大小（限制为5MB）
+      if (file.size > 5 * 1024 * 1024) {
+        alert('图片文件大小不能超过5MB')
+        return
+      }
+
+      // 显示上传进度
+      const loadingToast = showLoadingToast('正在上传图片...')
+
+      // 创建FileReader来读取图片
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const imageUrl = e.target.result
+        
+        // 验证图片尺寸
+        const img = new Image()
+        img.onload = () => {
+          // 检查图片尺寸，建议最小200x200
+          if (img.width < 200 || img.height < 200) {
+            hideLoadingToast(loadingToast)
+            if (!confirm('图片尺寸较小，可能影响显示效果。是否继续使用？')) {
+              return
+            }
+          }
+          
+          // 更新对应音色的自定义图片
+          updateToneImage(toneId, imageUrl)
+          hideLoadingToast(loadingToast)
+          showSuccessToast('图片上传成功！')
+        }
+        img.onerror = () => {
+          hideLoadingToast(loadingToast)
+          showErrorToast('图片加载失败，请重试')
+        }
+        img.src = imageUrl
+      }
+      reader.onerror = () => {
+        hideLoadingToast(loadingToast)
+        showErrorToast('图片读取失败，请重试')
+      }
+      reader.readAsDataURL(file)
+    }
+
+    // 显示加载提示
+    const showLoadingToast = (message) => {
+      const toast = document.createElement('div')
+      toast.className = 'loading-toast'
+      toast.innerHTML = `
+        <div class="loading-content">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>${message}</span>
+        </div>
+      `
+      document.body.appendChild(toast)
+      return toast
+    }
+
+    // 隐藏加载提示
+    const hideLoadingToast = (toast) => {
+      if (toast && toast.parentNode) {
+        toast.parentNode.removeChild(toast)
+      }
+    }
+
+    // 显示成功提示
+    const showSuccessToast = (message) => {
+      const toast = document.createElement('div')
+      toast.className = 'success-toast'
+      toast.innerHTML = `
+        <div class="toast-content">
+          <i class="fas fa-check-circle"></i>
+          <span>${message}</span>
+        </div>
+      `
+      document.body.appendChild(toast)
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast)
+        }
+      }, 3000)
+    }
+
+    // 显示错误提示
+    const showErrorToast = (message) => {
+      const toast = document.createElement('div')
+      toast.className = 'error-toast'
+      toast.innerHTML = `
+        <div class="toast-content">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>${message}</span>
+        </div>
+      `
+      document.body.appendChild(toast)
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast)
+        }
+      }, 3000)
+    }
+
+    // 更新音色图片
+    const updateToneImage = (toneId, imageUrl) => {
+      // 更新推荐音色
+      const recommendedTone = recommendedTones.value.find(t => t.id === toneId)
+      if (recommendedTone) {
+        recommendedTone.customImage = imageUrl
+        return
+      }
+
+      // 更新音色大全
+      const libraryTone = libraryTones.value.find(t => t.id === toneId)
+      if (libraryTone) {
+        libraryTone.customImage = imageUrl
+        return
+      }
+
+      // 更新使用历史
+      const usedTone = usedTones.value.find(t => t.id === toneId)
+      if (usedTone) {
+        usedTone.customImage = imageUrl
+        return
+      }
+
+      // 更新我的收藏
+      const favoriteTone = favoriteTones.value.find(t => t.id === toneId)
+      if (favoriteTone) {
+        favoriteTone.customImage = imageUrl
+        return
+      }
+
+      // 更新我的模型
+      const customTone = myCustomTones.value.find(t => t.id === toneId)
+      if (customTone) {
+        customTone.customImage = imageUrl
+        return
+      }
+    }
+
+    // 预览图片
+    const previewImage = (imageUrl, toneName) => {
+      const modal = document.createElement('div')
+      modal.className = 'image-preview-modal'
+      modal.innerHTML = `
+        <div class="modal-overlay">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>${toneName} - 封面预览</h3>
+              <button class="close-btn" onclick="this.closest('.image-preview-modal').remove()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <img src="${imageUrl}" alt="${toneName}" class="preview-image">
+            </div>
+          </div>
+        </div>
+      `
+      document.body.appendChild(modal)
+      
+      // 点击遮罩关闭
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove()
+        }
+      })
+    }
+
+    // 删除自定义图片
+    const removeCustomImage = (toneId) => {
+      if (!confirm('确定要删除自定义封面吗？')) {
+        return
+      }
+      
+      // 清除对应音色的自定义图片
+      updateToneImage(toneId, null)
+      showSuccessToast('封面已删除')
+    }
+
+    // 删除自定义封面
+    const removeCustomCover = () => {
+      if (!confirm('确定要删除封面吗？')) {
+        return
+      }
+      customToneCover.value = null
+      showSuccessToast('封面已删除')
+    }
+
     return {
       selectedTone,
       activeFunction,
@@ -687,7 +1099,12 @@ export default {
       toggleEditMode,
       removeFromHistory,
       removeFromFavorites,
-      removeFromModels
+      removeFromModels,
+      handleImageUpload,
+      previewImage,
+      removeCustomImage,
+      customToneCover,
+      removeCustomCover
     }
   }
 }
@@ -893,12 +1310,110 @@ export default {
   margin-right: 16px;
   flex-shrink: 0;
   overflow: hidden;
+  position: relative;
 }
 
-.tone-cover {
+.tone-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.tone-image:hover {
+  transform: scale(1.05);
+}
+
+.image-upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tone-icon:hover .image-upload-overlay {
+  opacity: 1;
+}
+
+.image-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-actions {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tone-icon:hover .upload-actions {
+  opacity: 1;
+}
+
+.upload-image-btn {
+  background: #fff;
+  color: #6ec6fa;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.upload-image-btn:hover {
+  background: #f8f9ff;
+  color: #5bb5e9;
+  border-color: #6ec6fa;
+  transform: scale(1.1);
+}
+
+.remove-image-btn {
+  background: #fff;
+  color: #ff6b6b;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.remove-image-btn:hover {
+  background: #fff5f5;
+  color: #ff5252;
+  border-color: #ff6b6b;
+  transform: scale(1.1);
 }
 
 .tone-info {
@@ -1280,6 +1795,83 @@ export default {
   cursor: pointer;
 }
 
+.cover-preview {
+  position: relative;
+  width: 100%;
+  height: 100px; /* Fixed height for preview */
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.cover-preview .cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover-preview .cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cover-preview:hover .cover-overlay {
+  opacity: 1;
+}
+
+.cover-preview .change-cover-btn,
+.cover-preview .remove-cover-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.cover-preview .change-cover-btn:hover,
+.cover-preview .remove-cover-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.cover-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.cover-upload-placeholder i {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
 .name-input {
   flex: 1;
 }
@@ -1464,6 +2056,233 @@ export default {
   padding-top: 24px;
 }
 
+/* 图片预览模态框 */
+.image-preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+  text-align: center;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Toast提示样式 */
+.loading-toast,
+.success-toast,
+.error-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: toastSlideIn 0.3s ease;
+  max-width: 300px;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.loading-toast {
+  background: #6ec6fa;
+  color: #fff;
+}
+
+.success-toast {
+  background: #51cf66;
+  color: #fff;
+}
+
+.error-toast {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.loading-content,
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-content i,
+.toast-content i {
+  font-size: 1.2rem;
+}
+
+.loading-content span,
+.toast-content span {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* 上传操作按钮样式 */
+.upload-actions {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tone-icon:hover .upload-actions {
+  opacity: 1;
+}
+
+.upload-image-btn {
+  background: #fff;
+  color: #6ec6fa;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.upload-image-btn:hover {
+  background: #f8f9ff;
+  color: #5bb5e9;
+  border-color: #6ec6fa;
+  transform: scale(1.1);
+}
+
+.remove-image-btn {
+  background: #fff;
+  color: #ff6b6b;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.remove-image-btn:hover {
+  background: #fff5f5;
+  color: #ff5252;
+  border-color: #ff6b6b;
+  transform: scale(1.1);
+}
+
+/* 图片样式优化 */
+.tone-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.tone-image:hover {
+  transform: scale(1.05);
+}
+
+/* 响应式设计 */
 @media (max-width: 768px) {
   .tone-settings {
     padding: 20px;
@@ -1529,6 +2348,39 @@ export default {
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
+  }
+
+  .modal-content {
+    margin: 20px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+  }
+  
+  .modal-header {
+    padding: 16px 20px;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  .loading-toast,
+  .success-toast,
+  .error-toast {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  
+  .upload-actions {
+    gap: 4px;
+  }
+  
+  .upload-image-btn,
+  .remove-image-btn {
+    width: 32px;
+    height: 32px;
   }
 }
 </style> 
