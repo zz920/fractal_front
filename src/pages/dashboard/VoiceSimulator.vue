@@ -16,13 +16,75 @@
         
         <!-- 主对话区域 -->
         <div class="main-conversation-area">
-          <MainTextArea 
-            :current-text="currentText"
-            :display-state="displayState"
-            :server-status="serverStatus"
-            :microphone-enabled="microphoneEnabled"
-            @toggle-microphone="toggleMicrophone"
-          />
+          <!-- 状态显示区域 -->
+          <div class="status-display">
+            <div class="status-emoji">{{ getStatusEmoji() }}</div>
+            <div class="status-text">{{ getStatusText() }}</div>
+          </div>
+          
+          <!-- 对话区域 -->
+          <div class="conversation-container">
+            <!-- 用户输入区域 -->
+            <div class="user-input-section">
+              <div class="input-label">您的语音输入</div>
+              <div class="input-container">
+                <textarea
+                  v-model="userInputText"
+                  class="user-input-textarea"
+                  :placeholder="getInputPlaceholder()"
+                  :disabled="!microphoneEnabled && currentState !== 'ready'"
+                  @input="handleInputChange"
+                  ref="userInputRef"
+                ></textarea>
+                <div class="input-actions">
+                  <button 
+                    @click="toggleMicrophone"
+                    :disabled="!isServerOnline"
+                    :class="{ 
+                      'mic-button': !microphoneEnabled,
+                      'stop-button': microphoneEnabled 
+                    }"
+                    class="action-button"
+                  >
+                    <i :class="microphoneEnabled ? 'fas fa-stop' : 'fas fa-microphone'"></i>
+                    {{ microphoneEnabled ? '停止录音' : '开始录音' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 助手输出区域 -->
+            <div class="assistant-output-section">
+              <div class="output-label">Fractal语音助手</div>
+              <div class="output-container">
+                <div class="output-text" :class="{ 'generating': currentState === 'generating' }">
+                  <div v-if="currentState === 'ready'" class="welcome-message">
+                    Hi, this is Fractal Voice Assistant, try talking to me.
+                  </div>
+                  <div v-else-if="currentState === 'listening'" class="listening-message">
+                    || 聆听中 ||
+                  </div>
+                  <div v-else-if="currentState === 'generating'" class="generating-message">
+                    生成中
+                  </div>
+                  <div v-else-if="assistantResponse" class="response-message">
+                    {{ assistantResponse }}
+                  </div>
+                </div>
+                <div class="output-actions">
+                  <button 
+                    v-if="assistantResponse"
+                    @click="speakResponse"
+                    :disabled="isSpeaking"
+                    class="speak-button"
+                  >
+                    <i :class="isSpeaking ? 'fas fa-volume-mute' : 'fas fa-volume-up'"></i>
+                    {{ isSpeaking ? '播放中...' : '朗读回复' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -30,18 +92,14 @@
 </template>
 
 <script>
-import MainTextArea from '../../components/MainTextArea.vue'
 import { useWebSocket } from '../../services/websocket.js'
 import { useAudio } from '../../services/audio.js'
 import { useServer } from '../../services/server.js'
 import { useProtocol } from '../../services/protocol.js'
-import { watch, computed, ref } from 'vue'
+import { watch, computed, ref, nextTick } from 'vue'
 
 export default {
   name: 'VoiceSimulator',
-  components: {
-    MainTextArea
-  },
   setup() {
     const { connectionStatus, connect, disconnect, sendMessage, sendBinary, addMessageHandler, removeMessageHandler } = useWebSocket()
     const { microphoneStatus, microphoneEnabled, toggleMicrophone: toggleMic, startAudioStream, stopAudioStream } = useAudio()
@@ -63,6 +121,12 @@ export default {
 
     const configFetched = ref(false)
     const detectMessageSent = ref(false)
+    
+    // 新的状态变量
+    const userInputText = ref('')
+    const assistantResponse = ref('')
+    const currentState = ref('ready') // ready, listening, generating, speaking
+    const userInputRef = ref(null)
 
     // 服务器状态计算属性
     const serverStatusClass = computed(() => {
@@ -83,21 +147,97 @@ export default {
       }
     })
 
-    // 计算显示状态
-    const displayState = computed(() => {
-      // 如果正在播放TTS，显示speaking状态
-      if (isSpeaking.value) {
-        return 'speaking'
-      }
-      
-      // 如果麦克风已开启且不在播放状态，显示listening状态（显示emoji）
-      if (microphoneEnabled.value) {
-        return 'listening'
-      }
-      
-      // 默认显示ready状态
-      return 'ready'
+    // 计算服务器是否在线
+    const isServerOnline = computed(() => {
+      return serverStatus.value === 'online'
     })
+    
+    // 获取状态颜文字
+    const getStatusEmoji = () => {
+      switch (currentState.value) {
+        case 'ready':
+          return '(@|ワ|@),'
+        case 'listening':
+          return '(@•₃•@)'
+        case 'generating':
+          return '^o^'
+        case 'speaking':
+          return '😃'
+        default:
+          return '(@|ワ|@),'
+      }
+    }
+    
+    // 获取状态文本
+    const getStatusText = () => {
+      switch (currentState.value) {
+        case 'ready':
+          return '等待输入'
+        case 'listening':
+          return '正在聆听'
+        case 'generating':
+          return '正在生成回复'
+        case 'speaking':
+          return '正在朗读'
+        default:
+          return '等待输入'
+      }
+    }
+    
+    // 获取输入框占位符
+    const getInputPlaceholder = () => {
+      switch (currentState.value) {
+        case 'ready':
+          return '点击开始录音按钮，然后开始说话...'
+        case 'listening':
+          return '正在录音，请说话...'
+        case 'generating':
+          return '正在处理您的语音...'
+        default:
+          return '点击开始录音按钮，然后开始说话...'
+      }
+    }
+    
+    // 处理输入变化
+    const handleInputChange = () => {
+      // 自动调整文本框高度
+      nextTick(() => {
+        if (userInputRef.value) {
+          userInputRef.value.style.height = 'auto'
+          userInputRef.value.style.height = userInputRef.value.scrollHeight + 'px'
+        }
+      })
+    }
+    
+    // 切换麦克风
+    const toggleMicrophone = async () => {
+      if (microphoneEnabled.value) {
+        // 停止录音
+        await stopAudioStream()
+        currentState.value = 'generating'
+        // 模拟处理时间
+        setTimeout(() => {
+          assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
+          currentState.value = 'ready'
+        }, 2000)
+      } else {
+        // 开始录音
+        await startAudioStream()
+        currentState.value = 'listening'
+        userInputText.value = ''
+      }
+    }
+    
+    // 朗读回复
+    const speakResponse = () => {
+      if (assistantResponse.value && !isSpeaking.value) {
+        currentState.value = 'speaking'
+        // 这里可以调用TTS服务
+        setTimeout(() => {
+          currentState.value = 'ready'
+        }, 3000)
+      }
+    }
 
     // 监听服务器状态变化，自动获取配置
     watch(serverStatus, async (newStatus) => {
@@ -229,9 +369,19 @@ export default {
       serverStatusClass,
       serverStatusText,
       currentText,
-      displayState,
       microphoneEnabled,
-      toggleMicrophone
+      toggleMicrophone,
+      // 新的状态和方法
+      userInputText,
+      assistantResponse,
+      currentState,
+      userInputRef,
+      isServerOnline,
+      getStatusEmoji,
+      getStatusText,
+      getInputPlaceholder,
+      handleInputChange,
+      speakResponse
     }
   }
 }
@@ -332,7 +482,227 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0;
+  padding: 24px;
+  gap: 24px;
+}
+
+/* 状态显示区域 */
+.status-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.status-emoji {
+  font-size: 2rem;
+  font-family: monospace;
+  color: #6c757d;
+  animation: pulse 2s infinite;
+}
+
+.status-text {
+  font-size: 1rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+/* 对话区域 */
+.conversation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+}
+
+/* 用户输入区域 */
+.user-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-input-textarea {
+  min-height: 80px;
+  max-height: 200px;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: none;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.user-input-textarea:focus {
+  outline: none;
+  border-color: #6ec6fa;
+  box-shadow: 0 0 0 3px rgba(110, 198, 250, 0.1);
+}
+
+.user-input-textarea:disabled {
+  background: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.input-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mic-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.mic-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.stop-button {
+  background: #dc3545;
+  color: white;
+}
+
+.stop-button:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 助手输出区域 */
+.assistant-output-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.output-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.output-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.output-text {
+  min-height: 120px;
+  padding: 20px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.output-text.generating {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+  border-color: #6ec6fa;
+}
+
+.welcome-message {
+  color: #333;
+  font-weight: 500;
+}
+
+.listening-message {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.generating-message {
+  color: #6ec6fa;
+  font-weight: 500;
+}
+
+.response-message {
+  color: #333;
+  text-align: left;
+  width: 100%;
+}
+
+.output-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.speak-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.speak-button:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.speak-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* 响应式设计 */
