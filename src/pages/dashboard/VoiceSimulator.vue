@@ -350,19 +350,7 @@ export default {
     addMessageHandler('json', handleJsonMessage)
     addMessageHandler('binary', handleBinaryMessage)
 
-    // 自定义麦克风切换逻辑
-    const toggleMicrophone = async () => {
-      if (microphoneEnabled.value) {
-        // 关闭麦克风
-        await toggleMic()
-      } else {
-        // 开启麦克风
-        const success = await toggleMic()
-        if (!success) {
-          console.error('开启麦克风失败')
-        }
-      }
-    }
+
 
     return {
       serverStatus,
@@ -370,6 +358,7 @@ export default {
       serverStatusText,
       currentText,
       microphoneEnabled,
+      isSpeaking,
       toggleMicrophone,
       // 新的状态和方法
       userInputText,
