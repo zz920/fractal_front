@@ -217,36 +217,10 @@ export default {
         // 停止录音
         console.log('停止录音...')
         await toggleMic() // 调用实际的麦克风切换函数
-        currentState.value = 'generating'
-        
-        // 模拟语音识别过程
-        setTimeout(() => {
-          // 模拟语音识别结果 - 这里应该从实际的语音识别服务获取结果
-          // 由于现在是模拟，我们使用一个固定的识别结果
-          const recognizedText = '你好，我想测试语音功能'
-          console.log('语音识别结果:', recognizedText)
-          
-          // 将识别结果填入输入框
-          userInputText.value = recognizedText
-          
-          // 根据识别结果生成回复
-          setTimeout(() => {
-            if (recognizedText.toLowerCase().includes('hi') || 
-                recognizedText.toLowerCase().includes('hello') ||
-                recognizedText.toLowerCase().includes('你好')) {
-              assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
-            } else {
-              assistantResponse.value = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
-            }
-            console.log('生成回复:', assistantResponse.value)
-            currentState.value = 'ready'
-            
-            // 自动朗读生成的回复
-            setTimeout(() => {
-              autoSpeakResponse()
-            }, 500)
-          }, 1000)
-        }, 1500)
+        currentState.value = 'ready'
+        userInputText.value = ''
+        assistantResponse.value = ''
+        console.log('录音已停止，状态重置为ready')
       } else {
         // 开始录音
         console.log('开始录音，请求麦克风权限...')
@@ -256,10 +230,11 @@ export default {
         if (success) {
           currentState.value = 'listening'
           userInputText.value = ''
+          assistantResponse.value = ''
           console.log('录音已开始，状态:', currentState.value)
           
-          // 在录音期间不显示任何内容，避免干扰
-          // 语音识别结果将在停止录音后显示
+          // 启动持续对话模式
+          startContinuousConversation()
         } else {
           console.error('开启麦克风失败')
           // 即使麦克风失败，也模拟一个默认的交互
@@ -271,6 +246,82 @@ export default {
           }, 2000)
         }
       }
+    }
+    
+    // 持续对话模式
+    const startContinuousConversation = () => {
+      console.log('启动持续对话模式')
+      
+      // 模拟对话模型检测用户说话
+      const conversationInterval = setInterval(() => {
+        if (!microphoneEnabled.value) {
+          clearInterval(conversationInterval)
+          return
+        }
+        
+        // 模拟检测到用户说完一句话
+        if (currentState.value === 'listening') {
+          // 随机模拟检测到语音输入
+          if (Math.random() < 0.3) { // 30%的概率检测到语音
+            processUserSpeech()
+          }
+        }
+      }, 3000) // 每3秒检查一次
+    }
+    
+    // 处理用户语音输入
+    const processUserSpeech = () => {
+      console.log('检测到用户语音输入')
+      currentState.value = 'generating'
+      
+      // 模拟语音识别过程
+      setTimeout(() => {
+        // 模拟语音识别结果
+        const speechOptions = [
+          '你好，我想测试语音功能',
+          '今天天气怎么样？',
+          '请帮我查询一下信息',
+          '我想了解一下这个系统',
+          '谢谢你的帮助'
+        ]
+        const recognizedText = speechOptions[Math.floor(Math.random() * speechOptions.length)]
+        console.log('语音识别结果:', recognizedText)
+        
+        // 将识别结果填入输入框
+        userInputText.value = recognizedText
+        
+        // 根据识别结果生成回复
+        setTimeout(() => {
+          if (recognizedText.includes('你好') || recognizedText.includes('hi') || recognizedText.includes('hello')) {
+            assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
+          } else if (recognizedText.includes('天气')) {
+            assistantResponse.value = '今天天气不错，适合出门走走。'
+          } else if (recognizedText.includes('查询') || recognizedText.includes('信息')) {
+            assistantResponse.value = '好的，我来帮您查询相关信息。'
+          } else if (recognizedText.includes('系统')) {
+            assistantResponse.value = '这是一个智能语音助手系统，可以帮您进行各种对话。'
+          } else if (recognizedText.includes('谢谢')) {
+            assistantResponse.value = '不客气！很高兴能帮助到您。'
+          } else {
+            assistantResponse.value = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
+          }
+          
+          console.log('生成回复:', assistantResponse.value)
+          
+          // 自动朗读生成的回复
+          setTimeout(() => {
+            autoSpeakResponse()
+          }, 500)
+          
+          // 朗读完成后继续录音
+          setTimeout(() => {
+            if (microphoneEnabled.value) {
+              currentState.value = 'listening'
+              console.log('继续录音，等待下一句...')
+            }
+          }, 4000) // 等待朗读完成后再继续录音
+        }, 1000)
+      }, 1500)
     }
     
     // 自动朗读回复（停止录音后自动触发）
@@ -491,7 +542,9 @@ export default {
       getInputPlaceholder,
       handleInputChange,
       speakResponse,
-      autoSpeakResponse
+      autoSpeakResponse,
+      startContinuousConversation,
+      processUserSpeech
     }
   }
 }
