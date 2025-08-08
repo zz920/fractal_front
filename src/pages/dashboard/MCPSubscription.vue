@@ -1,10 +1,5 @@
 <template>
   <div class="mcp-subscription">
-    <div class="page-header">
-      <h1>MCP订阅</h1>
-      <p>管理您的MCP服务订阅</p>
-    </div>
-    
     <div class="subscription-content">
       <div class="subscription-card">
         <h2>当前订阅状态</h2>
@@ -180,22 +175,7 @@ export default {
   margin: 0 auto;
 }
 
-.page-header {
-  margin-bottom: 32px;
-}
 
-.page-header h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 8px 0;
-}
-
-.page-header p {
-  font-size: 1.1rem;
-  color: #666;
-  margin: 0;
-}
 
 .subscription-content {
   display: grid;

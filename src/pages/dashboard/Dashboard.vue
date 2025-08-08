@@ -97,7 +97,25 @@
     
     <!-- 主内容区域 -->
     <main class="main-content">
-      <router-view />
+      <!-- 顶部用户信息栏 -->
+      <header class="user-header">
+        <div class="page-title">
+          <h1>{{ getCurrentPageTitle() }}</h1>
+        </div>
+        <div class="user-info">
+          <div class="user-avatar">
+            <span class="avatar-initial">{{ userInitials }}</span>
+          </div>
+          <div class="user-details">
+            <span class="user-nickname">{{ user?.user_name || '用户' }}</span>
+            <i class="user-status-icon fas fa-circle"></i>
+          </div>
+        </div>
+      </header>
+      
+      <div class="content-wrapper">
+        <router-view />
+      </div>
     </main>
   </div>
 </template>
@@ -129,10 +147,25 @@ export default {
       }
     }
     
+    // 获取当前页面标题
+    const getCurrentPageTitle = () => {
+      const route = router.currentRoute.value
+      const routeMap = {
+        '/dashboard/overview': '首页',
+        '/dashboard/voice': '语音模拟器',
+        '/dashboard/device': '设备管理',
+        '/dashboard/tone': '音色设置',
+        '/dashboard/mcp': 'MCP订阅',
+        '/dashboard/settings': '设置'
+      }
+      return routeMap[route.path] || '控制台'
+    }
+    
     return {
       user: computed(() => userStore.user),
       userInitials,
-      handleLogout
+      handleLogout,
+      getCurrentPageTitle
     }
   }
 }
@@ -334,6 +367,82 @@ export default {
   margin-left: 20%;
   min-height: 100vh;
   background-color: rgb(238, 235, 245);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部用户信息栏 */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px;
+  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.page-title h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b6a6f7 0%, #6ec6fa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(110, 198, 250, 0.3);
+}
+
+.avatar-initial {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.user-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-nickname {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.user-status-icon {
+  font-size: 0.6rem;
+  color: #10b981;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.content-wrapper {
+  flex: 1;
   padding: 0;
 }
 

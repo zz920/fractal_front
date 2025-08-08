@@ -1,11 +1,5 @@
 <template>
   <div class="overview">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>首页</h1>
-      <p>欢迎回到Fractal助手</p>
-    </div>
-    
     <!-- 欢迎卡片 -->
     <div class="welcome-section">
       <div class="welcome-card">
@@ -64,37 +58,15 @@ export default {
 
 <style scoped>
 .overview {
-  padding: 32px 32px 32px 0;
-  max-width: none;
-  margin: 0;
+  padding: 32px;
   background-color: rgb(238, 235, 245);
   min-height: 100vh;
   width: 100%;
 }
 
-/* 页面标题 */
-.page-header {
-  margin-bottom: 32px;
-  padding-left: 32px;
-}
-
-.page-header h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 8px 0;
-}
-
-.page-header p {
-  font-size: 1.3rem;
-  color: #666;
-  margin: 0;
-}
-
 /* 欢迎卡片 */
 .welcome-section {
   margin-bottom: 32px;
-  padding-left: 32px;
 }
 
 .welcome-card {

@@ -1,10 +1,5 @@
 <template>
   <div class="tone-settings">
-    <div class="page-header">
-      <h1>音色设置</h1>
-      <p>自定义您的语音助手音色</p>
-    </div>
-    
     <div class="settings-content">
       <div class="settings-card">
         <h2>音色选择</h2>

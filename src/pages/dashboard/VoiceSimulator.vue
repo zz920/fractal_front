@@ -1,11 +1,5 @@
 <template>
   <div class="voice-simulator">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>语音模拟器</h1>
-      <p>与 Fractal 语音助手进行智能对话</p>
-    </div>
-    
     <!-- 语音助手界面 -->
     <div class="simulator-content">
       <div class="content-layout">
@@ -245,28 +239,12 @@ export default {
 
 <style scoped>
 .voice-simulator {
+  padding: 32px;
   max-width: 1200px;
   margin: 0 auto;
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 0.5rem 0;
-}
-
-.page-header p {
-  color: #6c757d;
-  font-size: 1rem;
-  margin: 0;
 }
 
 .simulator-content {

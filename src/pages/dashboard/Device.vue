@@ -1,10 +1,5 @@
 <template>
   <div class="device-page">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>设备管理</h1>
-      <p>管理您账户下的所有设备</p>
-    </div>
 
     <!-- 设备管理主要内容 -->
     <div class="device-content">
@@ -198,25 +193,9 @@ export default {
 
 <style scoped>
 .device-page {
+  padding: 32px;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 0.5rem 0;
-}
-
-.page-header p {
-  color: #6c757d;
-  font-size: 1rem;
-  margin: 0;
 }
 
 .device-content {

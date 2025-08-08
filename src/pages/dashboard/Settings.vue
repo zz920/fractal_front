@@ -1,10 +1,5 @@
 <template>
   <div class="settings">
-    <div class="page-header">
-      <h1>设置</h1>
-      <p>管理您的账户和应用设置</p>
-    </div>
-    
     <div class="settings-content">
       <!-- 账户设置 -->
       <div class="settings-card">
@@ -216,22 +211,7 @@ export default {
   margin: 0 auto;
 }
 
-.page-header {
-  margin-bottom: 32px;
-}
 
-.page-header h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 8px 0;
-}
-
-.page-header p {
-  font-size: 1.1rem;
-  color: #666;
-  margin: 0;
-}
 
 .settings-content {
   display: grid;
