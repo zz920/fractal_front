@@ -425,13 +425,13 @@ export default {
           }
         })
         
-        // 音频流建立后发送检测消息（模拟用户说话）
-        setTimeout(() => {
-          if (!detectMessageSent.value) {
-            sendDetectMessage(sendMessage)
-            detectMessageSent.value = true
-          }
-        }, 200)
+        // 注释掉自动发送检测消息，避免在录音期间触发TTS
+        // setTimeout(() => {
+        //   if (!detectMessageSent.value) {
+        //     sendDetectMessage(sendMessage)
+        //     detectMessageSent.value = true
+        //   }
+        // }, 200)
       } else {
         // 退出listening状态，停止音频流
         stopAudioStream()
