@@ -211,8 +211,11 @@ export default {
     
     // 切换麦克风
     const toggleMicrophone = async () => {
+      console.log('切换麦克风，当前状态:', microphoneEnabled.value)
+      
       if (microphoneEnabled.value) {
         // 停止录音
+        console.log('停止录音...')
         await toggleMic() // 调用实际的麦克风切换函数
         currentState.value = 'generating'
         
@@ -220,6 +223,7 @@ export default {
         setTimeout(() => {
           // 模拟语音识别结果
           const recognizedText = userInputText.value.trim() || 'Hi'
+          console.log('语音识别结果:', recognizedText)
           
           // 将识别结果填入输入框
           userInputText.value = recognizedText
@@ -231,37 +235,82 @@ export default {
             } else {
               assistantResponse.value = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
             }
+            console.log('生成回复:', assistantResponse.value)
             currentState.value = 'ready'
           }, 1000)
         }, 1500)
       } else {
         // 开始录音
+        console.log('开始录音，请求麦克风权限...')
         const success = await toggleMic() // 调用实际的麦克风切换函数
+        console.log('麦克风权限请求结果:', success)
+        
         if (success) {
           currentState.value = 'listening'
           userInputText.value = ''
+          console.log('录音已开始，状态:', currentState.value)
           
           // 模拟语音识别过程，在录音期间显示识别结果
           setTimeout(() => {
             if (currentState.value === 'listening') {
               // 模拟实时语音识别
               userInputText.value = '正在识别您的语音...'
+              console.log('显示语音识别提示')
             }
           }, 500)
         } else {
           console.error('开启麦克风失败')
+          // 即使麦克风失败，也模拟一个默认的交互
+          currentState.value = 'generating'
+          setTimeout(() => {
+            userInputText.value = 'Hi'
+            assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
+            currentState.value = 'ready'
+          }, 2000)
         }
       }
     }
     
     // 朗读回复
     const speakResponse = () => {
+      console.log('开始朗读回复:', assistantResponse.value)
       if (assistantResponse.value && !isSpeaking.value) {
         currentState.value = 'speaking'
-        // 这里可以调用TTS服务
-        setTimeout(() => {
-          currentState.value = 'ready'
-        }, 3000)
+        
+        // 使用浏览器的语音合成API
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(assistantResponse.value)
+          utterance.lang = 'zh-CN'
+          utterance.rate = 0.9
+          utterance.pitch = 1.0
+          
+          utterance.onstart = () => {
+            console.log('开始朗读')
+          }
+          
+          utterance.onend = () => {
+            console.log('朗读结束')
+            currentState.value = 'ready'
+          }
+          
+          utterance.onerror = (error) => {
+            console.error('朗读错误:', error)
+            currentState.value = 'ready'
+          }
+          
+          speechSynthesis.speak(utterance)
+        } else {
+          console.log('浏览器不支持语音合成，使用模拟朗读')
+          // 模拟朗读过程
+          setTimeout(() => {
+            currentState.value = 'ready'
+          }, 3000)
+        }
+      } else {
+        console.log('无法朗读：', {
+          hasResponse: !!assistantResponse.value,
+          isSpeaking: isSpeaking.value
+        })
       }
     }
 
