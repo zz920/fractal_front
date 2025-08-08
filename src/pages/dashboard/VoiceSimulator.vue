@@ -28,15 +28,12 @@
             <div class="assistant-output-section">
               <div class="output-label">Fractal语音助手</div>
               <div class="output-container">
-                <div class="output-text" :class="{ 'generating': currentState === 'generating' }">
+                <div class="output-text">
                   <div v-if="currentState === 'ready'" class="welcome-message">
                     Hi, this is Fractal Voice Assistant, try talking to me.
                   </div>
                   <div v-else-if="currentState === 'listening'" class="listening-message">
                     || 聆听中 ||
-                  </div>
-                  <div v-else-if="currentState === 'generating'" class="generating-message">
-                    生成中
                   </div>
                   <div v-else-if="assistantResponse" class="response-message">
                     {{ assistantResponse }}
@@ -159,8 +156,6 @@ export default {
           return '(@|ワ|@),'
         case 'listening':
           return '(@•₃•@)'
-        case 'generating':
-          return '^o^'
         case 'speaking':
           return '😃'
         default:
@@ -175,8 +170,6 @@ export default {
           return '等待输入'
         case 'listening':
           return '正在聆听'
-        case 'generating':
-          return '正在生成回复'
         case 'speaking':
           return '正在朗读'
         default:
@@ -191,8 +184,6 @@ export default {
           return '点击开始录音按钮，然后开始说话...'
         case 'listening':
           return '正在录音，请说话...'
-        case 'generating':
-          return '正在处理您的语音...'
         default:
           return '点击开始录音按钮，然后开始说话...'
       }
@@ -263,7 +254,6 @@ export default {
     // 处理用户语音输入
     const processUserSpeech = () => {
       console.log('检测到用户语音输入')
-      currentState.value = 'generating'
       
       // 模拟语音识别过程
       setTimeout(() => {
@@ -299,15 +289,13 @@ export default {
           
           console.log('生成回复:', assistantResponse.value)
           
-
-          
-          // 朗读完成后继续录音
+          // 继续录音，等待下一句
           setTimeout(() => {
             if (microphoneEnabled.value) {
               currentState.value = 'listening'
               console.log('继续录音，等待下一句...')
             }
-          }, 4000) // 等待朗读完成后再继续录音
+          }, 2000) // 等待2秒后继续录音
         }, 1000)
       }, 1500)
     }
@@ -792,11 +780,6 @@ export default {
   text-align: center;
 }
 
-.output-text.generating {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
-  border-color: #6ec6fa;
-}
-
 .welcome-message {
   color: #333;
   font-weight: 500;
@@ -804,11 +787,6 @@ export default {
 
 .listening-message {
   color: #6c757d;
-  font-weight: 500;
-}
-
-.generating-message {
-  color: #6ec6fa;
   font-weight: 500;
 }
 
