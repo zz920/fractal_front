@@ -221,8 +221,9 @@ export default {
         
         // 模拟语音识别过程
         setTimeout(() => {
-          // 模拟语音识别结果
-          const recognizedText = userInputText.value.trim() || 'Hi'
+          // 模拟语音识别结果 - 这里应该从实际的语音识别服务获取结果
+          // 由于现在是模拟，我们使用一个固定的识别结果
+          const recognizedText = '你好，我想测试语音功能'
           console.log('语音识别结果:', recognizedText)
           
           // 将识别结果填入输入框
@@ -230,7 +231,9 @@ export default {
           
           // 根据识别结果生成回复
           setTimeout(() => {
-            if (recognizedText.toLowerCase() === 'hi' || recognizedText.toLowerCase() === 'hello') {
+            if (recognizedText.toLowerCase().includes('hi') || 
+                recognizedText.toLowerCase().includes('hello') ||
+                recognizedText.toLowerCase().includes('你好')) {
               assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
             } else {
               assistantResponse.value = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
@@ -250,14 +253,8 @@ export default {
           userInputText.value = ''
           console.log('录音已开始，状态:', currentState.value)
           
-          // 模拟语音识别过程，在录音期间显示识别结果
-          setTimeout(() => {
-            if (currentState.value === 'listening') {
-              // 模拟实时语音识别
-              userInputText.value = '正在识别您的语音...'
-              console.log('显示语音识别提示')
-            }
-          }, 500)
+          // 在录音期间不显示任何内容，避免干扰
+          // 语音识别结果将在停止录音后显示
         } else {
           console.error('开启麦克风失败')
           // 即使麦克风失败，也模拟一个默认的交互
