@@ -240,6 +240,11 @@ export default {
             }
             console.log('生成回复:', assistantResponse.value)
             currentState.value = 'ready'
+            
+            // 自动朗读生成的回复
+            setTimeout(() => {
+              autoSpeakResponse()
+            }, 500)
           }, 1000)
         }, 1500)
       } else {
@@ -268,9 +273,9 @@ export default {
       }
     }
     
-    // 朗读回复
-    const speakResponse = () => {
-      console.log('开始朗读回复:', assistantResponse.value)
+    // 自动朗读回复（停止录音后自动触发）
+    const autoSpeakResponse = () => {
+      console.log('自动朗读回复:', assistantResponse.value)
       if (assistantResponse.value && !isSpeaking.value) {
         currentState.value = 'speaking'
         
@@ -282,16 +287,16 @@ export default {
           utterance.pitch = 1.0
           
           utterance.onstart = () => {
-            console.log('开始朗读')
+            console.log('开始自动朗读')
           }
           
           utterance.onend = () => {
-            console.log('朗读结束')
+            console.log('自动朗读结束')
             currentState.value = 'ready'
           }
           
           utterance.onerror = (error) => {
-            console.error('朗读错误:', error)
+            console.error('自动朗读错误:', error)
             currentState.value = 'ready'
           }
           
@@ -304,7 +309,50 @@ export default {
           }, 3000)
         }
       } else {
-        console.log('无法朗读：', {
+        console.log('无法自动朗读：', {
+          hasResponse: !!assistantResponse.value,
+          isSpeaking: isSpeaking.value
+        })
+      }
+    }
+    
+    // 手动朗读回复（用户点击按钮触发）
+    const speakResponse = () => {
+      console.log('手动朗读回复:', assistantResponse.value)
+      if (assistantResponse.value && !isSpeaking.value) {
+        currentState.value = 'speaking'
+        
+        // 使用浏览器的语音合成API
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(assistantResponse.value)
+          utterance.lang = 'zh-CN'
+          utterance.rate = 0.9
+          utterance.pitch = 1.0
+          
+          utterance.onstart = () => {
+            console.log('开始手动朗读')
+          }
+          
+          utterance.onend = () => {
+            console.log('手动朗读结束')
+            currentState.value = 'ready'
+          }
+          
+          utterance.onerror = (error) => {
+            console.error('手动朗读错误:', error)
+            currentState.value = 'ready'
+          }
+          
+          speechSynthesis.speak(utterance)
+        } else {
+          console.log('浏览器不支持语音合成，使用模拟朗读')
+          // 模拟朗读过程
+          setTimeout(() => {
+            currentState.value = 'ready'
+          }, 3000)
+        }
+      } else {
+        console.log('无法手动朗读：', {
           hasResponse: !!assistantResponse.value,
           isSpeaking: isSpeaking.value
         })
@@ -442,7 +490,8 @@ export default {
       getStatusText,
       getInputPlaceholder,
       handleInputChange,
-      speakResponse
+      speakResponse,
+      autoSpeakResponse
     }
   }
 }
