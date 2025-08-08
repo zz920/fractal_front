@@ -24,35 +24,6 @@
           
           <!-- 对话区域 -->
           <div class="conversation-container">
-            <!-- 用户输入区域 -->
-            <div class="user-input-section">
-              <div class="input-label">您的语音输入</div>
-              <div class="input-container">
-                <textarea
-                  v-model="userInputText"
-                  class="user-input-textarea"
-                  :placeholder="getInputPlaceholder()"
-                  :disabled="!microphoneEnabled && currentState !== 'ready'"
-                  @input="handleInputChange"
-                  ref="userInputRef"
-                ></textarea>
-                <div class="input-actions">
-                  <button 
-                    @click="toggleMicrophone"
-                    :disabled="!isServerOnline"
-                    :class="{ 
-                      'mic-button': !microphoneEnabled,
-                      'stop-button': microphoneEnabled 
-                    }"
-                    class="action-button"
-                  >
-                    <i :class="microphoneEnabled ? 'fas fa-stop' : 'fas fa-microphone'"></i>
-                    {{ microphoneEnabled ? '停止录音' : '开始录音' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-            
             <!-- 助手输出区域 -->
             <div class="assistant-output-section">
               <div class="output-label">Fractal语音助手</div>
@@ -80,6 +51,35 @@
                   >
                     <i :class="isSpeaking ? 'fas fa-volume-mute' : 'fas fa-volume-up'"></i>
                     {{ isSpeaking ? '播放中...' : '朗读回复' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 用户输入区域 -->
+            <div class="user-input-section">
+              <div class="input-label">您的语音输入</div>
+              <div class="input-container">
+                <textarea
+                  v-model="userInputText"
+                  class="user-input-textarea"
+                  :placeholder="getInputPlaceholder()"
+                  :disabled="!microphoneEnabled && currentState !== 'ready'"
+                  @input="handleInputChange"
+                  ref="userInputRef"
+                ></textarea>
+                <div class="input-actions">
+                  <button 
+                    @click="toggleMicrophone"
+                    :disabled="!isServerOnline"
+                    :class="{ 
+                      'mic-button': !microphoneEnabled,
+                      'stop-button': microphoneEnabled 
+                    }"
+                    class="action-button"
+                  >
+                    <i :class="microphoneEnabled ? 'fas fa-stop' : 'fas fa-microphone'"></i>
+                    {{ microphoneEnabled ? '停止录音' : '开始录音' }}
                   </button>
                 </div>
               </div>
@@ -215,9 +215,18 @@ export default {
         // 停止录音
         await stopAudioStream()
         currentState.value = 'generating'
+        
+        // 检查是否有用户输入，如果没有则使用默认输入
+        const userInput = userInputText.value.trim() || 'Hi'
+        
         // 模拟处理时间
         setTimeout(() => {
-          assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
+          // 根据用户输入生成不同的回复
+          if (userInput.toLowerCase() === 'hi' || userInput.toLowerCase() === 'hello') {
+            assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
+          } else {
+            assistantResponse.value = `我听到了您说："${userInput}"。这是一个很好的开始！`
+          }
           currentState.value = 'ready'
         }, 2000)
       } else {
