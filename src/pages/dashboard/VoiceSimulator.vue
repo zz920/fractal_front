@@ -32,11 +32,14 @@
                   <div v-if="currentState === 'ready'" class="welcome-message">
                     Hi, this is Fractal Voice Assistant, try talking to me.
                   </div>
-                  <div v-else-if="currentState === 'listening'" class="listening-message">
+                  <div v-else-if="currentState === 'listening' && !assistantResponse && !userInputText" class="listening-message">
                     || 聆听中 ||
                   </div>
                   <div v-else-if="assistantResponse" class="response-message">
                     {{ assistantResponse }}
+                  </div>
+                  <div v-else-if="currentState === 'listening' && userInputText && !assistantResponse" class="processing-message">
+                    正在处理您的语音输入...
                   </div>
                 </div>
                 <div class="output-actions">
@@ -61,8 +64,7 @@
                   v-model="userInputText"
                   class="user-input-textarea"
                   :placeholder="getInputPlaceholder()"
-                  :disabled="true"
-                  readonly
+                  :disabled="false"
                   ref="userInputRef"
                 ></textarea>
                 <div class="input-actions">
@@ -234,7 +236,10 @@ export default {
     const startContinuousConversation = () => {
       console.log('启动持续对话模式')
       
-      // 模拟对话模型检测用户说话
+      // 模拟实时语音识别
+      let recognitionStartTime = Date.now()
+      let lastRecognitionTime = 0
+      
       const conversationInterval = setInterval(() => {
         if (!microphoneEnabled.value) {
           clearInterval(conversationInterval)
@@ -243,64 +248,94 @@ export default {
         
         // 模拟检测到用户说完一句话
         if (currentState.value === 'listening') {
-          // 随机模拟检测到语音输入
-          if (Math.random() < 0.3) { // 30%的概率检测到语音
-            processUserSpeech()
+          const currentTime = Date.now()
+          const timeSinceStart = currentTime - recognitionStartTime
+          const timeSinceLastRecognition = currentTime - lastRecognitionTime
+          
+          // 在录音开始后的2-8秒内随机触发语音识别
+          if (timeSinceStart > 2000 && timeSinceStart < 8000 && timeSinceLastRecognition > 2000) {
+            if (Math.random() < 0.4) { // 40%的概率检测到语音
+              lastRecognitionTime = currentTime
+              processUserSpeech()
+            }
           }
         }
-      }, 3000) // 每3秒检查一次
+      }, 1000) // 每秒检查一次
     }
     
     // 处理用户语音输入
     const processUserSpeech = () => {
       console.log('检测到用户语音输入')
       
-      // 模拟语音识别过程
-      setTimeout(() => {
-        // 模拟语音识别结果
-        const speechOptions = [
-          '你好，我想测试语音功能',
-          '今天天气怎么样？',
-          '请帮我查询一下信息',
-          '我想了解一下这个系统',
-          '谢谢你的帮助'
-        ]
-        const recognizedText = speechOptions[Math.floor(Math.random() * speechOptions.length)]
-        console.log('语音识别结果:', recognizedText)
-        
-        // 将识别结果填入输入框
-        userInputText.value = recognizedText
-        
-        // 根据识别结果生成回复
-        setTimeout(() => {
-          if (recognizedText.includes('你好') || recognizedText.includes('hi') || recognizedText.includes('hello')) {
-            assistantResponse.value = 'Hi! 你好呀, 今天心情怎么样?'
-          } else if (recognizedText.includes('天气')) {
-            assistantResponse.value = '今天天气不错，适合出门走走。'
-          } else if (recognizedText.includes('查询') || recognizedText.includes('信息')) {
-            assistantResponse.value = '好的，我来帮您查询相关信息。'
-          } else if (recognizedText.includes('系统')) {
-            assistantResponse.value = '这是一个智能语音助手系统，可以帮您进行各种对话。'
-          } else if (recognizedText.includes('谢谢')) {
-            assistantResponse.value = '不客气！很高兴能帮助到您。'
-          } else {
-            assistantResponse.value = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
-          }
+      // 模拟实时语音识别过程
+      simulateRealTimeSpeechRecognition()
+    }
+    
+    // 模拟实时语音识别
+    const simulateRealTimeSpeechRecognition = () => {
+      // 模拟语音识别结果
+      const speechOptions = [
+        '你好，我想测试语音功能',
+        '今天天气怎么样？',
+        '请帮我查询一下信息',
+        '我想了解一下这个系统',
+        '谢谢你的帮助'
+      ]
+      const recognizedText = speechOptions[Math.floor(Math.random() * speechOptions.length)]
+      
+      // 实时显示语音识别结果
+      displayRealTimeSpeechRecognition(recognizedText)
+    }
+    
+    // 实时显示语音识别结果
+    const displayRealTimeSpeechRecognition = (finalText) => {
+      console.log('开始实时语音识别显示:', finalText)
+      
+      // 模拟实时语音识别的渐进过程
+      const words = finalText.split('')
+      let currentIndex = 0
+      let displayText = ''
+      
+      const recognitionInterval = setInterval(() => {
+        if (currentIndex < words.length) {
+          displayText += words[currentIndex]
+          userInputText.value = displayText
+          currentIndex++
+        } else {
+          clearInterval(recognitionInterval)
+          console.log('语音识别显示完成:', finalText)
           
-          console.log('生成回复:', assistantResponse.value)
-          
-          // 模拟TTS文字实时显示
-          simulateTTSOutput(assistantResponse.value)
-          
-          // 继续录音，等待下一句
+          // 识别完成后生成回复
           setTimeout(() => {
-            if (microphoneEnabled.value) {
-              currentState.value = 'listening'
-              console.log('继续录音，等待下一句...')
-            }
-          }, 4000) // 等待TTS完成后再继续录音
-        }, 1000)
-      }, 1500)
+            generateAssistantResponse(finalText)
+          }, 500) // 延迟500ms再生成回复，模拟处理时间
+        }
+      }, 60) // 每60ms显示一个字，模拟实时语音识别
+    }
+    
+    // 生成助手回复
+    const generateAssistantResponse = (recognizedText) => {
+      console.log('生成助手回复，识别文本:', recognizedText)
+      
+      let responseText = ''
+      if (recognizedText.includes('你好') || recognizedText.includes('hi') || recognizedText.includes('hello')) {
+        responseText = 'Hi! 你好呀, 今天心情怎么样?'
+      } else if (recognizedText.includes('天气')) {
+        responseText = '今天天气不错，适合出门走走。'
+      } else if (recognizedText.includes('查询') || recognizedText.includes('信息')) {
+        responseText = '好的，我来帮您查询相关信息。'
+      } else if (recognizedText.includes('系统')) {
+        responseText = '这是一个智能语音助手系统，可以帮您进行各种对话。'
+      } else if (recognizedText.includes('谢谢')) {
+        responseText = '不客气！很高兴能帮助到您。'
+      } else {
+        responseText = `我听到了您说："${recognizedText}"。这是一个很好的开始！`
+      }
+      
+      console.log('生成的回复:', responseText)
+      
+      // 模拟TTS文字实时显示
+      simulateTTSOutput(responseText)
     }
     
     // 模拟TTS文字实时显示
@@ -327,6 +362,8 @@ export default {
           setTimeout(() => {
             if (microphoneEnabled.value) {
               currentState.value = 'listening'
+              // 清空用户输入，准备下一轮对话
+              userInputText.value = ''
               console.log('TTS完成，继续录音...')
             }
           }, 1000)
@@ -823,6 +860,12 @@ export default {
 .listening-message {
   color: #6c757d;
   font-weight: 500;
+}
+
+.processing-message {
+  color: #007bff;
+  font-weight: 500;
+  animation: pulse 1.5s infinite;
 }
 
 .response-message {

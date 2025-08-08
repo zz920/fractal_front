@@ -88,84 +88,85 @@
       
       <!-- 设置按钮 -->
       <div class="sidebar-footer">
-        <router-link to="/dashboard/settings" class="settings-btn">
+        <button class="settings-btn" @click="openSettings">
           <i class="settings-icon fas fa-cog"></i>
           <span>设置</span>
-        </router-link>
+        </button>
       </div>
     </aside>
     
     <!-- 主内容区域 -->
     <main class="main-content">
       <!-- 顶部用户信息栏 -->
-      <header class="user-header">
-        <div class="page-title">
-          <h1>{{ getCurrentPageTitle() }}</h1>
-        </div>
-        <div class="user-info">
-          <div class="user-avatar">
-            <span class="avatar-initial">{{ userInitials }}</span>
+      <header class="top-header">
+        <div class="header-content">
+          <div class="header-left">
+            <!-- 左侧可以放置其他内容，比如面包屑导航等 -->
           </div>
-          <div class="user-details">
-            <span class="user-nickname">{{ user?.user_name || '用户' }}</span>
-            <i class="user-status-icon fas fa-circle"></i>
+          <div class="user-info">
+            <div class="user-avatar">
+              <div class="avatar-placeholder">
+                {{ userInitials }}
+              </div>
+            </div>
+            <div class="user-details">
+              <div class="username">{{ user?.user_name || '用户' }}</div>
+              <div class="user-email">{{ user?.email || '未设置邮箱' }}</div>
+            </div>
           </div>
         </div>
       </header>
-      
-      <div class="content-wrapper">
+
+      <!-- 主要内容 -->
+      <div class="content-area">
         <router-view />
       </div>
     </main>
+
+    <!-- 设置弹窗 -->
+    <SettingsModal 
+      :visible="settingsVisible" 
+      @close="closeSettings"
+    />
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '../../stores/user.js'
+import { useUserStore } from '@/stores/user.js'
+import SettingsModal from '@/components/SettingsModal.vue'
 
 export default {
   name: 'Dashboard',
+  components: {
+    SettingsModal
+  },
   setup() {
     const router = useRouter()
     const userStore = useUserStore()
-    
+    const settingsVisible = ref(false)
+
     // 计算用户姓名首字母
     const userInitials = computed(() => {
       const name = userStore.user?.user_name || '用户'
       return name.charAt(0).toUpperCase()
     })
-    
-    // 处理登出
-    const handleLogout = async () => {
-      try {
-        await userStore.userLogout()
-        router.push('/login')
-      } catch (error) {
-        console.error('登出失败:', error)
-      }
+
+    const openSettings = () => {
+      settingsVisible.value = true
     }
-    
-    // 获取当前页面标题
-    const getCurrentPageTitle = () => {
-      const route = router.currentRoute.value
-      const routeMap = {
-        '/dashboard/overview': '首页',
-        '/dashboard/voice': '语音模拟器',
-        '/dashboard/device': '设备管理',
-        '/dashboard/tone': '音色设置',
-        '/dashboard/mcp': 'MCP订阅',
-        '/dashboard/settings': '设置'
-      }
-      return routeMap[route.path] || '控制台'
+
+    const closeSettings = () => {
+      settingsVisible.value = false
     }
-    
+
     return {
       user: computed(() => userStore.user),
       userInitials,
-      handleLogout,
-      getCurrentPageTitle
+      settingsVisible,
+      openSettings,
+      closeSettings
     }
   }
 }
@@ -330,35 +331,41 @@ export default {
 }
 
 /* 设置按钮 */
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid #e9ecef;
-}
-
 .settings-btn {
   display: flex;
   align-items: center;
+  gap: 12px;
+  width: 100%;
   padding: 12px 16px;
-  background: #fff;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  color: #333;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  color: #666;
+  font-size: 1rem;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .settings-btn:hover {
-  background-color: #f8f9fa;
+  background: #f0f3f5;
+  color: #333;
+  border-color: #e9ecef;
+  transform: translateX(4px);
+}
+
+.settings-btn.active {
+  background: #6ec6fa;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(110, 198, 250, 0.3);
   border-color: #6ec6fa;
-  color: #6ec6fa;
 }
 
 .settings-icon {
-  width: 16px;
-  margin-right: 8px;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
 }
 
 /* 主内容区域 */
@@ -373,7 +380,7 @@ export default {
 }
 
 /* 顶部用户信息栏 */
-.user-header {
+.top-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -383,65 +390,62 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.page-title h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-left {
+  flex: 1;
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  margin-left: auto;
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: linear-gradient(135deg, #b6a6f7 0%, #6ec6fa 100%);
+  background: linear-gradient(135deg, #6ec6fa 0%, #b6a6f7 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(110, 198, 250, 0.3);
-}
-
-.avatar-initial {
   color: #fff;
   font-size: 1.2rem;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(110, 198, 250, 0.3);
 }
 
 .user-details {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.user-nickname {
-  font-size: 1rem;
-  font-weight: 500;
+.username {
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #333;
 }
 
-.user-status-icon {
-  font-size: 0.6rem;
-  color: #10b981;
-  animation: pulse 2s infinite;
+.user-email {
+  font-size: 0.9rem;
+  color: #666;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.content-wrapper {
+.content-area {
   flex: 1;
   padding: 0;
 }
