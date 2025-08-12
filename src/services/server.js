@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { getToken } from './auth.js'
 
 // 响应式状态
 const serverAddress = ref('')
@@ -86,7 +87,7 @@ export function useServer() {
     }
 
     try {
-      const response = await fetch(`${serverUrl.value}/ota`, {
+      const response = await fetch(`${serverUrl.value}/ota?token=${getToken()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

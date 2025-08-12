@@ -7,6 +7,9 @@ const user = ref(null)
 const isLoading = ref(false)
 const error = ref(null)
 
+// 导出获取token的函数
+export const getToken = () => token.value
+
 // 从localStorage恢复用户信息
 const storedUser = localStorage.getItem('user_info')
 if (storedUser) {
