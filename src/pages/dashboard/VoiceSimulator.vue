@@ -41,7 +41,7 @@ import { useWebSocket } from '../../services/websocket.js'
 import { useAudio } from '../../services/audio.js'
 import { useServer } from '../../services/server.js'
 import { useProtocol } from '../../services/protocol.js'
-import { watch, computed, ref } from 'vue'
+import { watch, computed, ref, onMounted, onUnmounted } from 'vue'
 
 export default {
   name: 'VoiceSimulator',
@@ -49,7 +49,7 @@ export default {
     MainTextArea
   },
   setup() {
-    const { connectionStatus, connect, disconnect, sendMessage, sendBinary, addMessageHandler, removeMessageHandler } = useWebSocket()
+    const { connectionStatus, connect, disconnect, sendMessage, sendBinary, addMessageHandler, removeMessageHandler, clearAllMessageHandlers } = useWebSocket()
     const { microphoneStatus, microphoneEnabled, toggleMicrophone: toggleMic, startAudioStream, stopAudioStream } = useAudio()
     const { serverStatus, hasValidConfig, websocketUrl, fetchServerConfig: fetchConfig } = useServer()
     const { 
@@ -69,6 +69,12 @@ export default {
 
     const configFetched = ref(false)
     const detectMessageSent = ref(false)
+    
+    // 消息处理器引用，用于后续移除
+    const messageHandlers = ref({
+      json: null,
+      binary: null
+    })
 
     // 服务器状态计算属性
     const serverStatusClass = computed(() => {
@@ -133,6 +139,7 @@ export default {
       if (enabled && hasValidConfig.value && websocketUrl.value) {
         // 开启麦克风时，如果有有效配置，尝试连接WebSocket
         connect()
+        resetProtocol()
         
         // 等待连接建立后发送Hello消息
         const checkConnection = setInterval(() => {
@@ -199,7 +206,6 @@ export default {
       // 处理TTS消息
       handleTTSMessage(message, null, (text) => {
         // 这里可以更新界面显示
-        console.log('更新显示文本:', text)
         if (text != '') {
           currentText.value += text;
         } else {
@@ -212,9 +218,34 @@ export default {
       handleAudioData(audioData, null)
     }
 
-    // 添加消息处理器
-    addMessageHandler('json', handleJsonMessage)
-    addMessageHandler('binary', handleBinaryMessage)
+    // 组件挂载时添加消息处理器
+    onMounted(() => {
+      messageHandlers.value.json = handleJsonMessage
+      messageHandlers.value.binary = handleBinaryMessage
+      addMessageHandler('json', handleJsonMessage)
+      addMessageHandler('binary', handleBinaryMessage)
+    })
+
+    // 组件卸载时移除消息处理器
+    onUnmounted(() => {
+      if (messageHandlers.value.json) {
+        removeMessageHandler(messageHandlers.value.json)
+      }
+      if (messageHandlers.value.binary) {
+        removeMessageHandler(messageHandlers.value.binary)
+      }
+      
+      // 清理所有消息处理器确保没有残留
+      clearAllMessageHandlers()
+      
+      // 清理状态
+      configFetched.value = false
+      detectMessageSent.value = false
+      
+      // 断开连接并重置协议
+      disconnect()
+      resetProtocol()
+    })
 
     // 自定义麦克风切换逻辑
     const toggleMicrophone = async () => {

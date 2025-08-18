@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { useAuth } from './auth.js'
 
 // 响应式状态
 const serverAddress = ref('')
@@ -39,7 +40,7 @@ export function useServer() {
     
     configLoaded.value = true
     configSource.value = 'hardcoded'
-    console.log('使用硬编码配置:', { address: serverAddress.value, port: serverPort.value })
+    // console.log('使用硬编码配置:', { address: serverAddress.value, port: serverPort.value })
     return true
   }
 
@@ -86,7 +87,9 @@ export function useServer() {
     }
 
     try {
-      const response = await fetch(`${serverUrl.value}/ota`, {
+      const { token } = useAuth()
+      const otaUrl = token.value ? `${serverUrl.value}/ota?token=${token.value}` : `${serverUrl.value}/ota`
+      const response = await fetch(otaUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -97,7 +100,7 @@ export function useServer() {
       if (response.ok) {
         const config = await response.json()
         serverConfig.value = config
-        console.log('服务器配置已更新:', config)
+        // console.log('服务器配置已更新:', config)
         return true
       } else {
         console.error('获取服务器配置失败:', response.status)

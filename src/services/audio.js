@@ -10,12 +10,12 @@ const getEncoderPath = () => {
     `${baseUrl}encoderWorker.min.js` : 
     `${baseUrl}/encoderWorker.min.js`
   
-  console.log('Encoder路径计算:', {
-    baseUrl,
-    encoderPath,
-    isDev: import.meta.env.DEV,
-    mode: import.meta.env.MODE
-  })
+  // console.log('Encoder路径计算:', {
+  //   baseUrl,
+  //   encoderPath,
+  //   isDev: import.meta.env.DEV,
+  //   mode: import.meta.env.MODE
+  // })
   
   return encoderPath
 }
@@ -76,7 +76,7 @@ class OpusAudioPlayer {
       await this.decoder.ready
       
       this.isInitialized = true
-      console.log('OpusAudioPlayer初始化成功，使用OpusDecoderWebWorker')
+      // console.log('OpusAudioPlayer初始化成功，使用OpusDecoderWebWorker')
       
       // 启动定时驱动的音频输出
       this.startOutputTimer()
@@ -264,7 +264,7 @@ class OpusAudioPlayer {
     this.lastOutputTime = 0
     this.baseTime = 0
     
-    console.log('OpusAudioPlayer资源已清理')
+    // console.log('OpusAudioPlayer资源已清理')
   }
   
   // 解码opus裸帧并播放（单帧立即解码）
@@ -288,7 +288,7 @@ class OpusAudioPlayer {
         // 限制待解码队列大小，防止内存溢出
         if (this.pendingFrames.length < 20) {
           this.pendingFrames.push(uint8Data)
-          console.log('正在解码中，帧已加入待解码队列，队列长度:', this.pendingFrames.length)
+          // console.log('正在解码中，帧已加入待解码队列，队列长度:', this.pendingFrames.length)
         } else {
           console.warn('待解码队列已满，跳过此帧')
         }
@@ -427,7 +427,7 @@ class OpusAudioPlayer {
         duration: audioBuffer.duration
       })
       
-      console.log(`调度音频播放: 开始时间=${startTime.toFixed(3)}s, 持续时间=${audioBuffer.duration.toFixed(3)}s, 队列中剩余=${this.audioQueue.length}`)
+      // console.log(`调度音频播放: 开始时间=${startTime.toFixed(3)}s, 持续时间=${audioBuffer.duration.toFixed(3)}s, 队列中剩余=${this.audioQueue.length}`)
       
       return true
     } catch (error) {
@@ -498,7 +498,7 @@ class OpusAudioPlayer {
     if (this.audioContext) {
       this.baseTime = this.audioContext.currentTime
     }
-    console.log('播放时间已重置')
+    // console.log('播放时间已重置')
   }
   
   // 重新初始化（用于错误恢复）
@@ -582,11 +582,11 @@ export function useAudio() {
       // 检查获取到的音频流参数
       const audioTrack = stream.getAudioTracks()[0]
       const settings = audioTrack.getSettings()
-      console.log('获取到的音频流参数:', settings)
+      // console.log('获取到的音频流参数:', settings)
       
       microphoneStatus.value = 'active'
       microphoneEnabled.value = true
-      console.log('麦克风权限已获取成功')
+      // console.log('麦克风权限已获取成功')
       return true
     } catch (error) {
       console.error('获取麦克风权限失败:', error)
@@ -649,7 +649,7 @@ export function useAudio() {
     
     // 重置帧计数器
     frameCounter = 0
-    console.log('开始音频流，已重置帧计数器')
+    // console.log('开始音频流，已重置帧计数器')
     
     try {
       if (recorder) {
@@ -726,7 +726,7 @@ export function useAudio() {
   const stopAudioStream = () => {
     if (recorder) {
       recorder.pause()
-      console.log('opus-recorder已暂停')
+      // console.log('opus-recorder已暂停')
     }
     
     // 清理帧计数器状态
