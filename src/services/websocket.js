@@ -41,12 +41,12 @@ export function useWebSocket() {
       
       ws.onopen = () => {
         connectionStatus.value = 'connected'
-        console.log('WebSocket连接已建立:', websocketUrl.value)
+        // console.log('WebSocket连接已建立:', websocketUrl.value)
       }
       
       ws.onclose = () => {
         connectionStatus.value = 'failed'
-        console.log('WebSocket连接已关闭')
+        // console.log('WebSocket连接已关闭')
       }
       
       ws.onerror = (error) => {
@@ -138,11 +138,20 @@ export function useWebSocket() {
   }
 
   const addMessageHandler = (type, callback) => {
+    // 检查是否已经存在相同的处理器
+    const exists = messageHandlers.some(handler => handler.callback === callback)
+    if (exists) {
+      return
+    }
     messageHandlers.push({ type, callback })
   }
 
   const removeMessageHandler = (callback) => {
     messageHandlers = messageHandlers.filter(handler => handler.callback !== callback)
+  }
+
+  const clearAllMessageHandlers = () => {
+    messageHandlers = []
   }
 
   const reconnect = () => {
@@ -158,6 +167,7 @@ export function useWebSocket() {
     sendBinary,
     addMessageHandler,
     removeMessageHandler,
+    clearAllMessageHandlers,
     reconnect
   }
 } 

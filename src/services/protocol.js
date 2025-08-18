@@ -23,7 +23,7 @@ export function useProtocol() {
       }
     }
     
-    console.log('发送Hello消息:', helloMessage)
+    // console.log('发送Hello消息:', helloMessage)
     sendMessage(helloMessage)
   }
 
@@ -31,8 +31,8 @@ export function useProtocol() {
   const handleHelloResponse = (response) => {
     if (response.session_id) {
       sessionId.value = response.session_id
-      console.log('收到Hello响应，会话ID:', response.session_id)
-      console.log('欢迎消息:', response.welcome_msg)
+      // console.log('收到Hello响应，会话ID:', response.session_id)
+      // console.log('欢迎消息:', response.welcome_msg)
       return true
     }
     return false
@@ -52,13 +52,13 @@ export function useProtocol() {
       mode: "manual"
     }
     
-    console.log('发送开始监听消息:', listenMessage)
+    // console.log('发送开始监听消息:', listenMessage)
     sendMessage(listenMessage)
     
     // 100ms后进入listening状态
     setTimeout(() => {
       isListening.value = true
-      console.log('进入listening状态')
+      // console.log('进入listening状态')
     }, 100)
     
     return true
@@ -78,13 +78,13 @@ export function useProtocol() {
       mode: "manual"
     }
     
-    console.log('发送停止监听消息:', listenMessage)
+    // console.log('发送停止监听消息:', listenMessage)
     sendMessage(listenMessage)
     
     // 100ms后关闭连接
     setTimeout(() => {
       isListening.value = false
-      console.log('退出listening状态')
+      // console.log('退出listening状态')
     }, 100)
     
     return true
@@ -96,7 +96,7 @@ export function useProtocol() {
       case 'tts':
         switch (message.state) {
           case 'start':
-            console.log('TTS开始，进入speaking状态')
+            // console.log('TTS开始，进入speaking状态')
             isSpeaking.value = true
             isListening.value = false
             

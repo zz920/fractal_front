@@ -8,6 +8,7 @@ const Dashboard = () => import('../pages/dashboard/Dashboard.vue')
 const Overview = () => import('../pages/dashboard/Overview.vue')
 const VoiceSimulator = () => import('../pages/dashboard/VoiceSimulator.vue')
 const Device = () => import('../pages/dashboard/Device.vue')
+const VoiceConfig = () => import('../pages/dashboard/VoiceConfig.vue')
 
 // 路由配置
 const routes = [
@@ -70,6 +71,15 @@ const routes = [
           component: Device,
           meta: {
             title: '设备管理 - Fractal语音助手',
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'voice-config',
+          name: 'VoiceConfig',
+          component: VoiceConfig,
+          meta: {
+            title: '音色配置 - Fractal语音助手',
             requiresAuth: true
           }
         }
