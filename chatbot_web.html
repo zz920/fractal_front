@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ 百度地图聊天机器人</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 6px;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .help-btn {
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .help-btn:hover {
+            background: #218838;
+        }
+
+        .quick-actions {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .quick-actions h3 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .quick-btn {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: #5a6268;
+        }
+
+        .quick-btn.geocode { background: #17a2b8; }
+        .quick-btn.geocode:hover { background: #138496; }
+        
+        .quick-btn.search { background: #ffc107; color: #212529; }
+        .quick-btn.search:hover { background: #e0a800; }
+        
+        .quick-btn.distance { background: #dc3545; }
+        .quick-btn.distance:hover { background: #c82333; }
+        
+        .quick-btn.route { background: #28a745; }
+        .quick-btn.route:hover { background: #218838; }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ 百度地图聊天机器人</h1>
+            <p>智能地图服务助手，为您提供地理编码、路线规划等服务</p>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot">
+                <div class="message-content">
+                    👋 您好！我是百度地图聊天机器人，很高兴为您服务！<br><br>
+                    💡 您可以输入以下命令：<br>
+                    • <strong>geocode 北京市</strong> - 地理编码<br>
+                    • <strong>search 城市</strong> - 搜索地点<br>
+                    • <strong>distance 39.9042 116.4074 31.2304 121.4737</strong> - 计算距离<br>
+                    • <strong>route 39.9042 116.4074 31.2304 121.4737</strong> - 路线规划<br><br>
+                    或者点击下方快速操作按钮！
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h3>🚀 快速操作</h3>
+            <button class="quick-btn geocode" onclick="quickAction('geocode 北京市')">📍 地理编码</button>
+            <button class="quick-btn search" onclick="quickAction('search 城市')">🔍 搜索地点</button>
+            <button class="quick-btn distance" onclick="quickAction('distance 39.9042 116.4074 31.2304 121.4737')">📏 计算距离</button>
+            <button class="quick-btn route" onclick="quickAction('route 39.9042 116.4074 31.2304 121.4737')">🗺️ 路线规划</button>
+        </div>
+
+        <div class="input-container">
+            <div class="input-group">
+                <input type="text" class="input-field" id="messageInput" placeholder="输入您的问题或命令..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendMessage()">发送</button>
+                <button class="help-btn" onclick="showHelp()">帮助</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 地图工具类
+        class MapTool {
+            constructor() {
+                this.apiKey = "tiDQOua8ZbUvhTmfZBci9LPLG1g6Mk3u";
+                this.baseUrl = "https://api.map.baidu.com";
+            }
+
+            async makeApiRequest(endpoint, params) {
+                try {
+                    params.ak = this.apiKey;
+                    params.output = 'json';
+                    
+                    const response = await fetch(`${this.baseUrl}${endpoint}?${new URLSearchParams(params)}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 0) {
+                        return data;
+                    } else {
+                        throw new Error(data.message || 'API请求失败');
+                    }
+                } catch (error) {
+                    console.error('API请求错误:', error);
+                    return null;
+                }
+            }
+
+            async geocode(address) {
+                const data = await this.makeApiRequest('/geocoding/v3/', {
+                    address: address,
+                    city: ''
+                });
+                
+                if (data && data.result) {
+                    const location = data.result.location;
+                    return {
+                        address: address,
+                        latitude: location.lat,
+                        longitude: location.lng,
+                        name: address
+                    };
+                }
+                return null;
+            }
+
+            async searchPlaces(query) {
+                const data = await this.makeApiRequest('/place/v2/search', {
+                    query: query,
+                    region: '全国',
+                    page_size: 20
+                });
+                
+                if (data && data.results) {
+                    const results = data.results.map(place => ({
+                        name: place.name || '',
+                        address: place.address || '',
+                        latitude: place.location.lat,
+                        longitude: place.location.lng
+                    }));
+                    
+                    return {
+                        query: query,
+                        results: results,
+                        totalCount: results.length
+                    };
+                }
+                return { query: query, results: [], totalCount: 0 };
+            }
+
+            calculateDistance(lat1, lon1, lat2, lon2) {
+                // 使用Haversine公式计算距离
+                const R = 6371; // 地球半径（公里）
+                const dLat = this.toRadians(lat2 - lat1);
+                const dLon = this.toRadians(lon2 - lon1);
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                         Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
+                         Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                return R * c;
+            }
+
+            toRadians(degrees) {
+                return degrees * (Math.PI/180);
+            }
+
+            async getRoute(lat1, lon1, lat2, lon2, mode = "driving") {
+                const distance = this.calculateDistance(lat1, lon1, lat2, lon2);
+                const estimatedTime = Math.round(distance * 2); // 简单估算：2分钟/公里
+                
+                return {
+                    origin: `起点(${lat1}, ${lon1})`,
+                    destination: `终点(${lat2}, ${lon2})`,
+                    mode: mode,
+                    distance: distance.toFixed(2),
+                    duration: `${estimatedTime}分钟`,
+                    steps: [
+                        "从起点出发",
+                        "沿主要道路行驶",
+                        "到达目的地"
+                    ]
+                };
+            }
+        }
+
+        // 聊天机器人类
+        class Chatbot {
+            constructor() {
+                this.mapTool = new MapTool();
+                this.chatContainer = document.getElementById('chatContainer');
+                this.messageInput = document.getElementById('messageInput');
+            }
+
+            addMessage(content, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                messageContent.innerHTML = content;
+                
+                messageDiv.appendChild(messageContent);
+                this.chatContainer.appendChild(messageDiv);
+                
+                // 滚动到底部
+                this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+            }
+
+            async processCommand(command) {
+                const parts = command.trim().split(' ');
+                const cmd = parts[0].toLowerCase();
+
+                try {
+                    switch(cmd) {
+                        case 'geocode':
+                            if (parts.length >= 2) {
+                                const address = parts.slice(1).join(' ');
+                                const location = await this.mapTool.geocode(address);
+                                if (location) {
+                                    return `✅ 地理编码结果：<br>
+                                        📍 地址：${location.address}<br>
+                                        🌐 纬度：${location.latitude}<br>
+                                        🌐 经度：${location.longitude}`;
+                                } else {
+                                    return "❌ 地理编码失败，请检查地址是否正确";
+                                }
+                            }
+                            return "❌ 命令格式错误，请使用：geocode <地址>";
+
+                        case 'search':
+                            if (parts.length >= 2) {
+                                const query = parts.slice(1).join(' ');
+                                const result = await this.mapTool.searchPlaces(query);
+                                if (result.results.length > 0) {
+                                    let response = `✅ 搜索完成，找到 ${result.totalCount} 个结果：<br>`;
+                                    result.results.slice(0, 5).forEach((place, index) => {
+                                        response += `<br>   ${index + 1}. ${place.name || place.address}<br>`;
+                                        response += `       🌐 坐标：${place.latitude}, ${place.longitude}<br>`;
+                                        response += `       📍 地址：${place.address}`;
+                                    });
+                                    return response;
+                                } else {
+                                    return "❌ 搜索无结果，请尝试其他关键词";
+                                }
+                            }
+                            return "❌ 命令格式错误，请使用：search <关键词>";
+
+                        case 'distance':
+                            if (parts.length >= 5) {
+                                try {
+                                    const [lat1, lon1, lat2, lon2] = parts.slice(1, 5).map(Number);
+                                    const distance = this.mapTool.calculateDistance(lat1, lon1, lat2, lon2);
+                                    return `✅ 距离计算结果：<br>
+                                        📍 从 位置1(${lat1}, ${lon1}) 到 位置2(${lat2}, ${lon2})<br>
+                                        📏 距离：${distance.toFixed(2)} 公里`;
+                                } catch (e) {
+                                    return "❌ 坐标格式错误，请输入有效的数字";
+                                }
+                            }
+                            return "❌ 命令格式错误，请使用：distance <纬度1> <经度1> <纬度2> <经度2>";
+
+                        case 'route':
+                            if (parts.length >= 5) {
+                                try {
+                                    const [lat1, lon1, lat2, lon2] = parts.slice(1, 5).map(Number);
+                                    const mode = parts[5] || "driving";
+                                    const route = await this.mapTool.getRoute(lat1, lon1, lat2, lon2, mode);
+                                    
+                                    let response = `✅ 路线规划结果：<br>
+                                        🚀 起点：${route.origin}<br>
+                                        🎯 终点：${route.destination}<br>
+                                        🚗 方式：${route.mode}<br>
+                                        📏 距离：${route.distance} 公里<br>
+                                        ⏰ 时间：${route.duration}<br>
+                                        📋 步骤：<br>`;
+                                    
+                                    route.steps.forEach((step, index) => {
+                                        response += `     ${index + 1}. ${step}<br>`;
+                                    });
+                                    
+                                    return response;
+                                } catch (e) {
+                                    return "❌ 坐标格式错误，请输入有效的数字";
+                                }
+                            }
+                            return "❌ 命令格式错误，请使用：route <纬度1> <经度1> <纬度2> <经度2> [出行方式]";
+
+                        case 'help':
+                            return `🗺️ 地图工具命令说明：<br><br>
+                                🔍 <strong>地理编码</strong>：geocode <地址><br>
+                                📍 <strong>逆地理编码</strong>：reverse <纬度> <经度><br>
+                                🏢 <strong>搜索地点</strong>：search <关键词><br>
+                                📏 <strong>计算距离</strong>：distance <纬度1> <经度1> <纬度2> <经度2><br>
+                                🗺️ <strong>路线规划</strong>：route <纬度1> <经度1> <纬度2> <经度2> [出行方式]<br><br>
+                                💡 提示：所有坐标请使用十进制格式`;
+
+                        case 'config':
+                            return `⚙️ 当前配置：<br>
+                                🔑 API密钥：已配置<br>
+                                🌐 服务器：百度地图API<br>
+                                📦 服务：地理编码、搜索、路线规划`;
+
+                        case 'test':
+                            return `🧪 测试功能已准备就绪！<br>
+                                📍 地理编码：北京市<br>
+                                🔍 搜索地点：城市<br>
+                                📏 距离计算：北京到上海<br>
+                                🗺️ 路线规划：北京到上海`;
+
+                        default:
+                            if (command.trim()) {
+                                return `😃 您说的是：${command}<br><br>💡 提示：输入 'help' 查看可用命令`;
+                            }
+                            return "";
+                    }
+                } catch (error) {
+                    return `❌ 处理命令时发生错误：${error.message}`;
+                }
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message) return;
+
+                // 添加用户消息
+                this.addMessage(message, true);
+                this.messageInput.value = '';
+
+                // 显示加载状态
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'message bot';
+                loadingDiv.innerHTML = '<div class="message-content"><span class="loading"></span> 正在处理...</div>';
+                this.chatContainer.appendChild(loadingDiv);
+                this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+
+                // 处理命令并添加机器人回复
+                try {
+                    const response = await this.processCommand(message);
+                    this.chatContainer.removeChild(loadingDiv);
+                    if (response) {
+                        this.addMessage(response, false);
+                    }
+                } catch (error) {
+                    this.chatContainer.removeChild(loadingDiv);
+                    this.addMessage(`❌ 处理失败：${error.message}`, false);
+                }
+            }
+        }
+
+        // 初始化聊天机器人
+        const chatbot = new Chatbot();
+
+        // 发送消息函数
+        function sendMessage() {
+            chatbot.sendMessage();
+        }
+
+        // 处理回车键
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // 显示帮助
+        function showHelp() {
+            chatbot.addMessage(chatbot.processCommand('help'), false);
+        }
+
+        // 快速操作
+        function quickAction(command) {
+            chatbot.messageInput.value = command;
+            sendMessage();
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            chatbot.messageInput.focus();
+        });
+    </script>
+</body>
+</html>
+
+
