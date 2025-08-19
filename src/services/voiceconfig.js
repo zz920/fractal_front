@@ -8,17 +8,42 @@ export const useVoiceConfig = () => {
   
   // 处理API响应
   const handleApiResponse = async (response) => {
+    console.log('API响应状态:', response.status)
+    console.log('API响应头:', Object.fromEntries(response.headers.entries()))
+    
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      const errorMessage = errorData.message || `HTTP错误 ${response.status}`
+      let errorMessage = `HTTP错误 ${response.status}`
+      
+      try {
+        const errorData = await response.json()
+        console.log('错误响应数据:', errorData)
+        errorMessage = errorData.message || errorData.error || errorMessage
+      } catch (parseError) {
+        console.log('无法解析错误响应为JSON，尝试读取文本')
+        try {
+          const errorText = await response.text()
+          console.log('错误响应文本:', errorText)
+          errorMessage = errorText || errorMessage
+        } catch (textError) {
+          console.log('无法读取错误响应文本')
+        }
+      }
+      
       throw new Error(errorMessage)
     }
     
-    const data = await response.json()
-    if (data.success === true) {
-      return data.data
-    } else {
-      throw new Error(data.message || '请求失败')
+    try {
+      const data = await response.json()
+      console.log('成功响应数据:', data)
+      
+      if (data.success === true) {
+        return data.data
+      } else {
+        throw new Error(data.message || data.error || '请求失败')
+      }
+    } catch (parseError) {
+      console.error('解析响应JSON失败:', parseError)
+      throw new Error('响应数据格式错误')
     }
   }
   
@@ -112,15 +137,29 @@ export const useVoiceConfig = () => {
   // 编辑音色
   const editVoice = async (voiceData) => {
     try {
+      console.log('发送编辑音色请求:', voiceData)
+      
+      const authHeaders = getAuthHeaders()
+      console.log('认证头部:', authHeaders)
+      
       const response = await fetch(`${API_BASE_URL}/api/user_config/edit_voice`, {
         method: 'POST',
-        headers: getAuthHeaders(),
+        headers: authHeaders,
         body: JSON.stringify(voiceData)
       })
+      
+      console.log('编辑音色响应状态:', response.status)
+      console.log('编辑音色响应头:', Object.fromEntries(response.headers.entries()))
       
       if (response.status === 401) {
         clearAuthData()
         throw new Error('认证失败')
+      }
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('编辑音色错误响应:', errorText)
+        throw new Error(`HTTP错误 ${response.status}: ${errorText}`)
       }
       
       return await handleApiResponse(response)

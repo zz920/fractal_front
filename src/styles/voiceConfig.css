@@ -1,0 +1,377 @@
+/* VoiceConfig 页面主要样式 */
+.voice-config {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #EEEBF5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.page-title {
+  font-family: '优设标题黑', Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+  color: #6c757d;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.voice-content {
+  display: flex;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+/* 左侧导航栏 */
+.voice-sidebar {
+  flex: 0 0 250px;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.sidebar-section {
+  margin-bottom: 2rem;
+}
+
+.sidebar-title {
+  font-family: '优设标题黑', Arial, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: #e9ecef;
+  color: #495057;
+  border-color: #dee2e6;
+}
+
+.nav-btn.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.nav-btn.active:hover {
+  background: #5a6fd8;
+  border-color: #5a6fd8;
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nav-btn i {
+  font-size: 1.1rem;
+  width: 20px;
+}
+
+/* 右侧内容区域 */
+.voice-main {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-family: '优设标题黑', Arial, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.section-description {
+  color: #6c757d;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.tones-count {
+  font-size: 0.9rem;
+  color: #6c757d;
+  background: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+/* 自定义音色区域 */
+.custom-tones {
+  margin-top: 2rem;
+}
+
+.custom-title {
+  font-family: '优设标题黑', Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1.5rem 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  color: #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #495057;
+  margin: 0 0 1.5rem 0;
+}
+
+.create-btn {
+  padding: 0.75rem 1.5rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.create-btn:hover:not(:disabled) {
+  background: #5a6fd8;
+}
+
+.create-btn:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 992px) {
+  .voice-content {
+    flex-direction: column;
+  }
+
+  .voice-sidebar {
+    position: static;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 1rem;
+  }
+
+  .nav-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .tones-section {
+    margin-top: 0;
+  }
+
+  .tones-list {
+    grid-template-columns: 1fr;
+  }
+
+  .tone-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .tone-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .tone-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .tone-actions {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.75rem;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .message {
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .voice-config {
+    padding: 0 10px;
+  }
+
+  .page-header {
+    text-align: left;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .voice-sidebar {
+    padding: 1rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.1rem;
+  }
+
+  .nav-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .voice-main {
+    padding: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .section-description {
+    font-size: 0.85rem;
+  }
+
+  .tones-count {
+    font-size: 0.8rem;
+  }
+
+  .tone-card {
+    padding: 1rem;
+  }
+
+  .tone-info {
+    gap: 0.75rem;
+  }
+
+  .tone-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1.1rem;
+  }
+
+  .tone-name {
+    font-size: 1rem;
+  }
+
+  .tone-description {
+    font-size: 0.8rem;
+  }
+
+  .tone-type {
+    font-size: 0.7rem;
+  }
+
+  .tone-actions {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.75rem;
+  }
+
+  .play-btn, .select-btn, .edit-btn, .delete-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .play-btn svg, .select-btn svg, .edit-btn svg, .delete-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .empty-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .empty-text {
+    font-size: 1rem;
+  }
+
+  .create-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+  }
+}
