@@ -9,12 +9,18 @@ const Overview = () => import('../pages/dashboard/Overview.vue')
 const VoiceSimulator = () => import('../pages/dashboard/VoiceSimulator.vue')
 const Device = () => import('../pages/dashboard/Device.vue')
 const VoiceConfig = () => import('../pages/dashboard/VoiceConfig.vue')
+const Landing = () => import('../pages/Landing.vue')
 
 // 路由配置
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    name: 'Landing',
+    component: Landing,
+    meta: {
+      title: 'Fractal语音助手',
+      requiresGuest: false
+    }
   },
   {
     path: '/login',
@@ -136,6 +142,9 @@ router.beforeEach(async (to, from, next) => {
     next('/login')
   } else if (requiresGuest && isAuthenticated) {
     // 需要未登录状态但已登录，跳转到Dashboard
+    next('/dashboard')
+  } else if (to.path === '/' && isAuthenticated) {
+    // 访问首页但已登录，跳转到Dashboard
     next('/dashboard')
   } else {
     // 权限检查通过，继续导航
