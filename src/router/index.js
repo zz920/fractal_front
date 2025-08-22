@@ -86,7 +86,7 @@ const routes = [
     ]
   },
   {
-    // 404页面处理
+    // 404页面处理 - 对于SPA，重定向到dashboard
     path: '/:pathMatch(.*)*',
     redirect: '/dashboard'
   }

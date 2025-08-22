@@ -2,17 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>页面重定向</title>
+    <title>Fractal语音助手</title>
+    <script>
+        window.location.href = '/fractal_front/index.html';
+    </script>
 </head>
 <body>
-    <script>
-        // 获取当前路径
-        const path = window.location.pathname;
-        const search = window.location.search;
-        const hash = window.location.hash;
-        
-        // 重定向到主页
-        window.location.href = '/' + path + search + hash;
-    </script>
+    <noscript>
+        <h1>页面未找到</h1>
+        <p>请启用JavaScript或返回<a href="/fractal_front/index.html">主页</a></p>
+    </noscript>
 </body>
 </html> 
