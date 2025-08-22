@@ -62,18 +62,8 @@
         <p>加载中...</p>
       </div>
 
-      <div v-else-if="voiceList.length === 0" class="empty-state">
-        <div class="empty-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
-          </svg>
-        </div>
-        <p class="empty-text">暂无音色配置</p>
-        <p class="empty-subtitle">请上传语音文件来创建音色</p>
-      </div>
-
-      <div v-else class="voice-grid">
-        <!-- 默认音色选项 -->
+      <!-- 默认音色选项（始终显示） -->
+      <div class="voice-grid">
         <div class="voice-card" :class="{ 'selected': selectedVoiceId === '' }">
           <div class="voice-card-header">
             <div class="voice-info">
@@ -88,7 +78,10 @@
             </div>
           </div>
         </div>
-        
+      </div>
+
+      <!-- 用户上传的音色列表 -->
+      <div v-if="voiceList.length > 0" class="voice-grid">
         <div 
           v-for="voice in voiceList" 
           :key="voice.id" 

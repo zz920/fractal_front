@@ -57,6 +57,18 @@
           </li>
           <li class="nav-item">
             <router-link
+              to="/dashboard/prompt-config"
+              class="nav-link"
+              :class="{ active: $route.path === '/dashboard/prompt-config' }"
+            >
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21,6V8H3V6H21M3,18H12V16H3V18M3,13H21V11H3V13Z"/>
+              </svg>
+              <span>角色配置</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
               to="/dashboard/device"
               class="nav-link"
               :class="{ active: $route.path === '/dashboard/device' }"

@@ -9,6 +9,7 @@ const Overview = () => import('../pages/dashboard/Overview.vue')
 const VoiceSimulator = () => import('../pages/dashboard/VoiceSimulator.vue')
 const Device = () => import('../pages/dashboard/Device.vue')
 const VoiceConfig = () => import('../pages/dashboard/VoiceConfig.vue')
+const PromptConfig = () => import('../pages/dashboard/PromptConfig.vue')
 const Landing = () => import('../pages/Landing.vue')
 
 // 路由配置
@@ -86,6 +87,15 @@ const routes = [
           component: VoiceConfig,
           meta: {
             title: '音色配置 - Fractal语音助手',
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'prompt-config',
+          name: 'PromptConfig',
+          component: PromptConfig,
+          meta: {
+            title: '角色配置 - Fractal语音助手',
             requiresAuth: true
           }
         }
